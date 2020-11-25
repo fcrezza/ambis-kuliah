@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint --fix **/*.js",
     "format": "prettier --write \"**/*.{js,json}\"",
-    "precommit": "yarn run lint && yarn run format",
+    "precommit": "npm run lint && npm run format",
     "husky": "husky install",
     "setup": "npm install && npm run husky && npm run lint && npm run format"
   },

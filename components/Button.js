@@ -29,6 +29,7 @@ export const Button = styled.button`
   font-weight: 700;
   font-size: 1.2rem;
   cursor: pointer;
+  display: inline-block;
 
   ${({variant}) => (variant === 'outline' ? outline : original)};
 `;

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import Head from 'components/Head';
+import Footer from 'components/Footer';
 
 const HeaderContainer = styled.header`
   max-width: 1440px;
@@ -257,12 +258,12 @@ const AboutContent = styled.div`
   }
 `;
 
-const FooterContainer = styled.footer`
+const JoinContainer = styled.div`
   margin-top: auto;
   background-color: ${({theme}) => theme.colors['black.150']};
 `;
 
-const FooterWrapper = styled.div`
+const JoinWrapper = styled.div`
   max-width: 1440px;
   padding: 0 100px;
   margin: 0 auto;
@@ -280,11 +281,12 @@ const FooterWrapper = styled.div`
   }
 `;
 
-const FooterContent = styled.div`
+const JoinContent = styled.div`
   padding: 100px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid ${({theme}) => theme.colors['black.50']};
 
   @media screen and (max-width: 768px) {
     flex-direction: column;
@@ -303,34 +305,6 @@ const FooterContent = styled.div`
     @media screen and (max-width: 480px) {
       font-size: 1.8rem;
       line-height: 60px;
-    }
-  }
-`;
-
-const Divider = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: ${({theme}) => theme.colors['black.50']};
-`;
-
-const FooterCopyright = styled.div`
-  padding: 60px 0;
-  text-align: center;
-
-  .logo {
-    width: 40px;
-    margin-bottom: 1rem;
-    @media screen and (max-width: 480px) {
-      width: 32px;
-    }
-  }
-
-  .text {
-    color: ${({theme}) => theme.colors['gray.100']};
-    font-size: 1rem;
-
-    @media screen and (max-width: 480px) {
-      font-size: 0.9rem;
     }
   }
 `;
@@ -421,9 +395,9 @@ function landingPage() {
           </p>
         </AboutContent>
       </AboutContainer>
-      <FooterContainer>
-        <FooterWrapper>
-          <FooterContent>
+      <JoinContainer>
+        <JoinWrapper>
+          <JoinContent>
             <h2 className="title">Mulai Diskusi Sekarang!</h2>
             <AuthLink href="#">
               <img
@@ -431,18 +405,10 @@ function landingPage() {
                 alt="login menggunakan google"
               />
             </AuthLink>
-          </FooterContent>
-          <Divider />
-          <FooterCopyright>
-            <img
-              src="/images/logo-standalone.svg"
-              className="logo"
-              alt="ambis kuliah logo"
-            />
-            <p className="text">© 2020 Ambis Kuliah. All rights reserved</p>
-          </FooterCopyright>
-        </FooterWrapper>
-      </FooterContainer>
+          </JoinContent>
+        </JoinWrapper>
+      </JoinContainer>
+      <Footer />
     </div>
   );
 }
