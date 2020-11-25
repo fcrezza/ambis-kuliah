@@ -10,6 +10,19 @@ const HeaderContainer = styled.header`
   background-repeat: no-repeat;
   background-size: 450px;
   background-position: 95% center;
+
+  @media screen and (max-width: 1024px) {
+    background-image: none;
+    padding: 100px 70px;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 100px 50px;
+  }
+
+  @media screen and (max-width: 480px) {
+    padding: 80px 1.5rem;
+  }
 `;
 
 const HeaderContent = styled.div`
@@ -23,6 +36,20 @@ const HeaderContent = styled.div`
 
     span {
       display: block;
+
+      @media screen and (max-width: 480px) {
+        display: inline;
+      }
+    }
+
+    @media screen and (max-width: 1024px) {
+      font-size: 2.9rem;
+    }
+
+    @media screen and (max-width: 480px) {
+      line-height: 60px;
+      font-size: 2rem;
+      margin: 0 0 1.3rem;
     }
   }
 
@@ -31,15 +58,34 @@ const HeaderContent = styled.div`
     font-size: 1.3rem;
     line-height: 40px;
     margin: 0 0 1.8rem;
+
+    @media screen and (max-width: 1024px) {
+      font-size: 1.2rem;
+    }
+
+    @media screen and (max-width: 480px) {
+      font-size: 1.1rem;
+      margin: 0 0 1.3rem;
+      line-height: 35px;
+    }
   }
 `;
 
 const AuthLink = styled.a`
   text-decoration: none;
+  display: inline-block;
 
   img {
     display: block;
     width: 250px;
+
+    @media screen and (max-width: 1024px) {
+      width: 230px;
+    }
+
+    @media screen and (max-width: 480px) {
+      width: 200px;
+    }
   }
 `;
 
@@ -49,10 +95,31 @@ const FeaturesContainer = styled.div`
   max-width: 1440px;
   margin-bottom: 50px;
 
+  @media screen and (max-width: 1024px) {
+    padding: 70px;
+  }
+  @media screen and (max-width: 768px) {
+    padding: 50px;
+  }
+
+  @media screen and (max-width: 480px) {
+    padding: 50px 1.5rem;
+  }
+
   .title {
+    line-height: 70px;
     font-size: 2.6rem;
     color: ${({theme}) => theme.colors['black.150']};
     margin: 0 0 6rem;
+
+    @media screen and (max-width: 1024px) {
+      font-size: 2.2rem;
+    }
+
+    @media screen and (max-width: 480px) {
+      font-size: 1.8rem;
+      line-height: 60px;
+    }
   }
 `;
 
@@ -60,23 +127,44 @@ const FeaturesItemContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 80px;
+
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 100%;
+  }
 `;
 
 const FeaturesItem = styled.div`
   width: 100%;
   display: flex;
 
+  @media screen and (max-width: 480px) {
+    flex-direction: column;
+  }
+
   .features-item-title {
     color: ${({theme}) => theme.colors['black.150']};
     font-size: 1.8rem;
     margin: 0 0 1rem;
     font-weight: 500;
+
+    @media screen and (max-width: 1024px) {
+      font-size: 1.6rem;
+    }
+    @media screen and (max-width: 480px) {
+      font-size: 1.5rem;
+      line-height: 35px;
+    }
   }
 
   .features-item-description {
     font-size: 1.1rem;
     color: ${({theme}) => theme.colors['black.100']};
     line-height: 40px;
+
+    @media screen and (max-width: 480px) {
+      font-size: 1.1rem;
+      line-height: 35px;
+    }
   }
 
   .features-item-number {
@@ -91,6 +179,21 @@ const FeaturesItem = styled.div`
     font-size: 1.6rem;
     line-height: 50px;
     margin-right: 2rem;
+
+    @media screen and (max-width: 1024px) {
+      width: 45px;
+      height: 45px;
+      line-height: 45px;
+      font-size: 1.5rem;
+    }
+
+    @media screen and (max-width: 480px) {
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      font-size: 1.4rem;
+      margin: 0 0 1rem 0;
+    }
   }
 `;
 
@@ -102,16 +205,43 @@ const AboutContainer = styled.div`
   background-repeat: no-repeat;
   background-size: 450px;
   background-position: 95% center;
+
+  @media screen and (max-width: 1024px) {
+    background-image: none;
+    padding: 40px 70px;
+    margin: 0 auto 120px;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 40px 50px;
+  }
+
+  @media screen and (max-width: 480px) {
+    padding: 40px 1.5rem;
+  }
 `;
 
 const AboutContent = styled.div`
   max-width: 500px;
+
+  @media screen and (max-width: 1024px) {
+    max-width: 600px;
+  }
 
   .title {
     color: ${({theme}) => theme.colors['black.150']};
     font-size: 2.6rem;
     line-height: 70px;
     margin: 0 0 1.5rem;
+
+    @media screen and (max-width: 1024px) {
+      font-size: 2.2rem;
+    }
+
+    @media screen and (max-width: 480px) {
+      font-size: 1.8rem;
+      line-height: 60px;
+    }
   }
 
   .description {
@@ -119,6 +249,11 @@ const AboutContent = styled.div`
     font-size: 1.2rem;
     line-height: 40px;
     margin: 0 0 1.5rem;
+
+    @media screen and (max-width: 480px) {
+      font-size: 1.1rem;
+      line-height: 35px;
+    }
   }
 `;
 
@@ -131,6 +266,18 @@ const FooterWrapper = styled.div`
   max-width: 1440px;
   padding: 0 100px;
   margin: 0 auto;
+
+  @media screen and (max-width: 1024px) {
+    padding: 0 70px;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 0 50px;
+  }
+
+  @media screen and (max-width: 480px) {
+    padding: 50px 1.5rem;
+  }
 `;
 
 const FooterContent = styled.div`
@@ -139,9 +286,24 @@ const FooterContent = styled.div`
   align-items: center;
   justify-content: space-between;
 
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   h2 {
     color: ${({theme}) => theme.colors['white.50']};
     font-size: 2.6rem;
+    line-height: 70px;
+
+    @media screen and (max-width: 1024px) {
+      font-size: 2.2rem;
+    }
+
+    @media screen and (max-width: 480px) {
+      font-size: 1.8rem;
+      line-height: 60px;
+    }
   }
 `;
 
@@ -158,11 +320,18 @@ const FooterCopyright = styled.div`
   .logo {
     width: 40px;
     margin-bottom: 1rem;
+    @media screen and (max-width: 480px) {
+      width: 32px;
+    }
   }
 
   .text {
     color: ${({theme}) => theme.colors['gray.100']};
     font-size: 1rem;
+
+    @media screen and (max-width: 480px) {
+      font-size: 0.9rem;
+    }
   }
 `;
 

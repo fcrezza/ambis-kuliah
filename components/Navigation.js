@@ -12,6 +12,18 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  @media screen and (max-width: 1024px) {
+    padding: 40px 70px;
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 40px 50px;
+  }
+
+  @media screen and (max-width: 480px) {
+    padding: 40px 1.5rem;
+  }
 `;
 
 const Logo = styled.a`
@@ -20,6 +32,10 @@ const Logo = styled.a`
   img {
     width: 200px;
     display: block;
+
+    @media screen and (max-width: 480px) {
+      width: 180px;
+    }
   }
 `;
 
