@@ -30,6 +30,7 @@ export const Button = styled.button`
   font-size: 1.2rem;
   cursor: pointer;
   display: inline-block;
+  opacity: ${({disabled}) => (disabled ? 0.7 : 1)};
 
   ${({variant}) => (variant === 'outline' ? outline : original)};
 `;

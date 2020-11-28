@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import styled from 'styled-components';
@@ -7,6 +8,7 @@ import {Button} from './Button';
 
 const Container = styled.div`
   padding: 40px 100px;
+  z-index: 999;
   max-width: 1440px;
   margin: 0 auto;
   display: flex;
@@ -66,8 +68,14 @@ const NavItem = styled.a`
 `;
 
 function Navigation() {
-  const {pathname} = useRouter();
-  const isShowed = !['/', '/topics'].includes(pathname);
+  const router = useRouter();
+  const isShowed = !['/', '/topics'].includes(router.pathname);
+
+  const onClick = () => {
+    router.push(`${router.pathname}?compose=true`, router.pathname, {
+      shallow: true
+    });
+  };
 
   return (
     <Container>
@@ -78,10 +86,10 @@ function Navigation() {
       </Link>
       {isShowed ? (
         <Nav>
-          <NavLink href="/">Home</NavLink>
+          <NavLink href="/home">Home</NavLink>
           <NavLink href="/explore">Eksplor</NavLink>
           <NavLink href="/profile">Profil</NavLink>
-          <Button variant="outline">Tulis</Button>
+          <Button onClick={onClick}>Tulis</Button>
         </Nav>
       ) : null}
     </Container>
