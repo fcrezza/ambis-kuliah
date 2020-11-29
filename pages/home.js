@@ -5,11 +5,16 @@ import {ImNewspaper} from 'react-icons/im';
 import Head from 'components/Head';
 import Post from 'components/Post';
 import WritePost from 'components/WritePost';
+import {posts} from 'utils/data';
 
 const Container = styled.main`
   flex: 1;
   border-radius: 5px;
   border: 1px solid #d9d9d9;
+
+  @media screen and (max-width: 768px) {
+    border: 0;
+  }
 `;
 
 const Title = styled.div`
@@ -30,46 +35,13 @@ const Title = styled.div`
   }
 `;
 
-function home() {
-  const posts = [
-    {
-      avatar: '/images/avatar1.png',
-      name: 'Oscar Mingueza',
-      title: 'Apa pendapat kalian tentang menteri kesehatan kita?',
-      tags: ['Kesehatan', 'Umum', 'Politik'],
-      text:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy",
-      stats: {
-        answer: 30,
-        like: '650K'
-      }
-    },
-    {
-      avatar: '/images/avatar2.png',
-      name: 'Dominic Soboszalai',
-      title: 'Saranin laptop yang bagus buat kuliah dong',
-      tags: ['Teknologi', 'Umum'],
-      text:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy",
-      stats: {
-        answer: 30,
-        like: 650
-      }
-    },
-    {
-      avatar: '/images/avatar3.png',
-      name: 'Alejandro Balde',
-      title: 'Unpopular opinion: Windows is sucks',
-      text:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy",
-      tags: ['Teknologi'],
-      stats: {
-        answer: 30,
-        like: 65
-      }
-    }
-  ];
+const Wrapper = styled.div`
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`;
 
+function home() {
   return (
     <Container>
       <Head title="Home - Ambis Kuliah" description="Ambis kuliah homepage" />
@@ -77,7 +49,9 @@ function home() {
         <h1>Home</h1>
         <ImNewspaper size="2rem" />
       </Title>
-      <WritePost />
+      <Wrapper>
+        <WritePost />
+      </Wrapper>
       {posts.map((topic, idx) => (
         <Post key={idx} data={topic} showControl />
       ))}

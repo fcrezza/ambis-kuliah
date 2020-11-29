@@ -42,22 +42,6 @@ const Title = styled.div`
   }
 `;
 
-const customStyles = {
-  overlay: {
-    overflowY: 'auto'
-  },
-  content: {
-    top: '10%',
-    padding: 0,
-    borderRadius: '20px',
-    width: '650px',
-    left: '50%',
-    bottom: 'auto',
-    transform: 'translateX(-50%)',
-    overflow: 'unset'
-  }
-};
-
 function WritePostModal() {
   const [isOpen, setIsOpen] = React.useState(false);
   const overlayRef = React.useRef();
@@ -78,25 +62,24 @@ function WritePostModal() {
   }, [router]);
 
   return (
-    <div>
-      <Modal
-        isOpen={isOpen}
-        ref={node => (overlayRef.current = node)}
-        onRequestClose={onClose}
-        onAfterOpen={() => disableBodyScroll(overlayRef.current)}
-        onAfterClose={() => enableBodyScroll(overlayRef.current)}
-        contentLabel="Compose Discussion"
-        style={customStyles}
-      >
-        <Title>
-          <h2>Tulis Sesuatu</h2>
-          <button className="close-button" onClick={onClose}>
-            <MdClose />
-          </button>
-        </Title>
-        <WritePost />
-      </Modal>
-    </div>
+    <Modal
+      isOpen={isOpen}
+      ref={node => (overlayRef.current = node)}
+      onRequestClose={onClose}
+      onAfterOpen={() => disableBodyScroll(overlayRef.current)}
+      onAfterClose={() => enableBodyScroll(overlayRef.current)}
+      contentLabel="Compose Discussion"
+      className="customContent"
+      overlayClassName="customOverlay"
+    >
+      <Title>
+        <h2>Tulis Sesuatu</h2>
+        <button className="close-button" onClick={onClose}>
+          <MdClose />
+        </button>
+      </Title>
+      <WritePost />
+    </Modal>
   );
 }
 

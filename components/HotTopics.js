@@ -16,6 +16,10 @@ const HotTopicsContainer = styled.div`
   @media screen and (max-width: 1440px) {
     max-width: 340px;
   }
+
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const PostsContainer = styled.div`

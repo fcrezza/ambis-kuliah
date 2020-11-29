@@ -43,6 +43,7 @@ const PostProfile = styled.a`
     font-size: 0.8rem;
     margin: 0 0 0 0.5rem;
     color: ${({theme}) => theme.colors['black.50']};
+    white-space: nowrap;
   }
 
   &:hover,
@@ -101,6 +102,7 @@ const PostPreviewText = styled.p`
 const AnswerStat = styled.p`
   font-size: 0.8rem;
   color: ${({theme}) => theme.colors['black.50']};
+  white-space: nowrap;
 `;
 
 const ControlButton = styled.button`

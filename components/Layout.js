@@ -14,11 +14,7 @@ const LayoutContainer = styled.div`
   }
 
   @media screen and (max-width: 768px) {
-    padding: 40px 50px;
-  }
-
-  @media screen and (max-width: 480px) {
-    padding: 40px 1.5rem;
+    padding: 0;
   }
 `;
 
