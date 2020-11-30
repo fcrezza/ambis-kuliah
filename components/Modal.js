@@ -1,12 +1,9 @@
 import React from 'react';
-import Modal from 'react-modal';
+import ReactModal from 'react-modal';
 import styled from 'styled-components';
 import {lighten} from 'polished';
-import {useRouter} from 'next/router';
 import {disableBodyScroll, enableBodyScroll} from 'body-scroll-lock';
 import {MdClose} from 'react-icons/md';
-
-import WritePost from 'components/WritePost';
 
 const Title = styled.div`
   padding: 0.5rem 1.5rem;
@@ -42,45 +39,29 @@ const Title = styled.div`
   }
 `;
 
-function WritePostModal() {
-  const [isOpen, setIsOpen] = React.useState(false);
+function Modal({isOpen, onClose, contentLabel, title, children}) {
   const overlayRef = React.useRef();
-  const router = useRouter();
-
-  const onClose = () => {
-    setIsOpen(false);
-    router.push(router.pathname, undefined, {
-      shallow: true
-    });
-  };
-
-  React.useEffect(() => {
-    if ('compose' in router.query) {
-      return setIsOpen(true);
-    }
-    setIsOpen(false);
-  }, [router]);
 
   return (
-    <Modal
+    <ReactModal
       isOpen={isOpen}
       ref={node => (overlayRef.current = node)}
       onRequestClose={onClose}
       onAfterOpen={() => disableBodyScroll(overlayRef.current)}
       onAfterClose={() => enableBodyScroll(overlayRef.current)}
-      contentLabel="Compose Discussion"
+      contentLabel={contentLabel}
       className="customContent"
       overlayClassName="customOverlay"
     >
       <Title>
-        <h2>Tulis Sesuatu</h2>
+        <h2>{title}</h2>
         <button className="close-button" onClick={onClose}>
           <MdClose />
         </button>
       </Title>
-      <WritePost />
-    </Modal>
+      {children}
+    </ReactModal>
   );
 }
 
-export default WritePostModal;
+export default Modal;

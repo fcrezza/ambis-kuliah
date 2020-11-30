@@ -6,6 +6,8 @@ import {lighten, darken} from 'polished';
 import {FaRegCompass} from 'react-icons/fa';
 import {AiOutlineHome} from 'react-icons/ai';
 
+import WritePost from './WritePost';
+import Modal from './Modal';
 import {Button} from './Button';
 
 const DesktopContainer = styled.div`
@@ -104,18 +106,29 @@ const MobileNavButton = styled.button`
 `;
 
 function Navigation() {
+  const [isModalOpen, setModalState] = React.useState(false);
   const router = useRouter();
   const isShowed = !['/', '/topics'].includes(router.pathname);
   const isAuth = true;
 
   const onClickWrite = () => {
-    router.push(`${router.pathname}?compose=true`, router.pathname, {
-      shallow: true
-    });
+    setModalState(true);
+  };
+
+  const onModalClose = () => {
+    setModalState(false);
   };
 
   return (
     <>
+      <Modal
+        title="Tulis Sesuatu"
+        contentLabel="compose discussion"
+        onClose={onModalClose}
+        isOpen={isModalOpen}
+      >
+        <WritePost />
+      </Modal>
       <DesktopNavigation
         isShowed={isShowed}
         isAuth={isAuth}
@@ -142,7 +155,11 @@ function DesktopNavigation({isShowed, isAuth, onClickWrite}) {
         <DesktopNav>
           <DesktopNavLink href="/home">Home</DesktopNavLink>
           <DesktopNavLink href="/explore">Eksplor</DesktopNavLink>
-          {isAuth && <DesktopNavLink href="/profile">Profil</DesktopNavLink>}
+          {isAuth && (
+            <DesktopNavLink href="/profile/chrispetersen">
+              Profil
+            </DesktopNavLink>
+          )}
           {isAuth && <Button onClick={onClickWrite}>Tulis</Button>}
         </DesktopNav>
       ) : null}
