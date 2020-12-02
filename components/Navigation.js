@@ -73,6 +73,7 @@ const DesktopNavItem = styled.a`
 
 const MobileContainer = styled.div`
   position: fixed;
+  z-index: 999;
   right: 0;
   bottom: 0;
   left: 0;
@@ -183,7 +184,7 @@ function MobileNavigation({isShowed, isAuth, onClickWrite}) {
           <FaRegCompass />
         </MobileNavLink>
         {isAuth && (
-          <MobileNavLink href="/profile">
+          <MobileNavLink href="/profile/chrispetersen">
             <Profile />
           </MobileNavLink>
         )}
