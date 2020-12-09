@@ -1,12 +1,22 @@
 import React from 'react';
 import styled from 'styled-components';
+import Link from 'next/link';
 import {RiArrowUpSFill, RiArrowDownSFill} from 'react-icons/ri';
+import {lighten} from 'polished';
 
 import {Tag, TagGroup} from './Tag';
 
 const PostContainer = styled.div`
   padding: 1.5rem;
   display: flex;
+  cursor: ${({type}) => (type !== 'detail' ? 'pointer' : 'default')};
+
+  &:focus,
+  &:hover,
+  &:focus-within {
+    background-color: ${({theme, type}) =>
+      type !== 'detail' ? lighten(0.01, theme.colors['gray.50']) : null};
+  }
 
   &:not(:last-child) {
     border-bottom: 1px solid ${({theme}) => theme.colors['gray.100']};
@@ -22,8 +32,7 @@ const PostTitle = styled.a`
   font-weight: 700;
   display: inline-block;
 
-  &:focus,
-  &:hover {
+  ${PostContainer}:focus &, ${PostContainer}:hover & {
     text-decoration: underline;
   }
 `;
@@ -92,14 +101,36 @@ const Divider = styled.div`
   background: ${({theme}) => theme.colors['black.50']};
 `;
 
-const PostPreviewText = styled.p`
+const PostDescription = styled.p`
   line-height: 30px;
   color: ${({theme}) => theme.colors['black.100']};
   font-size: 1rem;
   margin: 0;
 `;
 
+const ReplyTo = styled.p`
+  font-size: 0.9rem;
+  color: ${({theme}) => theme.colors['black.50']};
+  margin: 0;
+
+  a {
+    text-decoration: none;
+    color: ${({theme}) => theme.colors['orange.50']};
+
+    &:focus,
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
 const AnswerStat = styled.p`
+  font-size: 0.8rem;
+  color: ${({theme}) => theme.colors['black.50']};
+  white-space: nowrap;
+`;
+
+const TimeStamp = styled.p`
   font-size: 0.8rem;
   color: ${({theme}) => theme.colors['black.50']};
   white-space: nowrap;
@@ -119,8 +150,17 @@ const ControlButton = styled.button`
   }
 `;
 
-function Post({data, showControl}) {
-  const {tags, avatar, title, name, text = '', stats = null} = data;
+function Post({data, showControl, type, onClickPost}) {
+  const {
+    tags,
+    avatar,
+    title,
+    name,
+    text = '',
+    stats = null,
+    replyTo,
+    timestamp
+  } = data;
   const [like, setLike] = React.useState(false);
   const [dislike, setDislike] = React.useState(false);
 
@@ -141,7 +181,7 @@ function Post({data, showControl}) {
   };
 
   return (
-    <PostContainer>
+    <PostContainer type={type} onClick={onClickPost} tabIndex="0">
       {showControl ? (
         <PostControl>
           <ControlButton onClick={onLike} isTruth={like}>
@@ -154,16 +194,23 @@ function Post({data, showControl}) {
         </PostControl>
       ) : null}
       <PostContent>
-        <TagGroup>
-          {tags.map((tag, idx) => (
-            <Tag key={idx} href={`#${tag}`}>
-              {tag}
-            </Tag>
-          ))}
-        </TagGroup>
-        <PostTitle href="/discussions">{title}</PostTitle>
+        {replyTo ? (
+          <ReplyTo>
+            Membalas kepada <Link href="/profile/crispetersen">{replyTo}</Link>
+          </ReplyTo>
+        ) : null}
+        {tags ? (
+          <TagGroup>
+            {tags.map((tag, idx) => (
+              <Tag key={idx} href={`#${tag}`}>
+                {tag}
+              </Tag>
+            ))}
+          </TagGroup>
+        ) : null}
+        {title ? <PostTitle href="/discussions">{title}</PostTitle> : null}
         {text ? (
-          <PostPreviewText>{text.substring(0, 255)}...</PostPreviewText>
+          <PostDescription>{text.substring(0, 255)}...</PostDescription>
         ) : null}
         <PostFooter>
           <PostProfile href="/profile/">
@@ -174,10 +221,16 @@ function Post({data, showControl}) {
             />
             <p className="profile-name">{name}</p>
           </PostProfile>
-          {stats?.answer ? (
+          {typeof stats?.answer === 'number' ? (
             <>
               <Divider />
               <AnswerStat>{stats.answer} Jawaban</AnswerStat>
+            </>
+          ) : null}
+          {timestamp ? (
+            <>
+              <Divider />
+              <TimeStamp>{timestamp}</TimeStamp>
             </>
           ) : null}
         </PostFooter>

@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import {lighten, darken} from 'polished';
-import {RiArrowUpSFill, RiArrowDownSFill} from 'react-icons/ri';
 
 import Head from 'components/Head';
 import {Button} from 'components/Button';
 import Post from 'components/Post';
 import {posts} from 'utils/data';
 import Modal from 'components/Modal';
+import {useRouter} from 'next/router';
 
 const Container = styled.main`
   flex: 1;
@@ -94,55 +94,6 @@ const MenuLink = styled.button`
     background-color: ${({theme, isActive}) =>
       !isActive && theme.colors['gray.50']};
   }
-`;
-
-const ReplyContainer = styled.div`
-  padding: 1.5rem;
-  display: flex;
-`;
-
-const ReplyControl = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-right: 2rem;
-  width: 30px;
-
-  .text-stats {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: ${({theme}) => theme.colors['black.150']};
-    display: inline-block;
-    margin: 5px 0;
-  }
-`;
-
-const ControlButton = styled.button`
-  border: 0;
-  background: none;
-  padding: 0;
-  cursor: pointer;
-
-  svg {
-    font-size: 2.5rem;
-    color: ${({theme, isTruth}) =>
-      isTruth ? theme.colors['orange.50'] : theme.colors['black.150']};
-    display: block;
-  }
-`;
-
-const ReplyContent = styled.div``;
-
-const ReplyText = styled.p`
-  color: ${({theme}) => theme.colors['black.100']};
-  margin: 0 0 1.3rem;
-  font-size: 1rem;
-  line-height: 30px;
-`;
-
-const PostReplyContainer = styled.div`
-  border-radius: 20px;
-  border: 1px solid ${({theme}) => theme.colors['gray.100']};
 `;
 
 const ProfileEditContainer = styled.div`
@@ -270,46 +221,29 @@ function ProfileWrite() {
 }
 
 function ProfileReply() {
-  const [like, setLike] = React.useState(false);
-  const [dislike, setDislike] = React.useState(false);
+  const router = useRouter();
 
-  const onLike = () => {
-    if (dislike) {
-      setDislike(prevState => !prevState);
-    }
-
-    setLike(prevState => !prevState);
-  };
-
-  const onDislike = () => {
-    if (like) {
-      setLike(prevState => !prevState);
-    }
-
-    setDislike(prevState => !prevState);
+  const onClickPost = () => {
+    router.push('/discussion/crispetersen/797889');
   };
 
   return (
-    <ReplyContainer>
-      <ReplyControl>
-        <ControlButton onClick={onLike} isTruth={like}>
-          <RiArrowUpSFill />
-        </ControlButton>
-        <span className="text-stats">30</span>
-        <ControlButton onClick={onDislike} isTruth={dislike}>
-          <RiArrowDownSFill />
-        </ControlButton>
-      </ReplyControl>
-      <ReplyContent>
-        <ReplyText>
-          Budget ada berapa? kalo ada sekitar 6 juta lebih, mending rakit peci
-          wkwkwk
-        </ReplyText>
-        <PostReplyContainer>
-          <Post data={posts[0]} />
-        </PostReplyContainer>
-      </ReplyContent>
-    </ReplyContainer>
+    <Post
+      data={{
+        replyTo: '@bagaskarahoahoe',
+        avatar: '/images/avatar1.png',
+        name: 'Christoph Petersen',
+        text:
+          'Budget ada berapa? kalo ada 8 juta lebih, mending rakit peci wkwkwk',
+        stats: {
+          like: 300,
+          answer: 0
+        },
+        timestamp: '10:03 AM, 2 Nov 2020'
+      }}
+      onClickPost={onClickPost}
+      showControl
+    />
   );
 }
 
