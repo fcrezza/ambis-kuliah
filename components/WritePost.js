@@ -7,8 +7,10 @@ import {lighten, darken} from 'polished';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
+
 import Search from 'components/Search';
 import {Button} from 'components/Button';
+import {users} from 'utils/data';
 
 const WritePostContainer = styled.div`
   padding: 2rem 1.5rem;
@@ -266,9 +268,9 @@ function WritePost() {
 
   return (
     <WritePostContainer>
-      <Link href="/profile" passHref>
+      <Link href={`/profile/${users[2].username}`} passHref>
         <Avatar>
-          <img src="/images/avatar1.png" alt="my avatar" />
+          <img src={users[2].avatar} alt={`${users[2].fullname} avatar`} />
         </Avatar>
       </Link>
       <EditorContainer>

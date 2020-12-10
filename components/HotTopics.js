@@ -1,9 +1,12 @@
+import React from 'react';
 import {useRouter} from 'next/router';
 import styled from 'styled-components';
 import {AiFillFire} from 'react-icons/ai';
 
+import {TrendSkeleton} from 'components/Skeleton';
 import Search from 'components/Search';
 import Post from 'components/Post';
+import {users, posts} from 'utils/data';
 
 const HotTopicsContainer = styled.div`
   max-width: 400px;
@@ -74,26 +77,22 @@ function HotTopics() {
 }
 
 function Posts() {
-  const posts = [
-    {
-      avatar: '/images/avatar1.png',
-      name: 'Oscar Mingueza',
-      title: 'Apa pendapat kalian tentang menteri kesehatan kita?',
-      tags: ['Kesehatan', 'Umum', 'Politik']
-    },
-    {
-      avatar: '/images/avatar2.png',
-      name: 'Dominic Soboszalai',
-      title: 'Saranin laptop yang bagus buat kuliah dong',
-      tags: ['Teknologi', 'Umum']
-    },
-    {
-      avatar: '/images/avatar3.png',
-      name: 'Alejandro Balde',
-      title: 'Unpopular opinion: Windows is sucks',
-      tags: ['Teknologi']
-    }
-  ];
+  const [discussions, setDiscussions] = React.useState(null);
+
+  React.useEffect(() => {
+    let data = posts.filter(post => !post.replyTo);
+    data = data.map(post => {
+      const user = users.find(user => user.id === post.userID);
+      return {
+        user,
+        post
+      };
+    });
+
+    setTimeout(() => {
+      setDiscussions(data);
+    }, 2000);
+  }, []);
 
   return (
     <PostsContainer>
@@ -101,9 +100,23 @@ function Posts() {
         <h2>Diskusi Terhangat</h2>
         <AiFillFire size="2rem" />
       </Title>
-      {posts.map((post, idx) => (
-        <Post key={idx} data={post} />
-      ))}
+      {discussions
+        ? discussions.map((discussion, idx) => (
+            <Post
+              key={idx}
+              postID={discussion.post.id}
+              title={discussion.post.title}
+              tags={discussion.post.tags}
+              fullname={discussion.user.fullname}
+              username={discussion.user.username}
+              avatar={discussion.user.avatar}
+            />
+          ))
+        : Array(3)
+            .fill()
+            .map((_, idx) => (
+              <TrendSkeleton uniqueKey={`trend-skeleton-${idx}`} key={idx} />
+            ))}
     </PostsContainer>
   );
 }

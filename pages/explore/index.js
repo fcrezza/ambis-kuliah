@@ -9,6 +9,7 @@ import {AiOutlineSetting} from 'react-icons/ai';
 import Head from 'components/Head';
 import Modal from 'components/Modal';
 import Search from 'components/Search';
+import {topics} from 'utils/data';
 
 const Container = styled.main`
   border-radius: 5px;
@@ -157,14 +158,6 @@ const Wrapper = styled.div`
 
 function explore() {
   const [isModalOpen, setModalState] = React.useState(false);
-  const topicList = [
-    {name: 'Umum', image: '/images/general.png'},
-    {name: 'Teknologi', image: '/images/technology.png'},
-    {name: 'Agama', image: '/images/religion.png'},
-    {name: 'Kesehatan', image: '/images/health.png'},
-    {name: 'Ekonomi', image: '/images/economy.png'},
-    {name: 'Pendidikan', image: '/images/education.png'}
-  ];
 
   const onSettingClick = () => {
     setModalState(true);
@@ -192,12 +185,8 @@ function explore() {
           </IconButton>
         </TitleContainer>
         <TopicsContainer>
-          {topicList.map((topic, idx) => (
-            <Link
-              key={idx}
-              href={`/explore/${topic.name.toLowerCase()}`}
-              passHref
-            >
+          {topics.map((topic, idx) => (
+            <Link key={idx} href={`/explore/${topic.name}`} passHref>
               <TopicItem>
                 <TopicText>{topic.name}</TopicText>
                 <Image
@@ -218,7 +207,6 @@ function explore() {
 
 function TopicsModal({isOpen, onClose}) {
   const [selectedTopics, setTopics] = React.useState([]);
-  const topicList = ['Umum', 'Teknologi', 'Agama', 'Kesehatan', 'Politik'];
 
   const onClickButton = newTopic => {
     if (selectedTopics.includes(newTopic)) {
@@ -233,20 +221,20 @@ function TopicsModal({isOpen, onClose}) {
   return (
     <Modal title="Ikuti Topik" isOpen={isOpen} onClose={onClose}>
       <ModalTopicsContainer>
-        {topicList.map((tag, idx) => {
-          const isSelected = selectedTopics.includes(tag);
+        {topics.map((topic, idx) => {
+          const isSelected = selectedTopics.includes(topic.name);
           return (
             <ModalTopicButton
               key={idx}
               isSelected={isSelected}
-              onClick={() => onClickButton(tag)}
+              onClick={() => onClickButton(topic.name)}
             >
               {isSelected && (
                 <ModalButtonIcon>
                   <MdCheck />
                 </ModalButtonIcon>
               )}
-              <ModalTopicText>{tag}</ModalTopicText>
+              <ModalTopicText>{topic.name}</ModalTopicText>
             </ModalTopicButton>
           );
         })}

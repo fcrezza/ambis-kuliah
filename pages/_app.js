@@ -9,6 +9,7 @@ import 'fontsource-inter/700-normal.css';
 import Layout from 'components/Layout';
 import Navigation from 'components/Navigation';
 import HotTopics from 'components/HotTopics';
+import {AuthProvider} from 'utils/auth';
 import {GlobalStyle} from 'utils/styles/Global';
 import {ThemeProvider} from 'utils/styles/Theme';
 
@@ -18,11 +19,13 @@ function MyApp({Component, pageProps}) {
   return (
     <ThemeProvider>
       <GlobalStyle />
-      <Navigation />
-      <Layout>
-        <Component {...pageProps} />
-        <HotTopics />
-      </Layout>
+      <AuthProvider>
+        <Navigation />
+        <Layout>
+          <Component {...pageProps} />
+          <HotTopics />
+        </Layout>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

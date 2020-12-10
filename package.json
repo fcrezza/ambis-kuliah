@@ -21,8 +21,10 @@
     "normalize.css": "^8.0.1",
     "polished": "^4.0.4",
     "react": "17.0.1",
+    "react-content-loader": "^5.1.4",
     "react-dom": "17.0.1",
     "react-icons": "^3.11.0",
+    "react-loading-skeleton": "^2.1.1",
     "react-media": "^1.10.0",
     "react-modal": "^3.12.1",
     "styled-components": "^5.2.1"

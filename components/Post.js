@@ -1,6 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
 import Link from 'next/link';
+import styled from 'styled-components';
+import {useRouter} from 'next/router';
 import {RiArrowUpSFill, RiArrowDownSFill} from 'react-icons/ri';
 import {lighten} from 'polished';
 
@@ -12,8 +13,7 @@ const PostContainer = styled.div`
   cursor: ${({type}) => (type !== 'detail' ? 'pointer' : 'default')};
 
   &:focus,
-  &:hover,
-  &:focus-within {
+  &:hover {
     background-color: ${({theme, type}) =>
       type !== 'detail' ? lighten(0.01, theme.colors['gray.50']) : null};
   }
@@ -23,18 +23,13 @@ const PostContainer = styled.div`
   }
 `;
 
-const PostTitle = styled.a`
+const PostTitle = styled.h2`
   color: ${({theme}) => theme.colors['black.150']};
   font-size: 1.3rem;
   line-height: 30px;
-  text-decoration: none;
-  cursor: pointer;
   font-weight: 700;
   display: inline-block;
-
-  ${PostContainer}:focus &, ${PostContainer}:hover & {
-    text-decoration: underline;
-  }
+  margin: 0;
 `;
 
 const PostProfile = styled.a`
@@ -150,21 +145,28 @@ const ControlButton = styled.button`
   }
 `;
 
-function Post({data, showControl, type, onClickPost}) {
+function Post(props) {
   const {
+    postID,
     tags,
-    avatar,
     title,
-    name,
-    text = '',
-    stats = null,
+    text,
+    stats,
     replyTo,
-    timestamp
-  } = data;
+    timestamp,
+    avatar,
+    fullname,
+    username,
+    showControl,
+    ...rest
+  } = props;
   const [like, setLike] = React.useState(false);
   const [dislike, setDislike] = React.useState(false);
+  const router = useRouter();
 
-  const onLike = () => {
+  const onLike = e => {
+    e.stopPropagation();
+
     if (dislike) {
       setDislike(prevState => !prevState);
     }
@@ -172,7 +174,8 @@ function Post({data, showControl, type, onClickPost}) {
     setLike(prevState => !prevState);
   };
 
-  const onDislike = () => {
+  const onDislike = e => {
+    e.stopPropagation();
     if (like) {
       setLike(prevState => !prevState);
     }
@@ -180,8 +183,12 @@ function Post({data, showControl, type, onClickPost}) {
     setDislike(prevState => !prevState);
   };
 
+  const onClickPost = () => {
+    router.push(`/discussion/${username}/${postID}`);
+  };
+
   return (
-    <PostContainer type={type} onClick={onClickPost} tabIndex="0">
+    <PostContainer tabIndex="0" onClick={onClickPost} {...rest}>
       {showControl ? (
         <PostControl>
           <ControlButton onClick={onLike} isTruth={like}>
@@ -196,7 +203,8 @@ function Post({data, showControl, type, onClickPost}) {
       <PostContent>
         {replyTo ? (
           <ReplyTo>
-            Membalas kepada <Link href="/profile/crispetersen">{replyTo}</Link>
+            Membalas kepada
+            <Link href="/discussion/crispetersen"> @crispetersen</Link>
           </ReplyTo>
         ) : null}
         {tags ? (
@@ -213,13 +221,13 @@ function Post({data, showControl, type, onClickPost}) {
           <PostDescription>{text.substring(0, 255)}...</PostDescription>
         ) : null}
         <PostFooter>
-          <PostProfile href="/profile/">
+          <PostProfile href={`/profile/${username}`}>
             <img
               src={avatar}
               alt={`${name} avatar`}
               className="profile-image"
             />
-            <p className="profile-name">{name}</p>
+            <p className="profile-name">{fullname}</p>
           </PostProfile>
           {typeof stats?.answer === 'number' ? (
             <>

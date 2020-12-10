@@ -5,9 +5,9 @@ import {lighten, darken} from 'polished';
 import Head from 'components/Head';
 import {Button} from 'components/Button';
 import Post from 'components/Post';
-import {posts} from 'utils/data';
+import {PostSkeleton} from 'components/Skeleton';
 import Modal from 'components/Modal';
-import {useRouter} from 'next/router';
+import {posts, users} from 'utils/data';
 
 const Container = styled.main`
   flex: 1;
@@ -158,6 +158,7 @@ const Textarea = styled.textarea`
 function Profile() {
   const [menuActive, setMenuActive] = React.useState('write');
   const [isModalOpen, setModalState] = React.useState(false);
+  const user = users[2];
 
   const onMenuClick = menu => {
     if (menuActive !== menu) {
@@ -176,8 +177,8 @@ function Profile() {
   return (
     <Container>
       <Head
-        title="Christoph Petersen (@chrispetersen) - Ambis Kuliah"
-        description="Christoph Petersen profile page"
+        title={`${user.fullname} (@${user.username}) - Ambis Kuliah`}
+        description={`${user.fullname} profile page`}
       />
       <ProfileEdit isOpen={isModalOpen} onClose={onModalClose} />
       <TitleContainer>
@@ -186,16 +187,14 @@ function Profile() {
       </TitleContainer>
       <ProfileDescriptionContainer>
         <ProfileContentHeader>
-          <ProfileAvatar src="/images/avatar1.png" alt="my avatar" />
+          <ProfileAvatar src={user.avatar} alt={`${user.fullname} avatar`} />
           <Button variant="outline" onClick={onEditClick}>
             Edit Profil
           </Button>
         </ProfileContentHeader>
-        <ProfileFullname>Christoph Petersen</ProfileFullname>
-        <ProfileUsername>@chrispetersen</ProfileUsername>
-        <ProfileBio>
-          Mahasiswa Teknik Havard angkatan 2015 • Fulltime ngantukan
-        </ProfileBio>
+        <ProfileFullname>{user.fullname}</ProfileFullname>
+        <ProfileUsername>@{user.username}</ProfileUsername>
+        <ProfileBio>{user.bio}</ProfileBio>
       </ProfileDescriptionContainer>
       <ProfileMenuContainer>
         <MenuLink
@@ -217,42 +216,92 @@ function Profile() {
 }
 
 function ProfileWrite() {
-  return posts.map((post, idx) => <Post key={idx} data={post} showControl />);
+  const [discussions, setDiscussions] = React.useState(null);
+
+  React.useEffect(() => {
+    let data = posts.filter(
+      post => !post.replyTo && post.userID === users[2].id
+    );
+    data = data.map(post => {
+      const user = users.find(user => user.id === post.userID);
+      return {
+        user,
+        post
+      };
+    });
+
+    setTimeout(() => {
+      setDiscussions(data);
+    }, 3000);
+  }, []);
+
+  return discussions
+    ? discussions.map((discussion, idx) => (
+        <Post
+          key={idx}
+          postID={discussion.post.id}
+          title={discussion.post.title}
+          text={discussion.post.text}
+          tags={discussion.post.tags}
+          stats={discussion.post.stats}
+          timestamp={discussion.post.timestamp}
+          fullname={discussion.user.fullname}
+          username={discussion.user.username}
+          avatar={discussion.user.avatar}
+          showControl
+        />
+      ))
+    : Array(3)
+        .fill()
+        .map((_, idx) => (
+          <PostSkeleton uniqueKey={`post-skeleton-${idx}`} key={idx} />
+        ));
 }
 
 function ProfileReply() {
-  const router = useRouter();
+  const [discussions, setDiscussions] = React.useState(null);
 
-  const onClickPost = () => {
-    router.push('/discussion/crispetersen/797889');
-  };
+  React.useEffect(() => {
+    const replies = posts.filter(post => Boolean(post.replyTo));
+    const data = replies.map(reply => {
+      const user = users.find(user => user.id === reply.userID);
+      return {
+        user,
+        reply
+      };
+    });
 
-  return (
-    <Post
-      data={{
-        replyTo: '@bagaskarahoahoe',
-        avatar: '/images/avatar1.png',
-        name: 'Christoph Petersen',
-        text:
-          'Budget ada berapa? kalo ada 8 juta lebih, mending rakit peci wkwkwk',
-        stats: {
-          like: 300,
-          answer: 0
-        },
-        timestamp: '10:03 AM, 2 Nov 2020'
-      }}
-      onClickPost={onClickPost}
-      showControl
-    />
-  );
+    setTimeout(() => {
+      setDiscussions(data);
+    }, 3000);
+  }, []);
+
+  return discussions
+    ? discussions.map((discussion, idx) => (
+        <Post
+          key={idx}
+          postID={discussion.reply.id}
+          text={discussion.reply.text}
+          stats={discussion.reply.stats}
+          timestamp={discussion.reply.timestamp}
+          fullname={discussion.user.fullname}
+          username={discussion.user.username}
+          avatar={discussion.user.avatar}
+          showControl
+          replyTo
+        />
+      ))
+    : Array(3)
+        .fill()
+        .map((_, idx) => (
+          <PostSkeleton uniqueKey={`post-skeleton-${idx}`} key={idx} />
+        ));
 }
 
 function ProfileEdit({isOpen, onClose}) {
-  const [username, setUsername] = React.useState('chrispetersen');
-  const [fullname, setFullname] = React.useState('Christoph Petersen');
-  const [bio, setBio] = React.useState(
-    'Mahasiswa Teknik Havard angkatan 2015 • Fulltime ngantukan'
-  );
+  const [username, setUsername] = React.useState(users[2].username);
+  const [fullname, setFullname] = React.useState(users[2].fullname);
+  const [bio, setBio] = React.useState(users[2].bio);
 
   const onUsernameChange = e => {
     setUsername(e.target.value);
@@ -268,7 +317,7 @@ function ProfileEdit({isOpen, onClose}) {
     <Modal title="Edit Profil" isOpen={isOpen} onClose={onClose}>
       <ProfileEditContainer>
         <AvatarWrapper>
-          <ProfileAvatar src="/images/avatar1.png" alt="my avatar" />
+          <ProfileAvatar src={users[2].avatar} alt={`${fullname} avatar`} />
         </AvatarWrapper>
         <InputGroup>
           <InputLabel htmlFor="fullname">Nama Lengkap</InputLabel>

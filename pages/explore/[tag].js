@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import Head from 'components/Head';
 import {Button} from 'components/Button';
 import Post from 'components/Post';
-import {posts} from 'utils/data';
+import {PostSkeleton} from 'components/Skeleton';
+import {posts, users} from 'utils/data';
 
 const Container = styled.main`
   flex: 1;
@@ -33,7 +34,25 @@ const Title = styled.h1`
 
 function exploreTag() {
   const router = useRouter();
+  const [discussions, setDiscussions] = React.useState(null);
   const [isFollowed, setIsFollowed] = React.useState(true);
+
+  React.useEffect(() => {
+    let data = posts.filter(
+      post => !post.replyTo && post.tags.includes(router.query.tag)
+    );
+    data = data.map(post => {
+      const user = users.find(user => user.id === post.userID);
+      return {
+        user,
+        post
+      };
+    });
+
+    setTimeout(() => {
+      setDiscussions(data);
+    }, 3000);
+  }, []);
 
   const onFollowButtonClick = () => {
     setIsFollowed(prevState => !prevState);
@@ -51,9 +70,27 @@ function exploreTag() {
           {isFollowed ? 'Diikuti' : 'Ikuti'}
         </Button>
       </TitleContainer>
-      {posts.map((post, idx) => (
-        <Post key={idx} data={post} showControl />
-      ))}
+      {discussions
+        ? discussions.map((discussion, idx) => (
+            <Post
+              key={idx}
+              postID={discussion.post.id}
+              title={discussion.post.title}
+              text={discussion.post.text}
+              tags={discussion.post.tags}
+              stats={discussion.post.stats}
+              timestamp={discussion.post.timestamp}
+              fullname={discussion.user.fullname}
+              username={discussion.user.username}
+              avatar={discussion.user.avatar}
+              showControl
+            />
+          ))
+        : Array(3)
+            .fill()
+            .map((_, idx) => (
+              <PostSkeleton uniqueKey={`post-skeleton-${idx}`} key={idx} />
+            ))}
     </Container>
   );
 }

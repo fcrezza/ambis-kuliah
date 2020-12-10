@@ -1,5 +1,7 @@
 export const posts = [
   {
+    id: 1,
+    userID: 1,
     avatar: '/images/avatar1.png',
     name: 'Oscar Mingueza',
     title: 'Apa pendapat kalian tentang menteri kesehatan kita?',
@@ -10,9 +12,12 @@ export const posts = [
       answer: 30,
       like: '650K'
     },
+    replyTo: null,
     timestamp: '10:03 AM, 2 Nov 2020'
   },
   {
+    id: 2,
+    userID: 2,
     avatar: '/images/avatar2.png',
     name: 'Dominic Soboszalai',
     title: 'Saranin laptop yang bagus buat kuliah dong',
@@ -23,9 +28,12 @@ export const posts = [
       answer: 30,
       like: 650
     },
+    replyTo: null,
     timestamp: '10:03 AM, 2 Nov 2020'
   },
   {
+    id: 3,
+    userID: 3,
     avatar: '/images/avatar3.png',
     name: 'Alejandro Balde',
     title: 'Unpopular opinion: Windows is sucks',
@@ -36,43 +44,60 @@ export const posts = [
       answer: 30,
       like: 65
     },
+    replyTo: null,
+    timestamp: '10:03 AM, 2 Nov 2020'
+  },
+  {
+    id: 4,
+    userID: 3,
+    title: null,
+    text: 'Budget ada berapa? kalo ada 8 juta lebih, mending rakit peci wkwkwk',
+    tags: null,
+    stats: {
+      like: 300,
+      answer: 0
+    },
+    replyTo: {
+      userID: 2,
+      postID: 2
+    },
     timestamp: '10:03 AM, 2 Nov 2020'
   }
 ];
 
-export const profiles = [
+export const users = [
   {
     id: 1,
     avatar: '/images/avatar1.png',
     fullname: 'Oscar Mingueza',
     username: 'oscarmingueza',
     bio:
-      'La masia pride! trying to be starting eleven and convince ronald trump'
+      'La masia pride! trying to be starting eleven and convince ronald trump',
+    topics: ['Teknologi', 'Olahraga', 'Umum']
   },
   {
     id: 2,
     avatar: '/images/avatar2.png',
     fullname: 'Dominic Soboszalai',
-    bio: 'Kuliah pulang, kuliah pulang'
+    username: 'domsoboszalai',
+    bio: 'Kuliah pulang, kuliah pulang',
+    topics: ['Hukum', 'Umum']
   },
   {
     id: 3,
     avatar: '/images/avatar3.png',
+    username: 'balde_alejandro',
     fullname: 'Alejandro Balde',
-    bio: 'Ordinary Person'
+    bio: 'Ordinary Person',
+    topics: ['Pendidikan', 'Umum']
   }
 ];
 
-export const comments = [
-  {
-    id: 1,
-    profileID: 3,
-    postID: 2,
-    text: 'Budget ada berapa? kalo ada 8 juta lebih, mending rakit peci wkwkwk',
-    timestamp: '10:03 AM, 2 Nov 2020',
-    stats: {
-      like: 300,
-      answer: 0
-    }
-  }
+export const topics = [
+  {name: 'Umum', image: '/images/general.png'},
+  {name: 'Teknologi', image: '/images/technology.png'},
+  {name: 'Agama', image: '/images/religion.png'},
+  {name: 'Kesehatan', image: '/images/health.png'},
+  {name: 'Ekonomi', image: '/images/economy.png'},
+  {name: 'Pendidikan', image: '/images/education.png'}
 ];
