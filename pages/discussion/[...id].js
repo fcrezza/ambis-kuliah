@@ -30,7 +30,7 @@ const Title = styled.h1`
   font-size: 1.6rem;
 `;
 
-function discussion() {
+function Discussion() {
   const [discussion, setDiscussion] = React.useState(null);
   const router = useRouter();
 
@@ -99,4 +99,4 @@ function discussion() {
   );
 }
 
-export default discussion;
+export default Discussion;

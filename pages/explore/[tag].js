@@ -32,7 +32,7 @@ const Title = styled.h1`
   font-size: 1.6rem;
 `;
 
-function exploreTag() {
+function ExploreTag() {
   const router = useRouter();
   const [discussions, setDiscussions] = React.useState(null);
   const [isFollowed, setIsFollowed] = React.useState(true);
@@ -52,6 +52,7 @@ function exploreTag() {
     setTimeout(() => {
       setDiscussions(data);
     }, 3000);
+    // eslint-disable-next-line
   }, []);
 
   const onFollowButtonClick = () => {
@@ -95,4 +96,4 @@ function exploreTag() {
   );
 }
 
-export default exploreTag;
+export default ExploreTag;

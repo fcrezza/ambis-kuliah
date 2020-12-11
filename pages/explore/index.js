@@ -156,7 +156,7 @@ const Wrapper = styled.div`
   flex: 1;
 `;
 
-function explore() {
+function Explore() {
   const [isModalOpen, setModalState] = React.useState(false);
 
   const onSettingClick = () => {
@@ -243,4 +243,4 @@ function TopicsModal({isOpen, onClose}) {
   );
 }
 
-export default explore;
+export default Explore;

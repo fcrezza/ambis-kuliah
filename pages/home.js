@@ -42,7 +42,7 @@ const Wrapper = styled.div`
   }
 `;
 
-function home() {
+function Home() {
   const [discussions, setDiscussions] = React.useState(null);
 
   React.useEffect(() => {
@@ -95,4 +95,4 @@ function home() {
   );
 }
 
-export default home;
+export default Home;
