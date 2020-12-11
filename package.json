@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --fix **/*.js",
+    "lint": "eslint --fix components pages utils",
     "format": "prettier --write \"**/*.{js,json}\"",
     "precommit": "npm run lint && npm run format",
     "husky": "husky install",
