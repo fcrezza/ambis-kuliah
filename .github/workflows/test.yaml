@@ -1,0 +1,12 @@
+name: test-actions
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - name: install dependecies and run test
+        run: npm ci
+      - name: run test
+        run: npm run lint
