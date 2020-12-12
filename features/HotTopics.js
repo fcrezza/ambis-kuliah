@@ -35,22 +35,23 @@ const PostsContainer = styled.div`
   }
 `;
 
-const Title = styled.div`
+const TitleContainer = styled.div`
   padding: 1rem 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid ${({theme}) => theme.colors['gray.100']};
+`;
 
-  h2 {
-    color: ${({theme}) => theme.colors['black.150']};
-    font-size: 1.4rem;
-    margin: 0;
-  }
+const Title = styled.h2`
+  color: ${({theme}) => theme.colors['black.150']};
+  font-size: 1.4rem;
+  margin: 0;
+`;
 
-  svg {
-    color: ${({theme}) => theme.colors['orange.50']};
-  }
+const TitleIcon = styled(AiFillFire)`
+  color: ${({theme}) => theme.colors['orange.50']};
+  font-size: 2rem;
 `;
 
 const Copyright = styled.p`
@@ -67,7 +68,7 @@ function HotTopics() {
     return (
       <HotTopicsContainer>
         <Search placeholder="Cari diskusi" />
-        <Posts />
+        <HotTopicsPosts />
         <Copyright>© 2020 Ambis Kuliah. All rights reserved</Copyright>
       </HotTopicsContainer>
     );
@@ -76,7 +77,7 @@ function HotTopics() {
   return null;
 }
 
-function Posts() {
+function HotTopicsPosts() {
   const [discussions, setDiscussions] = React.useState(null);
 
   React.useEffect(() => {
@@ -96,10 +97,10 @@ function Posts() {
 
   return (
     <PostsContainer>
-      <Title>
-        <h2>Diskusi Terhangat</h2>
-        <AiFillFire size="2rem" />
-      </Title>
+      <TitleContainer>
+        <Title>Diskusi Terhangat</Title>
+        <TitleIcon />
+      </TitleContainer>
       {discussions
         ? discussions.map((discussion, idx) => (
             <Post
