@@ -3,7 +3,7 @@ import {ImNewspaper} from 'react-icons/im';
 
 import {PostSkeleton} from 'components/Skeleton';
 import Post from 'components/Post';
-import WritePost from 'components/WritePost';
+import WritePost from 'features/writePost';
 import useDiscussions from './useDiscussions';
 
 const HomeContainer = styled.main`
