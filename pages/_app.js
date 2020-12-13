@@ -5,9 +5,9 @@ import 'fontsource-inter/400-normal.css';
 import 'fontsource-inter/500-normal.css';
 import 'fontsource-inter/700-normal.css';
 
+import Navigation from 'features/navigation';
 import HotTopics from 'features/hotTopics';
 import Layout from 'components/Layout';
-import Navigation from 'components/Navigation';
 import {AuthProvider} from 'utils/auth';
 import {GlobalStyle} from 'utils/styles/Global';
 import {ThemeProvider} from 'utils/styles/Theme';

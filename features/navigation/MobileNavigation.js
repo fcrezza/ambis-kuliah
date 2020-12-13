@@ -1,75 +1,8 @@
-import React from 'react';
-import Link from 'next/link';
-import {useRouter} from 'next/router';
 import styled from 'styled-components';
-import {lighten, darken} from 'polished';
 import {FaRegCompass} from 'react-icons/fa';
 import {AiOutlineHome} from 'react-icons/ai';
 
-import WritePost from './WritePost';
-import Modal from './Modal';
-import {Button} from './Button';
-
-const DesktopContainer = styled.div`
-  padding: 40px 100px;
-  z-index: 999;
-  max-width: 1440px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  @media screen and (max-width: 1024px) {
-    padding: 40px 70px;
-  }
-
-  @media screen and (max-width: 768px) {
-    ${({isShowed}) => (isShowed ? 'display: none' : 'padding: 40px 50px')}
-  }
-
-  @media screen and (max-width: 480px) {
-    padding: 40px 1.5rem;
-  }
-`;
-
-const Logo = styled.a`
-  text-decoration: none;
-
-  img {
-    width: 200px;
-    display: block;
-
-    @media screen and (max-width: 480px) {
-      width: 180px;
-    }
-  }
-`;
-
-const DesktopNav = styled.nav`
-  display: flex;
-  align-items: center;
-
-  & > *:not(:last-child) {
-    margin-right: 2.5rem;
-  }
-`;
-
-const DesktopNavItem = styled.a`
-  padding: 0.6rem 0.8rem;
-  border-radius: 5px;
-  font-weight: 500;
-  color: ${({theme}) => theme.colors['black.150']};
-  text-decoration: none;
-  background-color: ${({theme, isActive}) =>
-    isActive ? lighten(0.2, theme.colors['orange.50']) : 'transparent'};
-  font-size: 1.2rem;
-
-  &:hover,
-  &:focus {
-    background-color: ${({theme, isActive}) =>
-      !isActive && theme.colors['gray.50']};
-  }
-`;
+import {MobileNavLink, MobileLink} from './NavLink';
 
 const MobileContainer = styled.div`
   position: fixed;
@@ -84,98 +17,19 @@ const MobileContainer = styled.div`
   }
 `;
 
-const MobileNavItem = styled.a`
-  background: ${({theme, isActive}) =>
-    isActive
-      ? darken(0.08, theme.colors['orange.50'])
-      : theme.colors['orange.50']};
-  flex: 1;
-  text-decoration: none;
-  display: inline-block;
-  padding: 1rem;
-  text-align: center;
-
-  svg {
-    font-size: 2rem;
-    color: ${({theme}) => theme.colors['white.50']};
-  }
-`;
-
 const MobileNavButton = styled.button`
   border: 0;
   cursor: pointer;
 `;
-
-function Navigation() {
-  const [isModalOpen, setModalState] = React.useState(false);
-  const router = useRouter();
-  const isShowed = !['/', '/topics'].includes(router.pathname);
-  const isAuth = true;
-
-  const onClickWrite = () => {
-    setModalState(true);
-  };
-
-  const onModalClose = () => {
-    setModalState(false);
-  };
-
-  return (
-    <>
-      <Modal
-        title="Tulis Sesuatu"
-        contentLabel="compose discussion"
-        onClose={onModalClose}
-        isOpen={isModalOpen}
-      >
-        <WritePost />
-      </Modal>
-      <DesktopNavigation
-        isShowed={isShowed}
-        isAuth={isAuth}
-        onClickWrite={onClickWrite}
-      />
-      <MobileNavigation
-        isShowed={isShowed}
-        isAuth={isAuth}
-        onClickWrite={onClickWrite}
-      />
-    </>
-  );
-}
-
-function DesktopNavigation({isShowed, isAuth, onClickWrite}) {
-  return (
-    <DesktopContainer isShowed={isShowed}>
-      <Link href="/" passHref>
-        <Logo>
-          <img src="/images/logo.svg" alt="logo" />
-        </Logo>
-      </Link>
-      {isShowed ? (
-        <DesktopNav>
-          <DesktopNavLink href="/home">Home</DesktopNavLink>
-          <DesktopNavLink href="/explore">Eksplor</DesktopNavLink>
-          {isAuth && (
-            <DesktopNavLink href="/profile/chrispetersen">
-              Profil
-            </DesktopNavLink>
-          )}
-          {isAuth && <Button onClick={onClickWrite}>Tulis</Button>}
-        </DesktopNav>
-      ) : null}
-    </DesktopContainer>
-  );
-}
 
 function MobileNavigation({isShowed, isAuth, onClickWrite}) {
   if (isShowed) {
     return (
       <MobileContainer>
         {isAuth && (
-          <MobileNavItem as={MobileNavButton} onClick={onClickWrite}>
-            <Write />
-          </MobileNavItem>
+          <MobileLink as={MobileNavButton} onClick={onClickWrite}>
+            <WriteIcon />
+          </MobileLink>
         )}
         <MobileNavLink href="/home">
           <AiOutlineHome />
@@ -184,8 +38,8 @@ function MobileNavigation({isShowed, isAuth, onClickWrite}) {
           <FaRegCompass />
         </MobileNavLink>
         {isAuth && (
-          <MobileNavLink href="/profile/chrispetersen">
-            <Profile />
+          <MobileNavLink href="/profile/balde_alejandro">
+            <ProfileIcon />
           </MobileNavLink>
         )}
       </MobileContainer>
@@ -195,25 +49,7 @@ function MobileNavigation({isShowed, isAuth, onClickWrite}) {
   return null;
 }
 
-function MobileNavLink({href, children}) {
-  const {pathname} = useRouter();
-  return (
-    <Link href={href} passHref>
-      <MobileNavItem isActive={pathname === href}>{children}</MobileNavItem>
-    </Link>
-  );
-}
-
-function DesktopNavLink({children, href}) {
-  const {pathname} = useRouter();
-  return (
-    <Link href={href} passHref>
-      <DesktopNavItem isActive={pathname === href}>{children}</DesktopNavItem>
-    </Link>
-  );
-}
-
-function Write() {
+function WriteIcon() {
   return (
     <svg
       width="30"
@@ -230,7 +66,7 @@ function Write() {
   );
 }
 
-function Profile() {
+function ProfileIcon() {
   return (
     <svg
       width="30"
@@ -251,4 +87,4 @@ function Profile() {
   );
 }
 
-export default Navigation;
+export default MobileNavigation;
