@@ -5,7 +5,6 @@ import {users} from 'utils/data';
 const AuthContext = React.createContext();
 
 export function AuthProvider({children}) {
-  // eslint-disable-next-line
   const [user, setUser] = React.useState(users[2]);
 
   const login = () => {
