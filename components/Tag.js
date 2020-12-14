@@ -1,8 +1,6 @@
 import styled from 'styled-components';
 
-export const Tag = styled.a.attrs({
-  className: 'tag'
-})`
+export const Tag = styled.a`
 	text-decoration: none;
 	padding: 0.3rem;
 	border-radius: 5px;
@@ -17,7 +15,7 @@ export const Tag = styled.a.attrs({
 `;
 
 export const TagGroup = styled.div`
-  & > .tag:not(:last-child) {
+  & > ${Tag}:not(:last-child) {
     margin-right: 10px;
   }
 `;

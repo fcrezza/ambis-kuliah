@@ -1,5 +1,5 @@
 import styled, {css} from 'styled-components';
-import {darken} from 'polished';
+import {darken, lighten} from 'polished';
 
 const outline = css`
   border: 1px solid ${({theme}) => theme.colors['orange.50']};
@@ -33,4 +33,19 @@ export const Button = styled.button`
   opacity: ${({disabled}) => (disabled ? 0.7 : 1)};
 
   ${({variant}) => (variant === 'outline' ? outline : original)};
+`;
+
+export const IconButton = styled.button`
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+
+  &:focus,
+  &:hover {
+    background: ${({theme}) => lighten(0.2, theme.colors['orange.50'])};
+  }
 `;

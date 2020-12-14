@@ -25,22 +25,23 @@ const FooterWrapper = styled.div`
 
 const FooterContent = styled.div`
   text-align: center;
+`;
 
-  .logo {
-    width: 40px;
-    margin-bottom: 1rem;
-    @media screen and (max-width: 480px) {
-      width: 32px;
-    }
+const FooterLogo = styled.img`
+  width: 40px;
+  margin-bottom: 1rem;
+
+  @media screen and (max-width: 480px) {
+    width: 32px;
   }
+`;
 
-  .text {
-    color: ${({theme}) => theme.colors['gray.100']};
-    font-size: 1rem;
+const FooterCopyright = styled.p`
+  color: ${({theme}) => theme.colors['gray.100']};
+  font-size: 1rem;
 
-    @media screen and (max-width: 480px) {
-      font-size: 0.9rem;
-    }
+  @media screen and (max-width: 480px) {
+    font-size: 0.9rem;
   }
 `;
 
@@ -49,12 +50,13 @@ function Footer() {
     <FooterContainer>
       <FooterWrapper>
         <FooterContent>
-          <img
+          <FooterLogo
             src="/images/logo-standalone.svg"
-            className="logo"
             alt="ambis kuliah logo"
           />
-          <p className="text">© 2020 Ambis Kuliah. All rights reserved</p>
+          <FooterCopyright>
+            © 2020 Ambis Kuliah. All rights reserved
+          </FooterCopyright>
         </FooterContent>
       </FooterWrapper>
     </FooterContainer>

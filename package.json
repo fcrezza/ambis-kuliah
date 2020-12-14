@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint --fix components pages utils",
     "format": "prettier --write \"**/*.{js,json}\"",
-    "precommit": "npm run lint && npm run format",
+    "precommit": " npm run format && npm run lint",
     "husky": "husky install",
     "setup": "npm install && npm run husky && npm run lint && npm run format"
   },

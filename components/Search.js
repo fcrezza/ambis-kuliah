@@ -15,6 +15,18 @@ const SearchInput = styled.input`
   }
 `;
 
+const IconContainer = styled.div`
+  padding: ${({size}) =>
+    size === 'small'
+      ? '0.3rem 0.3rem 0.3rem 0.8rem'
+      : '0.8em 0.7rem 0.7rem 1.2rem'};
+`;
+
+const SearchIcon = styled(IoIosSearch)`
+  color: ${({theme}) => theme.colors['black.50']};
+  font-size: 1.3rem;
+`;
+
 const SearchContainer = styled.div`
   width: 100%;
   display: flex;
@@ -32,20 +44,9 @@ const SearchContainer = styled.div`
     background-color: transparent;
     border: 1px solid ${({theme}) => theme.colors['orange.50']};
 
-    svg {
+    ${SearchIcon} {
       color: ${({theme}) => theme.colors['orange.50']};
     }
-  }
-`;
-
-const IconContainer = styled.div`
-  padding: ${({size}) =>
-    size === 'small'
-      ? '0.3rem 0.3rem 0.3rem 0.8rem'
-      : '0.8em 0.7rem 0.7rem 1.2rem'};
-
-  svg {
-    color: ${({theme}) => theme.colors['black.50']};
   }
 `;
 
@@ -53,7 +54,7 @@ function Search({placeholder, size, value, onChange}) {
   return (
     <SearchContainer>
       <IconContainer size={size}>
-        <IoIosSearch title="search icon" size="1.3rem" />
+        <SearchIcon />
       </IconContainer>
       <SearchInput
         type="search"

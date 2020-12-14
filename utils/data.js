@@ -10,7 +10,8 @@ export const posts = [
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy",
     stats: {
       answer: 30,
-      like: '650K'
+      downvote: 30,
+      upvote: 500
     },
     replyTo: null,
     timestamp: '10:03 AM, 2 Nov 2020'
@@ -26,7 +27,8 @@ export const posts = [
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy",
     stats: {
       answer: 30,
-      like: 650
+      downvote: 30,
+      upvote: 650
     },
     replyTo: null,
     timestamp: '10:03 AM, 2 Nov 2020'
@@ -42,7 +44,8 @@ export const posts = [
     tags: ['Teknologi'],
     stats: {
       answer: 30,
-      like: 65
+      downvote: 30,
+      upvote: 65
     },
     replyTo: null,
     timestamp: '10:03 AM, 2 Nov 2020'
@@ -54,7 +57,8 @@ export const posts = [
     text: 'Budget ada berapa? kalo ada 8 juta lebih, mending rakit peci wkwkwk',
     tags: null,
     stats: {
-      like: 300,
+      downvote: 30,
+      upvote: 300,
       answer: 0
     },
     replyTo: {
