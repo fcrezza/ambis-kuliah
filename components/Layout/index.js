@@ -1,5 +1,6 @@
-import {useRouter} from 'next/router';
 import styled from 'styled-components';
+
+import useLayout from './useLayout';
 
 const LayoutContainer = styled.div`
   max-width: 1440px;
@@ -19,8 +20,7 @@ const LayoutContainer = styled.div`
 `;
 
 function Layout({children}) {
-  const router = useRouter();
-  const isShowed = !['/', '/topics'].includes(router.pathname);
+  const {isShowed} = useLayout();
 
   if (isShowed) {
     return <LayoutContainer>{children}</LayoutContainer>;
