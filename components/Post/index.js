@@ -16,11 +16,14 @@ import {
   TimeStamp
 } from './PostContents';
 import Link from 'next/link';
+import PostActions from './PostActions';
+import PostComment from './PostComment';
 
 const PostContainer = styled.div`
   padding: 1.5rem;
   display: flex;
   cursor: ${({type}) => (type !== 'detail' ? 'pointer' : 'default')};
+  position: relative;
 
   &:focus,
   &:hover {
@@ -54,7 +57,14 @@ function Post(props) {
     showControl,
     type
   } = props;
-  const {reaction, onClickPost, onReactPost} = usePost(username, postID);
+  const {
+    reaction,
+    onClickPost,
+    onReactPost,
+    isModalOpen,
+    onReplyClick,
+    onModalClose
+  } = usePost();
 
   return (
     <PostContainer
@@ -69,6 +79,12 @@ function Post(props) {
           voteStats={stats.upvote - stats.downvote}
         />
       ) : null}
+      <PostComment
+        postID={postID}
+        postUsername={username}
+        isModalOpen={isModalOpen}
+        onModalClose={onModalClose}
+      />
       <PostContentContainer>
         {replyTo ? <PostReply replyTo={replyTo} /> : null}
         {tags ? (
@@ -80,6 +96,7 @@ function Post(props) {
             ))}
           </TagGroup>
         ) : null}
+        <PostActions postUsername={username} onReplyClick={onReplyClick} />
         {title ? <PostTitle>{title}</PostTitle> : null}
         {text ? (
           <PostDescription>{text.substring(0, 255)}...</PostDescription>
