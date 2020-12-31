@@ -2,7 +2,9 @@ import {useRouter} from 'next/router';
 
 function useHotTopics() {
   const router = useRouter();
-  const isShowed = !['/', '/topics'].includes(router.asPath);
+  const isShowed = !['/', '/topics', '/login', '/signup'].includes(
+    router.asPath
+  );
 
   return {isShowed};
 }
