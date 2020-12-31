@@ -1,8 +1,10 @@
 import React from 'react';
-import Nextlink from 'next/link';
-import {Button} from 'components/Button';
 import styled from 'styled-components';
-import {lighten} from 'polished';
+import Nextlink from 'next/link';
+
+import Label from 'components/Label';
+import {Input, InputGroup, PasswordInput} from 'components/Input';
+import {Button} from 'components/Button';
 
 const LoginContainer = styled.div``;
 
@@ -21,59 +23,6 @@ const LoginFormWrapper = styled.div`
 const LoginForm = styled.form`
   & > *:not(:last-child) {
     margin-bottom: 1.3rem;
-  }
-`;
-
-const LoginFormInputGroup = styled.div`
-  & > label {
-    margin-bottom: 10px;
-  }
-`;
-
-const LoginFormInputLabel = styled.label`
-  display: block;
-  margin: 0;
-  font-size: 1rem;
-  color: ${({theme}) => theme.colors['black.50']};
-`;
-
-const LoginFormInputWrapper = styled.div`
-  border-radius: 20px;
-  border: 1px solid #d3d3d3;
-  display: flex;
-
-  &:focus-within {
-    border-color: ${({theme}) => theme.colors['orange.50']};
-  }
-`;
-
-const LoginFormInput = styled.input`
-  border: 0;
-  border-radius: 20px;
-  padding: 0.8rem 1rem;
-  display: block;
-  width: 100%;
-  font-size: 1rem;
-  background: transparent;
-  color: ${({theme}) => theme.colors['black.150']};
-  outline: none;
-`;
-
-const PasswordVisibilityToggler = styled.button`
-  color: ${({theme}) => theme.colors['orange.50']};
-  padding: 5px;
-  margin-right: 14px;
-  align-self: center;
-  cursor: pointer;
-  font-weight: 500;
-  border: 0;
-  border-radius: 5px;
-  background: none;
-  font-size: 14px;
-
-  &:focus,
-  &:hover {
-    background: ${({theme}) => lighten(0.23, theme.colors['orange.50'])};
   }
 `;
 
@@ -98,48 +47,25 @@ const SinupOptionLink = styled.a`
 `;
 
 function Login() {
-  const [isPasswordVisible, setPasswordVisibility] = React.useState(false);
-
-  const onTogglePasswordVisibility = () => {
-    setPasswordVisibility(prevState => !prevState);
-  };
-
   return (
     <LoginContainer>
       <LoginFormWrapper>
         <LoginTitle>Masuk</LoginTitle>
         <LoginForm>
-          <LoginFormInputGroup>
-            <LoginFormInputLabel htmlFor="username">
-              Username
-            </LoginFormInputLabel>
-            <LoginFormInputWrapper>
-              <LoginFormInput
-                type="text"
-                placeholder="Username"
-                id="username"
-              />
-            </LoginFormInputWrapper>
-          </LoginFormInputGroup>
-          <LoginFormInputGroup>
-            <LoginFormInputLabel htmlFor="password">
-              Password
-            </LoginFormInputLabel>
-            <LoginFormInputWrapper>
-              <LoginFormInput
-                type={isPasswordVisible ? 'text' : 'password'}
-                placeholder="Password"
-                id="password"
-              />
-              <PasswordVisibilityToggler
-                type="button"
-                onClick={onTogglePasswordVisibility}
-              >
-                {isPasswordVisible ? 'Sembunyikan' : 'Tampilkan'}
-              </PasswordVisibilityToggler>
-            </LoginFormInputWrapper>
-          </LoginFormInputGroup>
-          <Button block>Masuk</Button>
+          <InputGroup>
+            <Label htmlFor="username">Username</Label>
+            <Input
+              type="text"
+              placeholder="Username"
+              id="username"
+              standalone
+            />
+          </InputGroup>
+          <InputGroup>
+            <Label htmlFor="password">Password</Label>
+            <PasswordInput placeholder="Password" id="password" />
+          </InputGroup>
+          <Button>Masuk</Button>
         </LoginForm>
         <SignupOptionContainer>
           <SignupOptionText>
