@@ -1,8 +1,12 @@
 import React from 'react';
 import NextLink from 'next/link';
 import styled from 'styled-components';
+import {useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import Label from 'components/Label';
+import ErrorMessage from 'components/ErrorMessage';
 import {Input, InputGroup, PasswordInput} from 'components/Input';
 import {Button} from 'components/Button';
 
@@ -48,38 +52,81 @@ const LoginOptionLink = styled.a`
   text-decoration: none;
 `;
 
+const schemaValidation = yup.object().shape({
+  fullname: yup.string().required('Masukan Nama lengkap yang valid'),
+  username: yup.string().required('Masukan username yang valid'),
+  email: yup
+    .string()
+    .email('Masukan alamat email yang valid')
+    .required('Masukan alamat email yang valid'),
+  password: yup
+    .string()
+    .min(8, 'Password minimal mengandung 8 karakter')
+    .required('Masukan password yang valid')
+});
+
 function Signup() {
+  const {register, handleSubmit, errors} = useForm({
+    resolver: yupResolver(schemaValidation)
+  });
+
+  const onSubmit = data => {
+    console.log('data: ', data);
+  };
+
+  console.log(errors);
+
   return (
     <SignupContainer>
       <SignupFormWrapper>
         <SignupTitle>Daftar</SignupTitle>
-        <SignupForm>
+        <SignupForm onSubmit={handleSubmit(onSubmit)}>
           <InputGroup>
             <Label htmlFor="email">Email</Label>
-            <Input type="email" placeholder="Email" id="email" standalone />
+            <Input
+              type="email"
+              placeholder="Email"
+              id="email"
+              name="email"
+              ref={register}
+              standalone
+            />
           </InputGroup>
+          <ErrorMessage errors={errors} name="email" />
           <InputGroup>
             <Label htmlFor="fullname">Nama Lengkap</Label>
             <Input
               type="text"
               placeholder="Nama Lengkap"
               id="fullname"
+              name="fullname"
+              ref={register}
               standalone
             />
           </InputGroup>
+          <ErrorMessage errors={errors} name="fullname" />
           <InputGroup>
             <Label htmlFor="username">Nama Pengguna</Label>
             <Input
               type="text"
               placeholder="Nama Pengguna"
               id="username"
+              name="username"
+              ref={register}
               standalone
             />
           </InputGroup>
+          <ErrorMessage errors={errors} name="username" />
           <InputGroup>
             <Label htmlFor="password">Password</Label>
-            <PasswordInput type="text" placeholder="Password" id="password" />
+            <PasswordInput
+              placeholder="Password"
+              id="password"
+              name="password"
+              ref={register}
+            />
           </InputGroup>
+          <ErrorMessage errors={errors} name="password" />
           <Button>Daftar</Button>
         </SignupForm>
         <LoginOptionContainer>
