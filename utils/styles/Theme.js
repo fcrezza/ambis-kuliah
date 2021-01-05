@@ -8,7 +8,8 @@ const colors = {
   'gray.100': '#d9d9d9',
   'gray.150': '#eee',
   'white.50': '#fff',
-  'orange.50': '#FF9A76'
+  'orange.50': '#FF9A76',
+  'red.50': '#f5587b'
 };
 
 export function ThemeProvider({children}) {

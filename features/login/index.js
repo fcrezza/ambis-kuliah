@@ -1,8 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import Nextlink from 'next/link';
+import {useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import Label from 'components/Label';
+import ErrorMessage from 'components/ErrorMessage';
 import {Input, InputGroup, PasswordInput} from 'components/Input';
 import {Button} from 'components/Button';
 
@@ -46,25 +50,50 @@ const SinupOptionLink = styled.a`
   text-decoration: none;
 `;
 
+const schemaValidation = yup.object().shape({
+  username: yup.string().required('Masukan username yang valid'),
+  password: yup
+    .string()
+    .min(8, 'Password minimal mengandung 8 karakter')
+    .required('Masukan password yang valid')
+});
+
 function Login() {
+  const {register, handleSubmit, errors} = useForm({
+    resolver: yupResolver(schemaValidation)
+  });
+
+  const onSubmit = data => {
+    console.log('data: ', data);
+  };
+
   return (
     <LoginContainer>
       <LoginFormWrapper>
         <LoginTitle>Masuk</LoginTitle>
-        <LoginForm>
+        <LoginForm onSubmit={handleSubmit(onSubmit)}>
           <InputGroup>
             <Label htmlFor="username">Username</Label>
             <Input
               type="text"
               placeholder="Username"
               id="username"
+              name="username"
+              ref={register}
               standalone
             />
           </InputGroup>
+          <ErrorMessage errors={errors} name="username" />
           <InputGroup>
             <Label htmlFor="password">Password</Label>
-            <PasswordInput placeholder="Password" id="password" />
+            <PasswordInput
+              placeholder="Password"
+              id="password"
+              name="password"
+              ref={register}
+            />
           </InputGroup>
+          <ErrorMessage errors={errors} name="password" />
           <Button>Masuk</Button>
         </LoginForm>
         <SignupOptionContainer>

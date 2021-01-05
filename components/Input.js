@@ -57,7 +57,8 @@ const PasswordVisibilityToggler = styled.button`
   }
 `;
 
-export function PasswordInput({id, placeholder}) {
+export const PasswordInput = React.forwardRef((props, ref) => {
+  const {id, name, placeholder} = props;
   const [isPasswordVisible, setPasswordVisibility] = React.useState(false);
 
   const onTogglePasswordVisibility = () => {
@@ -68,15 +69,17 @@ export function PasswordInput({id, placeholder}) {
     <InputWrapper>
       <Input
         id={id}
+        name={name}
         type={isPasswordVisible ? 'text' : 'password'}
         placeholder={placeholder}
+        ref={ref}
       />
       <PasswordVisibilityToggler
         type="button"
         onClick={onTogglePasswordVisibility}
       >
-        {isPasswordVisible ? 'Sembunyikan' : 'Tampilan'}
+        {isPasswordVisible ? 'Sembunyikan' : 'Tampilkan'}
       </PasswordVisibilityToggler>
     </InputWrapper>
   );
-}
+});
