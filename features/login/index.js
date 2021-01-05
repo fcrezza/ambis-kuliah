@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Nextlink from 'next/link';
+import {useRouter} from 'next/router';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -9,6 +10,7 @@ import Label from 'components/Label';
 import ErrorMessage from 'components/ErrorMessage';
 import {Input, InputGroup, PasswordInput} from 'components/Input';
 import {Button} from 'components/Button';
+import axios from 'utils/axios';
 
 const LoginContainer = styled.div``;
 
@@ -59,12 +61,33 @@ const schemaValidation = yup.object().shape({
 });
 
 function Login() {
-  const {register, handleSubmit, errors} = useForm({
+  const [requestStatus, setRequestStatus] = React.useState('iddle');
+  const {register, handleSubmit, errors, setError, clearErrors} = useForm({
     resolver: yupResolver(schemaValidation)
   });
+  const router = useRouter();
 
-  const onSubmit = data => {
-    console.log('data: ', data);
+  const onSubmit = async data => {
+    try {
+      clearErrors('server');
+      setRequestStatus('loading');
+      await axios.post('/api/login.php', data, {
+        withCredentials: true
+      });
+      setRequestStatus('success');
+      router.push('/login');
+    } catch (error) {
+      if (error.response) {
+        setError('server', {
+          message: error.response.data.message
+        });
+      } else {
+        setError('server', {
+          message: 'Upss, ada yang salah'
+        });
+      }
+      setRequestStatus('failed');
+    }
   };
 
   return (
@@ -94,7 +117,8 @@ function Login() {
             />
           </InputGroup>
           <ErrorMessage errors={errors} name="password" />
-          <Button>Masuk</Button>
+          <ErrorMessage errors={errors} name="server" />
+          <Button disabled={requestStatus === 'loading'}>Masuk</Button>
         </LoginForm>
         <SignupOptionContainer>
           <SignupOptionText>
