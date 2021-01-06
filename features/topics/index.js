@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import useSWR from 'swr';
+import NextLink from 'next/link';
 
 import TopicsItem from './TopicsItem';
 import {Button} from 'components/Button';
@@ -8,6 +9,9 @@ import useTopics from './useTopics';
 import {useUser} from 'utils/user';
 import useRoute from 'utils/route';
 import axios from 'utils/axios';
+import LoadingSkeleton from './LoadingSkeleton';
+import useRequest from 'utils/request';
+import {useRouter} from 'next/router';
 
 const TopicsContainer = styled.div`
   max-width: 750px;
@@ -27,7 +31,7 @@ const TopicsContainer = styled.div`
   }
 `;
 
-const TopicsTitle = styled.h2`
+const TopicsTitle = styled.h1`
   color: ${({theme}) => theme.colors['black.150']};
   font-size: 2.6rem;
   line-height: 70px;
@@ -76,14 +80,55 @@ const ButtonContainer = styled.div`
   margin-top: 2rem;
 `;
 
+const SkipLink = styled.a`
+  text-decoration: none;
+  color: ${({theme}) => theme.colors['orange.50']};
+  font-size: 1.2rem;
+  margin-right: 2rem;
+`;
+
+const ErrorContainer = styled.div``;
+
+const ErrorMessage = styled.h2`
+  color: ${({theme}) => theme.colors['black.150']};
+  font-size: 1.5rem;
+  line-height: 40px;
+  margin: 0 0 1.5rem;
+`;
+
+const SubmitErrorMessage = styled.p`
+  font-size: 1rem;
+  color: ${({theme}) => theme.colors['red.50']};
+  margin: 1rem 0;
+`;
+
 function Topics() {
   const {selectedTopics, onToggleSelect, onSaveTopics} = useTopics();
+  const {
+    requestStatus: submitStatus,
+    onChangeRequestStatus: setSubmitStatus
+  } = useRequest();
+  const router = useRouter();
   const {userData} = useUser();
-  const {data: topics, error} = useSWR('/api/topics.php', url =>
+  const {data: topics, error, mutate} = useSWR('/api/topics.php', url =>
     axios.get(url, {withCredentials: true}).then(res => res.data)
   );
   // eslint-disable-next-line
   const route = useRoute();
+
+  const onRetry = () => {
+    mutate();
+  };
+
+  const onSubmit = async () => {
+    try {
+      setSubmitStatus('loading');
+      await onSaveTopics(userData.id);
+      router.push('/home');
+    } catch (err) {
+      setSubmitStatus('error', err);
+    }
+  };
 
   return (
     <TopicsWrapper>
@@ -93,9 +138,10 @@ function Topics() {
           Pilih topik yang ingin kamu ikuti, diskusi tentang topik terkait akan
           mancul dihalaman utama kamu.
         </TopicsDescription>
-        <TopicsList>
-          {topics && !error
-            ? topics.data.map(topic => {
+        {topics && !error ? (
+          <>
+            <TopicsList>
+              {topics.data.map(topic => {
                 const isSelected = selectedTopics.includes(topic.id);
                 return (
                   <TopicsItem
@@ -105,14 +151,46 @@ function Topics() {
                     onToggleSelect={() => onToggleSelect(topic.id)}
                   />
                 );
-              })
-            : error
-            ? 'Uppss ada yang salah, coba lagi'
-            : 'loading...'}
-        </TopicsList>
-        <ButtonContainer>
-          <Button onClick={() => onSaveTopics(userData.id)}>Simpan</Button>
-        </ButtonContainer>
+              })}
+            </TopicsList>
+            {submitStatus.name === 'error' && (
+              <SubmitErrorMessage>
+                Upsss ada yang tidak beres, coba beberapa saat lagi
+              </SubmitErrorMessage>
+            )}
+            <ButtonContainer>
+              <NextLink href="/home" passHref>
+                <SkipLink>Lewati</SkipLink>
+              </NextLink>
+              <Button
+                onClick={onSubmit}
+                disabled={
+                  !selectedTopics.length || submitStatus.name === 'loading'
+                }
+              >
+                Simpan
+              </Button>
+            </ButtonContainer>
+          </>
+        ) : error ? (
+          <ErrorContainer>
+            <ErrorMessage>
+              Data tidak dapat dimuat, coba beberapa saat lagi
+            </ErrorMessage>
+            <Button onClick={onRetry}>Coba lagi</Button>
+          </ErrorContainer>
+        ) : (
+          Array(5)
+            .fill()
+            .map((_, idx) => (
+              <LoadingSkeleton
+                uniqueKey={`loading-skeleton-${idx}`}
+                width="100%"
+                viewBox="0 0 100% 100"
+                key={idx}
+              />
+            ))
+        )}
       </TopicsContainer>
     </TopicsWrapper>
   );

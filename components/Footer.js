@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Logo from './Logo';
 
 const FooterContainer = styled.footer`
   margin-top: auto;
@@ -27,15 +28,6 @@ const FooterContent = styled.div`
   text-align: center;
 `;
 
-const FooterLogo = styled.img`
-  width: 40px;
-  margin-bottom: 1rem;
-
-  @media screen and (max-width: 480px) {
-    width: 32px;
-  }
-`;
-
 const FooterCopyright = styled.p`
   color: ${({theme}) => theme.colors['gray.100']};
   font-size: 1rem;
@@ -50,10 +42,7 @@ function Footer() {
     <FooterContainer>
       <FooterWrapper>
         <FooterContent>
-          <FooterLogo
-            src="/images/logo-standalone.svg"
-            alt="ambis kuliah logo"
-          />
+          <Logo width="40" height="40" />
           <FooterCopyright>
             © 2020 Ambis Kuliah. All rights reserved
           </FooterCopyright>

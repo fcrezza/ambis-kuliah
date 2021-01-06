@@ -8,7 +8,7 @@ const AuthContext = React.createContext();
 export function AuthProvider({children}) {
   const {data: userData, mutate, error} = useSWR(
     '/api/auth.php',
-    url => axios.get(url, {withCredentials: true}).then(res => res.data),
+    url => axios.get(url, {withCredentials: true}).then(res => res.data.data),
     {revalidateOnFocus: false}
   );
 

@@ -28,7 +28,7 @@ export const Button = styled.button`
   border-radius: 50px;
   font-weight: 700;
   font-size: 1.2rem;
-  cursor: pointer;
+  cursor: ${({disabled}) => (disabled ? 'default' : 'pointer')};
   display: inline-block;
   opacity: ${({disabled}) => (disabled ? 0.7 : 1)};
 
