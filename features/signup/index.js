@@ -10,7 +10,8 @@ import Label from 'components/Label';
 import ErrorMessage from 'components/ErrorMessage';
 import {Input, InputGroup, PasswordInput} from 'components/Input';
 import {Button} from 'components/Button';
-import axios from 'utils/axios';
+import {useAuth} from 'utils/auth';
+import useRoute from 'utils/route';
 
 const SignupContainer = styled.div`
   margin-bottom: 100px;
@@ -72,15 +73,18 @@ function Signup() {
   const {register, handleSubmit, errors, setError, clearErrors} = useForm({
     resolver: yupResolver(schemaValidation)
   });
+  const {signup} = useAuth();
   const router = useRouter();
+  // eslint-disable-next-line
+  const route = useRoute('/home', null);
 
   const onSubmit = async data => {
     try {
       clearErrors('server');
       setRequestStatus('loading');
-      await axios.post('/api/signup.php', data);
+      await signup(data);
       setRequestStatus('success');
-      router.push('/login');
+      router.push('/topics');
     } catch (error) {
       if (error.response) {
         setError('server', {

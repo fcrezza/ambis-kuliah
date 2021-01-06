@@ -1,24 +1,35 @@
 import React from 'react';
+import useSWR from 'swr';
 
-import {users} from 'utils/data';
+import axios from 'utils/axios';
 
 const AuthContext = React.createContext();
 
 export function AuthProvider({children}) {
-  const [user, setUser] = React.useState(users[2]);
+  const {data: userData, mutate, error} = useSWR(
+    '/api/auth.php',
+    url => axios.get(url, {withCredentials: true}).then(res => res.data),
+    {revalidateOnFocus: false}
+  );
 
-  const login = () => {
-    setUser(users[2]);
+  const login = async data => {
+    const response = await axios.post('/api/login.php', data);
+    mutate(response.data, false);
   };
 
-  const logout = () => {
-    setUser(null);
+  const signup = async data => {
+    const response = await axios.post('/api/signup.php', data);
+    mutate(response.data, false);
   };
+
+  const logout = () => {};
 
   const contextValue = {
     login,
+    signup,
     logout,
-    user
+    userData,
+    error
   };
 
   return (
@@ -27,6 +38,5 @@ export function AuthProvider({children}) {
 }
 
 export function useAuth() {
-  const authData = React.useContext(AuthContext);
-  return authData;
+  return React.useContext(AuthContext);
 }

@@ -29,7 +29,7 @@ function TopicsItem({title, onToggleSelect, isSelected}) {
       <TopicsItemTitle>{title}</TopicsItemTitle>
       <Button
         variant={isSelected ? 'default' : 'outline'}
-        onClick={() => onToggleSelect(title)}
+        onClick={onToggleSelect}
       >
         {isSelected ? 'Diikuti' : 'Ikuti'}
       </Button>

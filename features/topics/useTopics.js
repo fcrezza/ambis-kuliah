@@ -1,24 +1,26 @@
-import {useState} from 'react';
-
-import {topics} from 'utils/data';
+import React from 'react';
+// import axios from 'utils/axios';
 
 function useTopics() {
-  const [selectedTopics, setTopics] = useState([]);
+  const [selectedTopics, setTopics] = React.useState([]);
 
-  const onToggleSelect = topicName => {
-    if (selectedTopics.includes(topicName)) {
-      const filteredTopics = selectedTopics.filter(
-        topic => topic !== topicName
-      );
+  const onToggleSelect = topicId => {
+    if (selectedTopics.includes(topicId)) {
+      const filteredTopics = selectedTopics.filter(topic => topic !== topicId);
       setTopics(filteredTopics);
       return;
     }
 
-    setTopics(prevState => [...prevState, topicName]);
+    setTopics(prevState => [...prevState, topicId]);
+  };
+
+  const onSaveTopics = userId => {
+    console.log(userId);
+    console.log(selectedTopics);
   };
 
   return {
-    topics,
+    onSaveTopics,
     selectedTopics,
     onToggleSelect
   };

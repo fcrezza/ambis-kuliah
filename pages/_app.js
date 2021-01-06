@@ -9,6 +9,7 @@ import Navigation from 'features/navigation';
 import HotTopics from 'features/hotTopics';
 import Layout from 'components/Layout';
 import {AuthProvider} from 'utils/auth';
+import {UserProvider} from 'utils/user';
 import {GlobalStyle} from 'utils/styles/Global';
 import {ThemeProvider} from 'utils/styles/Theme';
 
@@ -19,11 +20,13 @@ function MyApp({Component, pageProps}) {
     <ThemeProvider>
       <GlobalStyle />
       <AuthProvider>
-        <Navigation />
-        <Layout>
-          <Component {...pageProps} />
-          <HotTopics />
-        </Layout>
+        <UserProvider>
+          <Navigation />
+          <Layout>
+            <Component {...pageProps} />
+            <HotTopics />
+          </Layout>
+        </UserProvider>
       </AuthProvider>
     </ThemeProvider>
   );
