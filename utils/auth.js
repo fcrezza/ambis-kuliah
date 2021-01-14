@@ -7,19 +7,23 @@ const AuthContext = React.createContext();
 
 export function AuthProvider({children}) {
   const {data: userData, mutate, error} = useSWR(
-    '/api/auth.php',
+    '/auth/user',
     url => axios.get(url, {withCredentials: true}).then(res => res.data.data),
     {revalidateOnFocus: false}
   );
 
   const login = async data => {
-    const response = await axios.post('/api/login.php', data);
-    mutate(response.data, false);
+    const response = await axios.post('/auth/login', data, {
+      withCredentials: true
+    });
+    mutate(response.data.data, false);
   };
 
   const signup = async data => {
-    const response = await axios.post('/api/signup.php', data);
-    mutate(response.data, false);
+    const response = await axios.post('/auth/signup', data, {
+      withCredentials: true
+    });
+    mutate(response.data.data, false);
   };
 
   const logout = () => {};

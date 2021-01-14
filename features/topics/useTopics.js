@@ -12,6 +12,8 @@ function useTopics() {
       setTopics(filteredTopics);
       return;
     }
+
+    setTopics([...selectedTopics, topicId]);
   };
 
   const onSaveTopics = async userId => {

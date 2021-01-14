@@ -76,8 +76,7 @@ function Signup() {
   const {signup} = useAuth();
   const router = useRouter();
   // eslint-disable-next-line
-  const route = useRoute('/home', null);
-
+  const route = useRoute(requestStatus === 'iddle' && '/home', null);
   const onSubmit = async data => {
     try {
       clearErrors('server');
@@ -88,7 +87,7 @@ function Signup() {
     } catch (error) {
       if (error.response) {
         setError('server', {
-          message: error.response.data.message
+          message: error.response.data.data.message
         });
       } else {
         setError('server', {

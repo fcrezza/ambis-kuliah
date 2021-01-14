@@ -81,7 +81,7 @@ function Login() {
     } catch (error) {
       if (error.response) {
         setError('server', {
-          message: error.response.data.message
+          message: error.response.data.data.message
         });
       } else {
         setError('server', {

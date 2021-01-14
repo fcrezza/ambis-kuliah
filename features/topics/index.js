@@ -110,7 +110,7 @@ function Topics() {
   } = useRequest();
   const router = useRouter();
   const {userData} = useUser();
-  const {data: topics, error, mutate} = useSWR('/api/topics.php', url =>
+  const {data: topics, error, mutate} = useSWR('/topics', url =>
     axios.get(url, {withCredentials: true}).then(res => res.data)
   );
   // eslint-disable-next-line
