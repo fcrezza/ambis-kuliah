@@ -2,16 +2,15 @@ import React from 'react';
 import styled from 'styled-components';
 import useSWR from 'swr';
 import NextLink from 'next/link';
+import {useRouter} from 'next/router';
 
 import TopicsItem from './TopicsItem';
 import {Button} from 'components/Button';
 import useTopics from './useTopics';
-import {useUser} from 'utils/user';
 import useRoute from 'utils/route';
 import axios from 'utils/axios';
 import LoadingSkeleton from './LoadingSkeleton';
 import useRequest from 'utils/request';
-import {useRouter} from 'next/router';
 
 const TopicsContainer = styled.div`
   max-width: 750px;
@@ -109,7 +108,6 @@ function Topics() {
     onChangeRequestStatus: setSubmitStatus
   } = useRequest();
   const router = useRouter();
-  const {userData} = useUser();
   const {data: topics, error, mutate} = useSWR('/topics', url =>
     axios.get(url, {withCredentials: true}).then(res => res.data)
   );
@@ -119,12 +117,10 @@ function Topics() {
   const onRetry = () => {
     mutate();
   };
-  console.log(router);
-
   const onSubmit = async () => {
     try {
       setSubmitStatus('loading');
-      await onSaveTopics(userData.id);
+      await onSaveTopics();
       router.push('/home');
     } catch (err) {
       setSubmitStatus('error', err);
