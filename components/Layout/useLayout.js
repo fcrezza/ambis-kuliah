@@ -2,7 +2,7 @@ import {useRouter} from 'next/router';
 
 function useLayout() {
   const router = useRouter();
-  const isShowed = !['/', '/topics', '/login', '/signup'].includes(
+  const isShowed = !['/', '/login', '/signup', '/signup/topics'].includes(
     router.pathname
   );
 

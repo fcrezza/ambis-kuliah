@@ -83,7 +83,15 @@ function Signup() {
       setRequestStatus('loading');
       await signup(data);
       setRequestStatus('success');
-      router.push('/topics');
+      router.push(
+        {
+          pathname: '/signup/topics',
+          query: {
+            registration: 1
+          }
+        },
+        '/signup/topics'
+      );
     } catch (error) {
       if (error.response) {
         setError('server', {

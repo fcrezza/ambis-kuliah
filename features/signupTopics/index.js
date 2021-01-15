@@ -113,12 +113,13 @@ function Topics() {
   const {data: topics, error, mutate} = useSWR('/topics', url =>
     axios.get(url, {withCredentials: true}).then(res => res.data)
   );
+  const isRegistration = 'registration' in router.query;
   // eslint-disable-next-line
-  const route = useRoute();
-
+  const route = useRoute(!isRegistration && '/home');
   const onRetry = () => {
     mutate();
   };
+  console.log(router);
 
   const onSubmit = async () => {
     try {

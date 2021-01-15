@@ -1,6 +1,6 @@
 import Head from 'components/Head';
 import Footer from 'components/Footer';
-import Topics from 'features/topics';
+import Topics from 'features/signupTopics';
 
 function topics() {
   return (

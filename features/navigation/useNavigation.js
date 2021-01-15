@@ -4,7 +4,7 @@ import {useRouter} from 'next/router';
 function useNavigation() {
   const [isModalOpen, setModalState] = useState(false);
   const router = useRouter();
-  const isShowed = !['/', '/topics', '/login', '/signup'].includes(
+  const isShowed = !['/', '/login', '/signup', '/signup/topics'].includes(
     router.pathname
   );
 
