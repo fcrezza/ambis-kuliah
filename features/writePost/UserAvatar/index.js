@@ -1,21 +1,6 @@
 import Link from 'next/link';
-import styled from 'styled-components';
 import {useUser} from 'utils/user';
-
-const ProfileLink = styled.a`
-  display: inline-block;
-  text-decoration: none;
-  border-radius: 50%;
-  overflow: hidden;
-  width: 80px;
-  height: 70px;
-`;
-
-const Avatar = styled.img`
-  width: 100%;
-  height: 100%;
-  display: block;
-`;
+import {ProfileLink, Avatar} from './utils';
 
 function ProfileAvatar() {
   const {userData} = useUser();

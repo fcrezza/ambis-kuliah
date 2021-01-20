@@ -1,9 +1,9 @@
-import {users} from 'utils/data';
+// import {users} from 'utils/data';
 
 function usePostReply(userID) {
-  const {username} = users.find(user => user.id === userID);
+  // const {username} = users.find(user => user.id === userID);
 
-  return {username};
+  return {username: ''};
 }
 
 export default usePostReply;

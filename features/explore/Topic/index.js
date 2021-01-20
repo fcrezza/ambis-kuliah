@@ -1,48 +1,56 @@
+import React from 'react';
 import useSWR from 'swr';
 import {useRouter} from 'next/router';
 
-import WritePost from 'features/writePost';
+import Head from 'components/Head';
 import Post from 'components/Post';
-import useRoute from 'utils/route';
-import axios from 'utils/axios';
 import {Button} from 'components/Button';
 import {PostSkeleton} from 'components/Skeleton';
+import axios from 'utils/axios';
+import {Container, Title, TitleContainer} from './utils';
 import {useAuth} from 'utils/auth';
-import {
-  HomeContainer,
-  TitleContainer,
-  TitleIcon,
-  TitleText,
-  WritePostWrapper
-} from './utils';
 
-function Home() {
-  useRoute(null, '/login');
-  const {reload} = useRouter();
+function ExploreTag() {
+  const {query} = useRouter();
+  const tag = query.tag;
   const {userData} = useAuth();
-  const topics = userData.topics.map(topic => topic.name).join(',');
-  const {data: postsData, error} = useSWR(['/posts', topics], (url, arg) => {
-    const combinedUrl = `${url}?topics=${arg}`;
-    const fetchOptions = {
-      withCredentials: true
-    };
-    return axios.get(combinedUrl, fetchOptions).then(({data}) => data.data);
+  const [isFollowed, setIsFollowed] = React.useState(() => {
+    const userTopics = userData.topics.map(({name}) => name);
+    const isExist = userTopics.includes(tag);
+    return isExist;
   });
+  const {data: postsData, mutate, error, isValidating} = useSWR(
+    tag ? ['/posts', tag] : null,
+    (url, arg) => {
+      const combinedUrl = `${url}?topics=${arg}`;
+      const fetchOptions = {
+        withCredentials: true
+      };
+      return axios.get(combinedUrl, fetchOptions).then(({data}) => data.data);
+    }
+  );
+
+  const onFollowButtonClick = () => {
+    setIsFollowed(prevState => !prevState);
+  };
 
   return (
-    <HomeContainer>
+    <Container>
+      <Head
+        title={`${tag} - Ambis Kuliah`}
+        description={`Eksplor diskusi yang menggunakan tag ${tag}`}
+      />
       <TitleContainer>
-        <TitleText>Beranda</TitleText>
-        <TitleIcon />
+        <Title>{tag}</Title>
+        <Button onClick={onFollowButtonClick}>
+          {isFollowed ? 'Diikuti' : 'Ikuti'}
+        </Button>
       </TitleContainer>
-      <WritePostWrapper>
-        <WritePost />
-      </WritePostWrapper>
       {/* display error message when can't fetch posts data */}
       {error ? (
         <div>
           <h2>Tidak dapat memuat data</h2>
-          <Button onClick={reload}>Coba lagi</Button>
+          <Button onClick={mutate}>Coba lagi</Button>
         </div>
       ) : null}
       {/* display posts */}
@@ -64,19 +72,19 @@ function Home() {
           ))
         : null}
       {/* display message when there are no posts related to user topics */}
-      {!postsData?.length && !error ? (
-        <div>Post tentang topik yang kamu ikuti akan tampil disini</div>
+      {!isValidating && !postsData?.length && !error ? (
+        <div>Tidak ada apa-apa disini</div>
       ) : null}
       {/* display loading skeleton when fetching the data */}
-      {!postsData && !error ? (
+      {isValidating && !error ? (
         <div>
           <PostSkeleton uniqueKey="post-skeleton-1" />
           <PostSkeleton uniqueKey="post-skeleton-2" />
           <PostSkeleton uniqueKey="post-skeleton-3" />
         </div>
       ) : null}
-    </HomeContainer>
+    </Container>
   );
 }
 
-export default Home;
+export default ExploreTag;

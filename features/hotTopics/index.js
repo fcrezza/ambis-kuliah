@@ -1,43 +1,23 @@
 import React from 'react';
-import styled from 'styled-components';
+import {useRouter} from 'next/router';
 
-import HotTopicsPosts from './HotTopicsPosts';
+// import Posts from './Posts';
 import Search from 'components/Search';
-import useHotTopics from './useHotTopics';
-
-const HotTopicsContainer = styled.div`
-  max-width: 400px;
-  margin-left: 3rem;
-
-  & > *:not(:last-child) {
-    margin-bottom: 1.5rem;
-  }
-
-  @media screen and (max-width: 1440px) {
-    max-width: 340px;
-  }
-
-  @media screen and (max-width: 768px) {
-    display: none;
-  }
-`;
-
-const Copyright = styled.p`
-  color: ${({theme}) => theme.colors['black.50']};
-  font-size: 0.8rem;
-  margin: 0;
-`;
+import {Container, Copyright} from './utils';
 
 function HotTopics() {
-  const {isShowed} = useHotTopics();
+  const router = useRouter();
+  const isShowed = !['/', '/login', '/signup', '/signup/topics'].includes(
+    router.pathname
+  );
 
   if (isShowed) {
     return (
-      <HotTopicsContainer>
+      <Container>
         <Search placeholder="Cari diskusi" />
-        {/* <HotTopicsPosts /> */}
+        {/* <Posts /> */}
         <Copyright>© 2020 Ambis Kuliah. All rights reserved</Copyright>
-      </HotTopicsContainer>
+      </Container>
     );
   }
 

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import styled from 'styled-components';
 
-import {users} from 'utils/data';
+// import {users} from 'utils/data';
 
 const ProfileLink = styled.a`
   display: inline-block;
@@ -16,11 +16,12 @@ const Avatar = styled.img`
 
 function ProfileAvatar() {
   return (
-    <Link href={`/profile/${users[2].username}`} passHref>
-      <ProfileLink>
-        <Avatar src={users[2].avatar} alt={`${users[2].fullname} avatar`} />
-      </ProfileLink>
-    </Link>
+    // <Link href={`/profile/${users[2].username}`} passHref>
+    // <ProfileLink>
+    // <Avatar src={users[2].avatar} alt={`${users[2].fullname} avatar`} />
+    // </ProfileLink>
+    // </Link>
+    'a'
   );
 }
 
