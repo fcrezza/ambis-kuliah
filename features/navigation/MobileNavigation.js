@@ -27,13 +27,15 @@ function MobileNavigation({isShowed, isAuth, onClickWrite}) {
     return (
       <MobileContainer>
         {isAuth && (
-          <MobileLink as={MobileNavButton} onClick={onClickWrite}>
-            <WriteIcon />
-          </MobileLink>
+          <>
+            <MobileLink as={MobileNavButton} onClick={onClickWrite}>
+              <WriteIcon />
+            </MobileLink>
+            <MobileNavLink href="/home">
+              <AiOutlineHome />
+            </MobileNavLink>
+          </>
         )}
-        <MobileNavLink href="/home">
-          <AiOutlineHome />
-        </MobileNavLink>
         <MobileNavLink href="/explore">
           <FaRegCompass />
         </MobileNavLink>

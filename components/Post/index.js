@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import {lighten} from 'polished';
+import {formatDistanceToNow} from 'date-fns';
+import {id} from 'date-fns/locale';
 
 import {Tag, TagGroup} from '../Tag';
 import usePost from './usePost';
@@ -76,7 +78,7 @@ function Post(props) {
         <PostActionButton
           reaction={reaction}
           onReactPost={onReactPost}
-          voteStats={stats.upvote - stats.downvote}
+          voteStats={stats.upvotes - stats.downvotes}
         />
       ) : null}
       <PostComment
@@ -90,8 +92,8 @@ function Post(props) {
         {tags ? (
           <TagGroup>
             {tags.map((tag, idx) => (
-              <Link key={idx} href={`/explore/${tag}`} passHref>
-                <Tag onClick={e => e.stopPropagation()}>{tag}</Tag>
+              <Link key={idx} href={`/explore/${tag.name}`} passHref>
+                <Tag onClick={e => e.stopPropagation()}>{tag.name}</Tag>
               </Link>
             ))}
           </TagGroup>
@@ -107,16 +109,21 @@ function Post(props) {
             avatar={avatar}
             name={fullname}
           />
-          {typeof stats?.answer === 'number' ? (
+          {typeof stats?.replies === 'number' ? (
             <>
               <Divider />
-              <AnswerStats>{stats.answer} Jawaban</AnswerStats>
+              <AnswerStats>{stats.replies} Jawaban</AnswerStats>
             </>
           ) : null}
           {timestamp ? (
             <>
               <Divider />
-              <TimeStamp>{timestamp}</TimeStamp>
+              <TimeStamp>
+                {formatDistanceToNow(new Date(timestamp), {
+                  includeSeconds: true,
+                  locale: id
+                })}
+              </TimeStamp>
             </>
           ) : null}
         </PostFooter>

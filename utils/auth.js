@@ -11,7 +11,7 @@ export function AuthProvider({children}) {
     url => axios.get(url, {withCredentials: true}).then(res => res.data.data),
     {revalidateOnFocus: false}
   );
-  console.log(userData);
+
   const login = async data => {
     const response = await axios.post('/auth/login', data, {
       withCredentials: true

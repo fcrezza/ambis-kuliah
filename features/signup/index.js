@@ -81,7 +81,13 @@ function Signup() {
     try {
       clearErrors('server');
       setRequestStatus('loading');
-      await signup(data);
+      const randomNum = Math.round(Math.random() * 3 + 1);
+      const defaultAvatarURl = `/images/avatars/default-avatar-${randomNum}.png`;
+      const inputData = {
+        ...data,
+        avatarUrl: defaultAvatarURl
+      };
+      await signup(inputData);
       setRequestStatus('success');
       router.push(
         {

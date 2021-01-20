@@ -74,10 +74,10 @@ function PostActions({postUsername, onReplyClick}) {
 }
 
 function ButtonActions({postUsername, onReplyClick}) {
-  const {user} = useAuth();
+  const {userData} = useAuth();
   return (
     <ButtonActionsContainer>
-      {user.username === postUsername ? (
+      {userData.username === postUsername ? (
         <PostActionButton onClick={() => {}}>Hapus</PostActionButton>
       ) : null}
       <PostActionButton onClick={onReplyClick}>Balas</PostActionButton>

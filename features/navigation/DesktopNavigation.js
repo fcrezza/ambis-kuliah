@@ -58,14 +58,16 @@ function DesktopNavigation({isShowed, isAuth, onClickWrite}) {
       </Link>
       {isShowed ? (
         <DesktopNav>
-          <DesktopNavLink href="/home">Beranda</DesktopNavLink>
+          {isAuth && <DesktopNavLink href="/home">Beranda</DesktopNavLink>}
           <DesktopNavLink href="/explore">Jelajahi</DesktopNavLink>
           {isAuth && (
-            <DesktopNavLink href="/profile/balde_alejandro">
-              Profil
-            </DesktopNavLink>
+            <>
+              <DesktopNavLink href="/profile/balde_alejandro">
+                Profil
+              </DesktopNavLink>
+              <Button onClick={onClickWrite}>Tulis</Button>
+            </>
           )}
-          {isAuth && <Button onClick={onClickWrite}>Tulis</Button>}
         </DesktopNav>
       ) : null}
     </DesktopContainer>

@@ -1,24 +1,32 @@
 import Link from 'next/link';
 import styled from 'styled-components';
-
-import {users} from 'utils/data';
+import {useUser} from 'utils/user';
 
 const ProfileLink = styled.a`
   display: inline-block;
   text-decoration: none;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 80px;
+  height: 70px;
 `;
 
 const Avatar = styled.img`
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  display: block;
 `;
 
 function ProfileAvatar() {
+  const {userData} = useUser();
+
   return (
-    <Link href={`/profile/${users[2].username}`} passHref>
+    <Link href={`/profile/${userData?.username}`} passHref>
       <ProfileLink>
-        <Avatar src={users[2].avatar} alt={`${users[2].fullname} avatar`} />
+        <Avatar
+          src={userData?.avatarUrl}
+          alt={`${userData?.username} avatar`}
+        />
       </ProfileLink>
     </Link>
   );
