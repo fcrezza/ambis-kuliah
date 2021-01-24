@@ -37,7 +37,7 @@ function ProfilePost({username}) {
     key,
     fetcher
   );
-  const postData = data ? [].concat(...data) : [];
+  const postData = Array.isArray(data) ? [].concat(...data) : [];
 
   if ((data && !data[data.length - 1].length) || error) {
     hasMore = false;
@@ -71,7 +71,7 @@ function ProfilePost({username}) {
       {error && !isValidating && (
         <div style={{textAlign: 'center'}}>
           <h2 style={{padding: '2rem'}}>Tidak dapat memuat data</h2>
-          <Button onClick={mutate}>Coba lagi</Button>
+          <Button onClick={() => mutate()}>Coba lagi</Button>
         </div>
       )}
     </InfiniteScroll>

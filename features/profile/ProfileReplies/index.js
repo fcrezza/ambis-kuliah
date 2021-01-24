@@ -61,6 +61,7 @@ function ProfileReplies({username}) {
           text={post.contents}
           tags={post.topics}
           stats={post.stats}
+          replyTo={post.replyTo}
           timestamp={post.timestamp}
           fullname={post.author.fullname}
           username={post.author.username}

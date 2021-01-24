@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import styled from 'styled-components';
-import usePostReply from './usePostReply';
 
 const PostReplyContainer = styled.p`
   font-size: 0.9rem;
@@ -88,15 +87,16 @@ export const TimeStamp = styled.p`
 `;
 
 export function PostReply({replyTo}) {
-  const {username} = usePostReply(replyTo.userID);
-
   return (
     <PostReplyContainer>
       Membalas kepada
-      <Link href={`/discussion/${username}/${replyTo.postID}`} passHref>
+      <Link
+        href={`/discussion/${replyTo.author.username}/${replyTo.id}`}
+        passHref
+      >
         <ProfileLink onClick={e => e.stopPropagation()}>
           {' '}
-          @{username}
+          @{replyTo.author.username}
         </ProfileLink>
       </Link>
     </PostReplyContainer>
