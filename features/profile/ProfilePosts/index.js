@@ -1,76 +1,10 @@
 import React from 'react';
 import {useSWRInfinite} from 'swr';
-import {throttle} from 'lodash';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import Post from 'components/Post';
 import {Button} from 'components/Button';
 import axios from 'utils/axios';
-
-// function ProfilePost({username}) {
-//   const key = username
-//     ? (pageIndex, previousPageData) =>
-//         getKey(pageIndex, previousPageData, username)
-//     : null;
-//   const {data, mutate, error, isValidating, size, setSize} = useSWRInfinite(
-//     key,
-//     fetcher
-//   );
-//   const postData = data ? [].concat(...data) : [];
-//   // console.log('postData: ', postData);
-//   React.useEffect(() => {
-//     const scrollHandler = throttle(() => {
-//       if (
-//         window.innerHeight + document.documentElement.scrollTop ===
-//         document.documentElement.offsetHeight
-//       ) {
-//         if (!isValidating) {
-//           console.log(
-//             '%ccalled',
-//             'background-color: green;color: #fff; padding: 4rem; font-size: 3rem;'
-//           );
-//           setSize(size + 1);
-//         }
-//       }
-//     }, 100);
-
-//     window.addEventListener('scroll', scrollHandler);
-
-//     return () => {
-//       window.removeEventListener('scroll', scrollHandler);
-//     };
-//   }, []);
-
-//   console.log('isValidating', isValidating);
-
-//   return (
-//     <div>
-//       {!isValidating && !postData?.length && !error ? (
-//         <div>Tidak ada apa-apa disini</div>
-//       ) : null}
-//       {postData?.length
-//         ? postData.map(post => (
-//             <Post
-//               key={post.id}
-//               postID={post.id}
-//               title={post.title}
-//               text={post.contents}
-//               tags={post.topics}
-//               stats={post.stats}
-//               timestamp={post.timestamp}
-//               fullname={post.author.fullname}
-//               username={post.author.username}
-//               avatar={post.author.avatarUrl}
-//               showControl
-//             />
-//           ))
-//         : null}
-//       {error ? (
-
-//       {isValidating && !error ? <div>Memuat lebih banyak...</div> : null}
-//     </div>
-//   );
-// }
 
 function fetcher(url) {
   const fetchOptions = {

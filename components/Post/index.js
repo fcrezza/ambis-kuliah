@@ -1,11 +1,9 @@
 import React from 'react';
-import styled from 'styled-components';
-import {lighten} from 'polished';
 import {formatDistanceToNow} from 'date-fns';
 import {id} from 'date-fns/locale';
+import {useRouter} from 'next/router';
 
 import {Tag, TagGroup} from '../Tag';
-import usePost from './usePost';
 import PostActionButton from './PostActionButtons';
 import {
   PostReply,
@@ -20,29 +18,7 @@ import {
 import Link from 'next/link';
 import PostActions from './PostActions';
 import PostComment from './PostComment';
-
-const PostContainer = styled.div`
-  padding: 1.5rem;
-  display: flex;
-  cursor: ${({type}) => (type !== 'detail' ? 'pointer' : 'default')};
-  position: relative;
-
-  &:focus,
-  &:hover {
-    background-color: ${({theme, type}) =>
-      type !== 'detail' ? lighten(0.01, theme.colors['gray.50']) : null};
-  }
-
-  &:not(:last-child) {
-    border-bottom: 1px solid ${({theme}) => theme.colors['gray.100']};
-  }
-`;
-
-const PostContentContainer = styled.div`
-  & > *:not(:last-child) {
-    margin-bottom: 1.3rem;
-  }
-`;
+import {PostContainer, PostContentContainer} from './utils';
 
 function Post(props) {
   const {
@@ -59,14 +35,28 @@ function Post(props) {
     showControl,
     type
   } = props;
-  const {
-    reaction,
-    onClickPost,
-    onReactPost,
-    isModalOpen,
-    onReplyClick,
-    onModalClose
-  } = usePost();
+
+  const [reaction, setReaction] = React.useState('');
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const router = useRouter();
+
+  const onReactPost = (reaction, e) => {
+    e.stopPropagation();
+    setReaction(reaction);
+  };
+
+  const onClickPost = (username, postID) => {
+    router.push(`/discussion/${username}/${postID}`);
+  };
+
+  const onReplyClick = e => {
+    e.stopPropagation();
+    setIsModalOpen(true);
+  };
+
+  const onModalClose = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <PostContainer
