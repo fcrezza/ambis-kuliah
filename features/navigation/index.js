@@ -5,11 +5,9 @@ import DesktopNavigation from './DesktopNavigation';
 import useNavigation from './useNavigation';
 import WritePost from 'features/writePost';
 import Modal from 'components/Modal';
-import {useUser} from 'utils/user';
 
 function Navigation() {
   const {isShowed, isModalOpen, onClickWrite, onModalClose} = useNavigation();
-  const {userData} = useUser();
 
   return (
     <>
@@ -21,18 +19,10 @@ function Navigation() {
       >
         <WritePost />
       </Modal>
-      <DesktopNavigation
-        isShowed={isShowed}
-        isAuth={!!userData}
-        onClickWrite={onClickWrite}
-      />
-      {!isModalOpen ? (
-        <MobileNavigation
-          isShowed={isShowed}
-          isAuth={!!userData}
-          onClickWrite={onClickWrite}
-        />
-      ) : null}
+      <DesktopNavigation isShowed={isShowed} onClickWrite={onClickWrite} />
+      {!isModalOpen && (
+        <MobileNavigation isShowed={isShowed} onClickWrite={onClickWrite} />
+      )}
     </>
   );
 }

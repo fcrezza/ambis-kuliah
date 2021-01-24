@@ -26,7 +26,12 @@ export function AuthProvider({children}) {
     mutate(response.data.data, false);
   };
 
-  const logout = () => {};
+  const logout = async () => {
+    await axios.delete('/auth/logout', {
+      withCredentials: true
+    });
+    mutate({}, false);
+  };
 
   const contextValue = {
     login,

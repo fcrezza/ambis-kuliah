@@ -22,11 +22,11 @@ const MobileNavButton = styled.button`
   cursor: pointer;
 `;
 
-function MobileNavigation({isShowed, isAuth, onClickWrite}) {
+function MobileNavigation({isShowed, user, onClickWrite}) {
   if (isShowed) {
     return (
       <MobileContainer>
-        {isAuth && (
+        {user && (
           <>
             <MobileLink as={MobileNavButton} onClick={onClickWrite}>
               <WriteIcon />
@@ -39,8 +39,8 @@ function MobileNavigation({isShowed, isAuth, onClickWrite}) {
         <MobileNavLink href="/explore">
           <FaRegCompass />
         </MobileNavLink>
-        {isAuth && (
-          <MobileNavLink href="/profile/balde_alejandro">
+        {user && (
+          <MobileNavLink href={`/profile/${user.username}`}>
             <ProfileIcon />
           </MobileNavLink>
         )}

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import {DesktopNavLink} from './NavLink';
 import {Button} from 'components/Button';
+import {useUser} from 'utils/user';
 
 const DesktopContainer = styled.div`
   padding: 40px 100px;
@@ -48,7 +49,10 @@ const DesktopNav = styled.nav`
   }
 `;
 
-function DesktopNavigation({isShowed, isAuth, onClickWrite}) {
+function DesktopNavigation({isShowed, onClickWrite}) {
+  const {userData} = useUser();
+  const isAuth = Object.keys(userData).length;
+
   return (
     <DesktopContainer isShowed={isShowed}>
       <Link href="/" passHref>
@@ -58,16 +62,18 @@ function DesktopNavigation({isShowed, isAuth, onClickWrite}) {
       </Link>
       {isShowed ? (
         <DesktopNav>
-          {isAuth && <DesktopNavLink href="/home">Beranda</DesktopNavLink>}
+          {isAuth ? (
+            <DesktopNavLink href="/home">Beranda</DesktopNavLink>
+          ) : null}
           <DesktopNavLink href="/explore">Jelajahi</DesktopNavLink>
-          {isAuth && (
+          {isAuth ? (
             <>
-              <DesktopNavLink href="/profile/balde_alejandro">
+              <DesktopNavLink href={`/profile/${userData.username}`}>
                 Profil
               </DesktopNavLink>
               <Button onClick={onClickWrite}>Tulis</Button>
             </>
-          )}
+          ) : null}
         </DesktopNav>
       ) : null}
     </DesktopContainer>

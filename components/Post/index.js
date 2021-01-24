@@ -122,7 +122,8 @@ function Post(props) {
                 {formatDistanceToNow(new Date(timestamp), {
                   includeSeconds: true,
                   locale: id
-                })}
+                })}{' '}
+                yang lalu
               </TimeStamp>
             </>
           ) : null}

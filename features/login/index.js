@@ -62,14 +62,13 @@ const schemaValidation = yup.object().shape({
 });
 
 function Login() {
+  useRoute('/home', null);
   const [requestStatus, setRequestStatus] = React.useState('iddle');
   const {login} = useAuth();
   const {register, handleSubmit, errors, setError, clearErrors} = useForm({
     resolver: yupResolver(schemaValidation)
   });
   const router = useRouter();
-  // eslint-disable-next-line
-  const route = useRoute('/home', null);
 
   const onSubmit = async data => {
     try {

@@ -12,6 +12,7 @@ import {AuthProvider} from 'utils/auth';
 import {UserProvider} from 'utils/user';
 import {GlobalStyle} from 'utils/styles/Global';
 import {ThemeProvider} from 'utils/styles/Theme';
+import GlobalSWRConfig from 'utils/swr';
 
 ReactModal.setAppElement('#__next');
 
@@ -19,15 +20,17 @@ function MyApp({Component, pageProps}) {
   return (
     <ThemeProvider>
       <GlobalStyle />
-      <AuthProvider>
-        <UserProvider>
-          <Navigation />
-          <Layout>
-            <Component {...pageProps} />
-            <HotTopics />
-          </Layout>
-        </UserProvider>
-      </AuthProvider>
+      <GlobalSWRConfig>
+        <AuthProvider>
+          <UserProvider>
+            <Navigation />
+            <Layout>
+              <Component {...pageProps} />
+              <HotTopics />
+            </Layout>
+          </UserProvider>
+        </AuthProvider>
+      </GlobalSWRConfig>
     </ThemeProvider>
   );
 }

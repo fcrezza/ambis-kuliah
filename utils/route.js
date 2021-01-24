@@ -1,16 +1,17 @@
 import {useRouter} from 'next/router';
 
-import {useAuth} from './auth';
+import {useUser} from './user';
 
 function useRoute(authRoute, unAuthRoute = '/login') {
-  const router = useRouter();
-  const {userData, error} = useAuth();
+	const router = useRouter();
+	const {userData} = useUser();
+	const userDataLength = Object.keys(userData).length;
 
-  if (userData && authRoute) {
-    router.replace(authRoute);
-  } else if (error?.response?.status === 401 && unAuthRoute) {
-    router.replace(unAuthRoute);
-  }
+	if (userDataLength && authRoute) {
+		router.replace(authRoute);
+	} else if (!userDataLength && unAuthRoute) {
+		router.replace(unAuthRoute);
+	}
 }
 
 export default useRoute;

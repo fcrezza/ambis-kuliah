@@ -1,49 +1,124 @@
-import styled from 'styled-components';
+import React from 'react';
+import {useRouter} from 'next/router';
+import useSWR from 'swr';
 
 import ProfileDescription from './ProfileDescription';
 import ProfileEdit from './ProfileEdit';
 import ProfileMenus from './ProfileMenus';
 import Head from 'components/Head';
 import {Button} from 'components/Button';
-import useProfile from './useProfile';
 import {useAuth} from 'utils/auth';
-import {useRouter} from 'next/router';
+import {ProfileContainer, Title, TitleContainer} from './utils';
+import axios from 'utils/axios';
+import {useUser} from 'utils/user';
 
-const ProfileContainer = styled.main`
-  flex: 1;
-  border-radius: 5px;
-  border: 1px solid #d9d9d9;
-
-  @media screen and (max-width: 768px) {
-    border: 0;
-  }
-`;
-
-const TitleContainer = styled.div`
-  padding: 1.5rem;
-  border-bottom: 1px solid ${({theme}) => theme.colors['gray.100']};
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Title = styled.h1`
-  color: ${({theme}) => theme.colors['black.150']};
-  margin: 0;
-  font-size: 1.6rem;
-`;
+function fetcher(url) {
+  return axios.get(url).then(({data}) => data.data);
+}
 
 function Profile() {
-  const {
-    user,
-    menuActive,
-    isModalOpen,
-    onMenuClick,
-    onEditClick,
-    onModalClose
-  } = useProfile();
-  const {user: authUser} = useAuth();
   const router = useRouter();
+  const [menuActive, setMenuActive] = React.useState('posts');
+  const [isModalOpen, setModalState] = React.useState(false);
+  const {logout} = useAuth();
+  const {userData} = useUser();
+  const isAdmin = userData?.username === router.query?.username;
+  const key =
+    'username' in router.query ? `/users/${router.query.username}` : null;
+  const {data: user, error, mutate} = useSWR(key, fetcher);
+
+  const onClickMenu = menu => {
+    if (menuActive !== menu) {
+      setMenuActive(menu);
+    }
+  };
+
+  const onClickEdit = () => {
+    setModalState(true);
+  };
+
+  const onCloseModal = () => {
+    setModalState(false);
+  };
+
+  const onClickLogout = async () => {
+    await logout();
+    router.push('/login');
+  };
+
+  if (error?.response.status === 404) {
+    return (
+      <ProfileContainer>
+        <Head
+          title={`Profil ${router.query.username} tidak ditemukan - Ambis Kuliah`}
+          description={`Profil ${router.query.username} tidak ditemukan`}
+        />
+        <TitleContainer>
+          <Title>Profile</Title>
+        </TitleContainer>
+        <div style={{textAlign: 'center'}}>
+          <h2>404</h2>
+          <p>
+            Profil <strong>{router.query.username}</strong> tidak ditemukan
+          </p>
+        </div>
+      </ProfileContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <ProfileContainer>
+        <Head
+          title={`${router.query.username} - Ambis Kuliah`}
+          description={`Halaman profil ${router.query.username}`}
+        />
+        <TitleContainer>
+          <Title>Profile</Title>
+        </TitleContainer>
+        <div style={{textAlign: 'center'}}>
+          <h2>Upzzzz, ada yang salah</h2>
+          <Button onClick={mutate}>Coba lagi</Button>
+        </div>
+      </ProfileContainer>
+    );
+  }
+
+  if (isAdmin) {
+    return (
+      <ProfileContainer>
+        <Head
+          title={`${userData.fullname} (@${userData.username}) - Ambis Kuliah`}
+          description={`${userData.fullname} profile page`}
+        />
+        <ProfileEdit
+          avatar={userData.avatarUrl}
+          fullname={userData.fullname}
+          username={userData.username}
+          bio={userData.bio}
+          isOpen={isModalOpen}
+          onClose={onCloseModal}
+        />
+        <TitleContainer>
+          <Title>Profile</Title>
+          <Button onClick={onClickLogout}>Logout</Button>
+        </TitleContainer>
+        <ProfileDescription
+          avatar={userData.avatarUrl}
+          fullname={userData.fullname}
+          username={userData.username}
+          bio={userData.bio}
+          onClickEdit={onClickEdit}
+          isAdmin
+        />
+        <ProfileMenus
+          onClickMenu={onClickMenu}
+          menuActive={menuActive}
+          username={userData.username}
+        />
+      </ProfileContainer>
+    );
+  }
 
   return (
     <ProfileContainer>
@@ -51,27 +126,19 @@ function Profile() {
         title={`${user?.fullname} (@${user?.username}) - Ambis Kuliah`}
         description={`${user?.fullname} profile page`}
       />
-      <ProfileEdit isOpen={isModalOpen} onClose={onModalClose} />
       <TitleContainer>
         <Title>Profile</Title>
-        {router.query.username === authUser.username ? (
-          <Button>Logout</Button>
-        ) : null}
       </TitleContainer>
       <ProfileDescription
-        avatar={user?.avatar}
+        avatar={user?.avatarUrl}
         fullname={user?.fullname}
         username={user?.username}
         bio={user?.bio}
-        onEditClick={onEditClick}
       />
       <ProfileMenus
-        onMenuClick={onMenuClick}
+        onClickMenu={onClickMenu}
         menuActive={menuActive}
-        userID={user?.id}
-        userAvatar={user?.avatar}
-        userFullname={user?.fullname}
-        userUsername={user?.username}
+        username={user?.username}
       />
     </ProfileContainer>
   );
