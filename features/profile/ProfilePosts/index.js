@@ -5,6 +5,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Post from 'components/Post';
 import {Button} from 'components/Button';
 import axios from 'utils/axios';
+import {upvotePost, downvotePost} from 'utils/common/vote';
+import {useUser} from 'utils/user';
 
 function fetcher(url) {
   const fetchOptions = {
@@ -29,21 +31,39 @@ function getKey(pageIndex, previousPageData, username) {
   return `/posts/${username}?limit=${startOffset},${endOffset}`;
 }
 
-function ProfilePost({username}) {
-  let hasMore = true;
+function ProfilePosts({username}) {
+  const {userData} = useUser();
   const key = (pageIndex, previousPageData) =>
     getKey(pageIndex, previousPageData, username);
   const {data, error, mutate, isValidating, setSize} = useSWRInfinite(
     key,
     fetcher
   );
-  const postData = Array.isArray(data) ? [].concat(...data) : [];
+  let hasMore = true;
+  const postData = Array.isArray(data) ? data.flat() : [];
 
-  if ((data && !data[data.length - 1].length) || error) {
+  if ((Array.isArray(data) && !data[data.length - 1].length) || error) {
     hasMore = false;
   } else {
     hasMore = true;
   }
+
+  const onUpvote = postId => {
+    if (!userData) {
+      console.log('youre not login');
+      return;
+    }
+    mutate(prevData => upvotePost(postId, userData.id, prevData), false);
+  };
+
+  const onDownvote = postId => {
+    if (!userData) {
+      console.log('youre not login');
+      return;
+    }
+
+    mutate(prevData => downvotePost(postId, userData.id, prevData), false);
+  };
 
   return (
     <InfiniteScroll
@@ -60,11 +80,16 @@ function ProfilePost({username}) {
           title={post.title}
           text={post.contents}
           tags={post.topics}
-          stats={post.stats}
+          stats={post.stats.upvotes - post.stats.downvotes}
           timestamp={post.timestamp}
           fullname={post.author.fullname}
           username={post.author.username}
           avatar={post.author.avatarUrl}
+          response={post.feedback}
+          isUpvote={post.feedback.upvotes}
+          isDownvote={post.feedback.downvotes}
+          onUpvote={() => onUpvote(post.id)}
+          onDownvote={() => onDownvote(post.id)}
           showControl
         />
       ))}
@@ -78,4 +103,4 @@ function ProfilePost({username}) {
   );
 }
 
-export default ProfilePost;
+export default ProfilePosts;

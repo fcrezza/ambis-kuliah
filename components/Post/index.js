@@ -33,17 +33,15 @@ function Post(props) {
     fullname,
     username,
     showControl,
-    type
+    type,
+    isDownvote,
+    isUpvote,
+    onUpvote,
+    onDownvote
   } = props;
 
-  const [reaction, setReaction] = React.useState('');
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const router = useRouter();
-
-  const onReactPost = (reaction, e) => {
-    e.stopPropagation();
-    setReaction(reaction);
-  };
 
   const onClickPost = (username, postID) => {
     router.push(`/discussion/${username}/${postID}`);
@@ -66,9 +64,11 @@ function Post(props) {
     >
       {showControl ? (
         <PostActionButton
-          reaction={reaction}
-          onReactPost={onReactPost}
-          voteStats={stats.upvotes - stats.downvotes}
+          isUpvote={isUpvote}
+          isDownvote={isDownvote}
+          onUpvote={onUpvote}
+          onDownvote={onDownvote}
+          voteStats={stats}
         />
       ) : null}
       <PostComment

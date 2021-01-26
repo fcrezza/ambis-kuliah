@@ -6,16 +6,10 @@ import {
   ProfileDescriptionContainer,
   ProfileFullname,
   ProfileUsername
-} from './utils';
+} from './style';
 
-function ProfileDescription({
-  avatar,
-  isAdmin,
-  fullname,
-  username,
-  bio,
-  onClickEdit = () => {}
-}) {
+function ProfileDescription(props) {
+  const {avatar, isAdmin, fullname, username, bio, onClickEdit} = props;
   return (
     <ProfileDescriptionContainer>
       <ProfileContentHeader>

@@ -3,35 +3,36 @@ import {useRouter} from 'next/router';
 import useSWR from 'swr';
 
 import ProfileDescription from './ProfileDescription';
-import ProfileEdit from './ProfileEdit';
-import ProfileMenus from './ProfileMenus';
+import ProfileEditModal from './ProfileEditModal';
+import ProfileMenu from './ProfileMenu';
 import Head from 'components/Head';
+import axios from 'utils/axios';
 import {Button} from 'components/Button';
 import {useAuth} from 'utils/auth';
-import {ProfileContainer, Title, TitleContainer} from './utils';
-import axios from 'utils/axios';
+import {ProfileContainer, Title, TitleContainer} from './style';
 import {useUser} from 'utils/user';
 
 function fetcher(url) {
   return axios.get(url).then(({data}) => data.data);
 }
 
+const fetchOptions = {
+  revalidateOnFocus: false
+};
+
 function Profile() {
   const router = useRouter();
-  const [menuActive, setMenuActive] = React.useState('posts');
+  const {userData} = useUser();
   const [isModalOpen, setModalState] = React.useState(false);
   const {logout} = useAuth();
-  const {userData} = useUser();
-  const isAdmin = userData?.username === router.query?.username;
   const key =
     'username' in router.query ? `/users/${router.query.username}` : null;
-  const {data: user, error, mutate} = useSWR(key, fetcher);
-
-  const onClickMenu = menu => {
-    if (menuActive !== menu) {
-      setMenuActive(menu);
-    }
-  };
+  const {data: user, error, mutate, isValidating} = useSWR(
+    key,
+    fetcher,
+    fetchOptions
+  );
+  const isAdmin = userData?.username === user?.username;
 
   const onClickEdit = () => {
     setModalState(true);
@@ -46,7 +47,7 @@ function Profile() {
     router.push('/login');
   };
 
-  if (error?.response.status === 404) {
+  if (error?.response?.status === 404) {
     return (
       <ProfileContainer>
         <Head
@@ -66,7 +67,7 @@ function Profile() {
     );
   }
 
-  if (error) {
+  if (error && !user) {
     return (
       <ProfileContainer>
         <Head
@@ -84,38 +85,17 @@ function Profile() {
     );
   }
 
-  if (isAdmin) {
+  if (!user && isValidating) {
     return (
       <ProfileContainer>
         <Head
-          title={`${userData.fullname} (@${userData.username}) - Ambis Kuliah`}
-          description={`${userData.fullname} profile page`}
-        />
-        <ProfileEdit
-          avatar={userData.avatarUrl}
-          fullname={userData.fullname}
-          username={userData.username}
-          bio={userData.bio}
-          isOpen={isModalOpen}
-          onClose={onCloseModal}
+          title={`${router.query.username} - Ambis Kuliah`}
+          description={`Halaman profil ${router.query.username}`}
         />
         <TitleContainer>
           <Title>Profile</Title>
-          <Button onClick={onClickLogout}>Logout</Button>
         </TitleContainer>
-        <ProfileDescription
-          avatar={userData.avatarUrl}
-          fullname={userData.fullname}
-          username={userData.username}
-          bio={userData.bio}
-          onClickEdit={onClickEdit}
-          isAdmin
-        />
-        <ProfileMenus
-          onClickMenu={onClickMenu}
-          menuActive={menuActive}
-          username={userData.username}
-        />
+        <div>loading...</div>;
       </ProfileContainer>
     );
   }
@@ -126,20 +106,27 @@ function Profile() {
         title={`${user?.fullname} (@${user?.username}) - Ambis Kuliah`}
         description={`${user?.fullname} profile page`}
       />
+      <ProfileEditModal
+        avatar={user?.avatarUrl}
+        fullname={user?.fullname}
+        username={user?.username}
+        bio={user?.bio}
+        isOpen={isModalOpen}
+        onClose={onCloseModal}
+      />
       <TitleContainer>
         <Title>Profile</Title>
+        {isAdmin && <Button onClick={onClickLogout}>Logout</Button>}
       </TitleContainer>
       <ProfileDescription
         avatar={user?.avatarUrl}
         fullname={user?.fullname}
         username={user?.username}
         bio={user?.bio}
+        onClickEdit={onClickEdit}
+        isAdmin={isAdmin}
       />
-      <ProfileMenus
-        onClickMenu={onClickMenu}
-        menuActive={menuActive}
-        username={user?.username}
-      />
+      <ProfileMenu username={user?.username} />
     </ProfileContainer>
   );
 }

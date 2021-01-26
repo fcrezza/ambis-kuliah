@@ -10,7 +10,7 @@ import {
   InputLabel,
   ButtonWrapper,
   Textarea
-} from './utils';
+} from './style';
 
 function ProfileEdit({isOpen, onClose, username, fullname, bio, avatar}) {
   const [usernameValue, setUsername] = React.useState(() => username);
