@@ -83,8 +83,8 @@ function ProfileReplies({username}) {
           stats={post.stats.upvotes - post.stats.downvotes}
           onUpvote={() => onUpvote(post.id)}
           onDownvote={() => onDownvote(post.id)}
-          isUpvote={post.feedback.upvotes}
-          isDownvote={post.feedback.downvotes}
+          isUpvote={post?.feedback?.upvotes}
+          isDownvote={post?.feedback?.downvotes}
           replyTo={post.replyTo}
           timestamp={post.timestamp}
           fullname={post.author.fullname}

@@ -13,6 +13,8 @@ export const ButtonWrapper = styled.div`
   text-align: right;
 `;
 
+export const Form = styled.form``;
+
 export const InputGroup = styled.div`
   margin-bottom: 2rem;
 `;

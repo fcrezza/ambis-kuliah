@@ -38,8 +38,7 @@ export function AuthProvider({children}) {
     signup,
     logout,
     userData,
-    error,
-    updateProfile: mutate
+    error
   };
 
   return (

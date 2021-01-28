@@ -111,6 +111,7 @@ function Profile() {
         fullname={user?.fullname}
         username={user?.username}
         bio={user?.bio}
+        email={user?.email}
         isOpen={isModalOpen}
         onClose={onCloseModal}
       />

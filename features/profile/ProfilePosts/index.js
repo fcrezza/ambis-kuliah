@@ -47,9 +47,8 @@ function ProfilePosts({username}) {
   } else {
     hasMore = true;
   }
-
   const onUpvote = postId => {
-    if (!userData) {
+    if (!Object.keys(userData).length) {
       console.log('youre not login');
       return;
     }
@@ -57,7 +56,7 @@ function ProfilePosts({username}) {
   };
 
   const onDownvote = postId => {
-    if (!userData) {
+    if (!Object.keys(userData).length) {
       console.log('youre not login');
       return;
     }
@@ -85,9 +84,8 @@ function ProfilePosts({username}) {
           fullname={post.author.fullname}
           username={post.author.username}
           avatar={post.author.avatarUrl}
-          response={post.feedback}
-          isUpvote={post.feedback.upvotes}
-          isDownvote={post.feedback.downvotes}
+          isUpvote={post?.feedback?.upvotes}
+          isDownvote={post?.feedback?.downvotes}
           onUpvote={() => onUpvote(post.id)}
           onDownvote={() => onDownvote(post.id)}
           showControl
