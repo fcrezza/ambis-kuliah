@@ -39,6 +39,7 @@ export const IconButton = styled.button`
   border: 0;
   background: transparent;
   display: flex;
+  justify-content: center;
   align-items: center;
   cursor: pointer;
   padding: 0.5rem;
@@ -46,6 +47,7 @@ export const IconButton = styled.button`
 
   &:focus,
   &:hover {
-    background: ${({theme}) => lighten(0.2, theme.colors['orange.50'])};
+    background: ${({theme, styles}) =>
+      styles?.backgroundColor || lighten(0.2, theme.colors['orange.50'])};
   }
 `;

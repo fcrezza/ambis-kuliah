@@ -89,7 +89,7 @@ function ProfileReplies({username}) {
           timestamp={post.timestamp}
           fullname={post.author.fullname}
           username={post.author.username}
-          avatar={post.author.avatarUrl}
+          avatar={post.author.avatar.url}
           showControl
         />
       ))}

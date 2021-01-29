@@ -107,7 +107,7 @@ function Profile() {
         description={`${user?.fullname} profile page`}
       />
       <ProfileEditModal
-        avatar={user?.avatarUrl}
+        avatar={user?.avatar.url}
         fullname={user?.fullname}
         username={user?.username}
         bio={user?.bio}
@@ -120,7 +120,7 @@ function Profile() {
         {isAdmin && <Button onClick={onClickLogout}>Logout</Button>}
       </TitleContainer>
       <ProfileDescription
-        avatar={user?.avatarUrl}
+        avatar={user?.avatar.url}
         fullname={user?.fullname}
         username={user?.username}
         bio={user?.bio}

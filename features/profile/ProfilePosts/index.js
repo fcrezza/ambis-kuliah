@@ -83,7 +83,7 @@ function ProfilePosts({username}) {
           timestamp={post.timestamp}
           fullname={post.author.fullname}
           username={post.author.username}
-          avatar={post.author.avatarUrl}
+          avatar={post.author.avatar.url}
           isUpvote={post?.feedback?.upvotes}
           isDownvote={post?.feedback?.downvotes}
           onUpvote={() => onUpvote(post.id)}

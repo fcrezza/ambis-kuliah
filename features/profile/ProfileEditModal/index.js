@@ -6,21 +6,26 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import {mutate, cache} from 'swr';
 
 import ErrorMessage from 'components/ErrorMessage';
-import {Button} from 'components/Button';
+import {Button, IconButton} from 'components/Button';
 import {
-  ProfileAvatar,
+  ProfileAvatarPreview,
   ProfileEditContainer,
   AvatarWrapper,
+  ChangeAvatarIcon,
   Input,
   InputGroup,
   InputLabel,
   ButtonWrapper,
   Textarea,
-  Form
+  Form,
+  ButtonContainer,
+  ImageInput
 } from './style';
 import axios from 'utils/axios';
 import {useUser} from 'utils/user';
 import {useRouter} from 'next/router';
+import {lighten} from 'polished';
+import {useTheme} from 'styled-components';
 
 const schemaValidation = yup.object().shape({
   fullname: yup.string().required('Nama lengkap tidak boleh kosong'),
@@ -32,11 +37,14 @@ const schemaValidation = yup.object().shape({
 });
 
 function ProfileEdit(props) {
-  // const [avatar, setAvatar] = React.useState('');
+  const {isOpen, onClose, username, fullname, email, bio, avatar} = props;
+  const [avatarFile, setAvatarFile] = React.useState(null);
+  const [avatarPreview, setAvatarPreview] = React.useState(() => avatar);
   const [requestStatus, setRequestStatus] = React.useState('iddle');
+  const imgRef = React.useRef();
+  const {colors} = useTheme();
   const router = useRouter();
   const {userData} = useUser();
-  const {isOpen, onClose, username, fullname, email, bio, avatar} = props;
   const {
     register,
     handleSubmit,
@@ -53,10 +61,39 @@ function ProfileEdit(props) {
     },
     resolver: yupResolver(schemaValidation)
   });
+
+  const onChange = e => {
+    setAvatarFile(e.target.files[0]);
+  };
+
+  const onModalClose = () => {
+    setAvatarFile(null);
+    setAvatarPreview(avatar);
+    onClose();
+  };
+
+  const onSelectedImage = () => {
+    imgRef.current.click();
+  };
+
   const onSubmit = async data => {
     try {
       clearErrors('server');
       setRequestStatus('loading');
+      let newAvatar;
+
+      if (avatarPreview !== avatar) {
+        const fd = new FormData();
+        fd.append('avatar', avatarFile);
+        const {data: avatarData} = await axios.post(
+          `/users/${userData.username}/avatar`,
+          fd,
+          {
+            withCredentials: true
+          }
+        );
+        newAvatar = avatarData.data;
+      }
 
       const {data: newData} = await axios.put(
         `/users/${userData.username}/profile`,
@@ -70,7 +107,8 @@ function ProfileEdit(props) {
         username: newData.data.username,
         fullname: newData.data.fullname,
         email: newData.data.email,
-        bio: newData.data.bio
+        bio: newData.data.bio,
+        avatar: newAvatar ? newAvatar : prevData.avatar
       }));
 
       if (newData.data.username !== userData.username) {
@@ -81,7 +119,8 @@ function ProfileEdit(props) {
           username: newData.data.username,
           fullname: newData.data.fullname,
           email: newData.data.email,
-          bio: newData.data.bio
+          bio: newData.data.bio,
+          avatar: newAvatar ? newAvatar : prevData.avatar
         }));
         const cacheKeys = cache
           .keys()
@@ -92,11 +131,13 @@ function ProfileEdit(props) {
         }
       }
       setRequestStatus('success');
+      setAvatarFile(null);
+      setAvatarPreview(avatar);
       reset({
-        username: newData.data.username,
-        fullname: newData.data.fullname,
-        email: newData.data.email,
-        bio: newData.data.bio
+        username: username,
+        fullname: fullname,
+        email: email,
+        bio: bio
       });
       onClose();
     } catch (error) {
@@ -113,11 +154,42 @@ function ProfileEdit(props) {
     }
   };
 
+  React.useEffect(() => {
+    if (!avatarFile) {
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(avatarFile);
+    setAvatarPreview(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [avatarFile]);
+
   return (
-    <Modal title="Edit Profil" isOpen={isOpen} onClose={onClose}>
+    <Modal title="Edit Profil" isOpen={isOpen} onClose={onModalClose}>
       <ProfileEditContainer>
         <AvatarWrapper>
-          <ProfileAvatar src={avatar} alt={`${fullname} avatar`} />
+          <ProfileAvatarPreview imageUrl={avatarPreview}>
+            <ButtonContainer>
+              <IconButton
+                styles={{
+                  backgroundColor: lighten(0.1, colors['black.150'])
+                }}
+                onClick={onSelectedImage}
+              >
+                <ImageInput
+                  ref={imgRef}
+                  type="file"
+                  onChange={onChange}
+                  name="image"
+                  accept="image/x-png,image/gif,image/jpeg"
+                />
+                <ChangeAvatarIcon />
+              </IconButton>
+            </ButtonContainer>
+          </ProfileAvatarPreview>
         </AvatarWrapper>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <InputGroup>

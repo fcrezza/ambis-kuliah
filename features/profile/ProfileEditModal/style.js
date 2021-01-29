@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import {darken} from 'polished';
+import {darken, lighten, parseToRgb} from 'polished';
+import {MdAddAPhoto} from 'react-icons/md';
 
 export const ProfileEditContainer = styled.div`
   padding: 1.5rem;
@@ -62,9 +63,35 @@ export const Textarea = styled.textarea`
   }
 `;
 
-export const ProfileAvatar = styled.img`
+export const ProfileAvatarPreview = styled.div`
   width: 100px;
   height: 100px;
   border-radius: 50%;
   display: block;
+  background: ${({theme}) => theme.colors['gray.100']};
+  background-image: url(${({imageUrl}) => imageUrl});
+  background-size: cover;
+  background-repeat: no-repeat;
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  background: ${({theme}) =>
+    `rgba(${Object.values(parseToRgb(theme.colors['black.150'])).join(
+      ','
+    )}, 0.4)`};
+`;
+
+export const ChangeAvatarIcon = styled(MdAddAPhoto)`
+  font-size: 1.8rem;
+  color: ${({theme}) => theme.colors['orange.50']};
+`;
+
+export const ImageInput = styled.input`
+  display: none;
 `;
