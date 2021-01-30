@@ -1,8 +1,8 @@
 import React from 'react';
-import axios from 'axios';
 import useSWR from 'swr';
 
 import Search from 'components/Search';
+import axios from 'utils/axios';
 import {
   TagListContainer,
   TagSearchContainer,

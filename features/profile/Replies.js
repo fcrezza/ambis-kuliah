@@ -48,21 +48,24 @@ function ProfileReplies({username}) {
     hasMore = true;
   }
 
-  const onUpvote = postId => {
+  const handleUpvote = postId => {
     if (!userData) {
       console.log('youre not login');
       return;
     }
-    mutate(prevData => upvotePost(postId, userData.id, prevData), false);
+    mutate(prevData => upvotePost(postId, userData.id, prevData.flat()), false);
   };
 
-  const onDownvote = postId => {
+  const handleDownvote = postId => {
     if (!userData) {
       console.log('youre not login');
       return;
     }
 
-    mutate(prevData => downvotePost(postId, userData.id, prevData), false);
+    mutate(
+      prevData => downvotePost(postId, userData.id, prevData.flat()),
+      false
+    );
   };
 
   return (
@@ -76,21 +79,21 @@ function ProfileReplies({username}) {
       {postData.map(post => (
         <Post
           key={post.id}
-          postID={post.id}
+          id={post.id}
           title={post.title}
-          text={post.contents}
-          tags={post.topics}
-          stats={post.stats.upvotes - post.stats.downvotes}
-          onUpvote={() => onUpvote(post.id)}
-          onDownvote={() => onDownvote(post.id)}
-          isUpvote={post?.feedback?.upvotes}
-          isDownvote={post?.feedback?.downvotes}
+          description={post.contents}
+          voteStats={post.stats.upvotes - post.stats.downvotes}
+          replyStats={post.stats.replies}
           replyTo={post.replyTo}
           timestamp={post.timestamp}
-          fullname={post.author.fullname}
-          username={post.author.username}
-          avatar={post.author.avatar.url}
-          showControl
+          authorFullname={post.author.fullname}
+          authorUsername={post.author.username}
+          authorAvatar={post.author.avatar.url}
+          isUpvote={post?.feedback?.upvotes}
+          isDownvote={post?.feedback?.downvotes}
+          handleUpvote={() => handleUpvote(post.id)}
+          handleDownvote={() => handleDownvote(post.id)}
+          hasAuth={userData.id === post.author.id}
         />
       ))}
       {error && !isValidating && (

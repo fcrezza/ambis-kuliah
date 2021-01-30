@@ -5,11 +5,11 @@ import {useUser} from './user';
 function useRoute(authRoute, unAuthRoute = '/login') {
   const router = useRouter();
   const {userData} = useUser();
-  const userDataLength = Object.keys(userData).length;
+  const isAuth = Object.keys(userData).length;
 
-  if (userDataLength && authRoute) {
+  if (isAuth && authRoute) {
     router.replace(authRoute);
-  } else if (!userDataLength && unAuthRoute) {
+  } else if (!isAuth && unAuthRoute) {
     router.replace(unAuthRoute);
   }
 }

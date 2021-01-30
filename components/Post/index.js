@@ -1,122 +1,132 @@
 import React from 'react';
+import styled from 'styled-components';
+import {lighten} from 'polished';
 import {formatDistanceToNow} from 'date-fns';
-import {id} from 'date-fns/locale';
+import {id as localeId} from 'date-fns/locale';
 import {useRouter} from 'next/router';
 
-import {Tag, TagGroup} from '../Tag';
-import PostActionButton from './PostActionButtons';
-import {
-  PostReply,
-  PostTitle,
-  PostProfile,
-  PostDescription,
-  PostFooter,
-  AnswerStats,
-  Divider,
-  TimeStamp
-} from './PostContents';
-import Link from 'next/link';
-import PostActions from './PostActions';
-import PostComment from './PostComment';
-import {PostContainer, PostContentContainer} from './utils';
+import PostVote from './PostVote';
+import PostContent from './PostContent';
+import PostAuthor from './PostAuthor';
+import PostOption from './PostOption';
+import PostTopic from './PostTopic';
+import PostReply from './PostReply';
+
+const PostContainer = styled.div`
+  padding: 1.5rem;
+  display: flex;
+  cursor: ${({type}) => (type !== 'detail' ? 'pointer' : 'default')};
+  position: relative;
+
+  &:focus,
+  &:hover {
+    background-color: ${({theme, type}) =>
+      type !== 'detail' ? lighten(0.01, theme.colors['gray.50']) : null};
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid ${({theme}) => theme.colors['gray.100']};
+  }
+`;
+
+const PostContentContainer = styled.div`
+  & > *:not(:last-child) {
+    margin-bottom: 1.3rem;
+  }
+`;
+
+const AnswerStats = styled.p`
+  font-size: 0.8rem;
+  color: ${({theme}) => theme.colors['black.50']};
+  white-space: nowrap;
+`;
+
+const TimeStamp = styled.p`
+  font-size: 0.8rem;
+  color: ${({theme}) => theme.colors['black.50']};
+  white-space: nowrap;
+`;
+
+const Divider = styled.div`
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: ${({theme}) => theme.colors['black.50']};
+`;
+
+const PostFooter = styled.div`
+  display: flex;
+  align-items: center;
+
+  & > *:not(:last-child) {
+    margin-right: 0.5rem;
+  }
+`;
 
 function Post(props) {
   const {
-    postID,
-    tags,
+    type,
+    hasAuth,
+    id,
+    topics,
     title,
-    text,
-    stats,
+    description,
+    image,
+    voteStats,
+    replyStats,
     replyTo,
     timestamp,
-    avatar,
-    fullname,
-    username,
-    showControl,
-    type,
+    authorAvatar,
+    authorFullname,
+    authorUsername,
     isDownvote,
     isUpvote,
-    onUpvote,
-    onDownvote
+    handleUpvote,
+    handleDownvote
   } = props;
 
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
   const router = useRouter();
+  const readableTimestamp = formatDistanceToNow(new Date(timestamp), {
+    includeSeconds: true,
+    locale: localeId
+  });
 
-  const onClickPost = (username, postID) => {
-    router.push(`/discussion/${username}/${postID}`);
-  };
-
-  const onReplyClick = e => {
-    e.stopPropagation();
-    setIsModalOpen(true);
-  };
-
-  const onModalClose = () => {
-    setIsModalOpen(false);
+  const onClickPost = (authorUsername, postId) => {
+    router.push(`/discussion/${authorUsername}/${postId}`);
   };
 
   return (
     <PostContainer
       tabIndex="0"
-      onClick={type === 'detail' ? null : () => onClickPost(username, postID)}
+      onClick={type === 'detail' ? null : () => onClickPost(authorUsername, id)}
       type={type}
     >
-      {showControl ? (
-        <PostActionButton
-          isUpvote={isUpvote}
-          isDownvote={isDownvote}
-          onUpvote={onUpvote}
-          onDownvote={onDownvote}
-          voteStats={stats}
-        />
-      ) : null}
-      <PostComment
-        postID={postID}
-        postUsername={username}
-        isModalOpen={isModalOpen}
-        onModalClose={onModalClose}
+      <PostVote
+        isUpvote={isUpvote}
+        isDownvote={isDownvote}
+        handleUpvote={handleUpvote}
+        handleDownvote={handleDownvote}
+        voteStats={voteStats}
       />
       <PostContentContainer>
         {replyTo ? <PostReply replyTo={replyTo} /> : null}
-        {tags ? (
-          <TagGroup>
-            {tags.map((tag, idx) => (
-              <Link key={idx} href={`/explore/${tag.name}`} passHref>
-                <Tag onClick={e => e.stopPropagation()}>{tag.name}</Tag>
-              </Link>
-            ))}
-          </TagGroup>
-        ) : null}
-        <PostActions postUsername={username} onReplyClick={onReplyClick} />
-        {title ? <PostTitle>{title}</PostTitle> : null}
-        {text ? (
-          <PostDescription>{text.substring(0, 255)}...</PostDescription>
-        ) : null}
+        {topics ? <PostTopic topics={topics} /> : null}
+        <PostOption
+          authorUsername={authorUsername}
+          postId={id}
+          hasAuth={hasAuth}
+        />
+        <PostContent title={title} description={description} image={image} />
         <PostFooter>
-          <PostProfile
-            href={`/profile/${username}`}
-            avatar={avatar}
-            name={fullname}
+          <PostAuthor
+            avatar={authorAvatar}
+            fullname={authorFullname}
+            username={authorUsername}
           />
-          {typeof stats?.replies === 'number' ? (
-            <>
-              <Divider />
-              <AnswerStats>{stats.replies} Jawaban</AnswerStats>
-            </>
-          ) : null}
-          {timestamp ? (
-            <>
-              <Divider />
-              <TimeStamp>
-                {formatDistanceToNow(new Date(timestamp), {
-                  includeSeconds: true,
-                  locale: id
-                })}{' '}
-                yang lalu
-              </TimeStamp>
-            </>
-          ) : null}
+          <Divider />
+          <AnswerStats>{replyStats} Jawaban</AnswerStats>
+          <Divider />
+          <TimeStamp>{readableTimestamp} yang lalu</TimeStamp>
         </PostFooter>
       </PostContentContainer>
     </PostContainer>

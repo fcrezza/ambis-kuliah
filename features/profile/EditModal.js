@@ -1,31 +1,112 @@
 import React from 'react';
-import Modal from 'components/Modal';
+import styled, {useTheme} from 'styled-components';
+import {useRouter} from 'next/router';
+import {darken, lighten, parseToRgb} from 'polished';
+import {MdAddAPhoto} from 'react-icons/md';
 import * as yup from 'yup';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {mutate, cache} from 'swr';
 
+import Modal from 'components/Modal';
 import ErrorMessage from 'components/ErrorMessage';
 import {Button, IconButton} from 'components/Button';
-import {
-  ProfileAvatarPreview,
-  ProfileEditContainer,
-  AvatarWrapper,
-  ChangeAvatarIcon,
-  Input,
-  InputGroup,
-  InputLabel,
-  ButtonWrapper,
-  Textarea,
-  Form,
-  ButtonContainer,
-  ImageInput
-} from './style';
 import axios from 'utils/axios';
 import {useUser} from 'utils/user';
-import {useRouter} from 'next/router';
-import {lighten} from 'polished';
-import {useTheme} from 'styled-components';
+
+const ProfileEditContainer = styled.div`
+  padding: 1.5rem;
+`;
+
+const AvatarWrapper = styled.div`
+  padding: 1.5rem 0 3rem;
+`;
+
+const ButtonWrapper = styled.div`
+  text-align: right;
+`;
+
+const Form = styled.form``;
+
+const InputGroup = styled.div`
+  margin-bottom: 2rem;
+`;
+
+const InputLabel = styled.label`
+  color: ${({theme}) => theme.colors['black.150']};
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  display: inline-block;
+`;
+
+const Input = styled.input`
+  padding: 0.8rem;
+  width: 100%;
+  background-color: ${({theme, disabled}) =>
+    disabled ? darken(0.05, theme.colors['gray.50']) : theme.colors['gray.50']};
+  border: 1px solid ${({theme}) => theme.colors['gray.150']};
+  font-size: 1rem;
+  color: ${({theme, disabled}) =>
+    disabled ? theme.colors['black.50'] : theme.colors['black.100']};
+  border-radius: 5px;
+
+  &:hover,
+  &:focus {
+    background-color: ${({theme}) => darken(0.02, theme.colors['gray.50'])};
+  }
+`;
+
+const Textarea = styled.textarea`
+  background-color: ${({theme}) => theme.colors['gray.50']};
+  border: 1px solid ${({theme}) => theme.colors['gray.150']};
+  padding: 0.8rem;
+  font-size: 1rem;
+  width: 100%;
+  color: ${({theme}) => theme.colors['black.100']};
+  min-height: 100px;
+  resize: vertical;
+  display: block;
+  border-radius: 5px;
+
+  &:hover,
+  &:focus {
+    background-color: ${({theme}) => darken(0.02, theme.colors['gray.50'])};
+  }
+`;
+
+const ProfileAvatarPreview = styled.div`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: block;
+  background: ${({theme}) => theme.colors['gray.100']};
+  background-image: url(${({imageUrl}) => imageUrl});
+  background-size: cover;
+  background-repeat: no-repeat;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  background: ${({theme}) =>
+    `rgba(${Object.values(parseToRgb(theme.colors['black.150'])).join(
+      ','
+    )}, 0.4)`};
+`;
+
+const ChangeAvatarIcon = styled(MdAddAPhoto)`
+  font-size: 1.8rem;
+  color: ${({theme}) => theme.colors['orange.50']};
+`;
+
+const ImageInput = styled.input`
+  display: none;
+`;
 
 const schemaValidation = yup.object().shape({
   fullname: yup.string().required('Nama lengkap tidak boleh kosong'),

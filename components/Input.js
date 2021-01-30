@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, {css} from 'styled-components';
-import {lighten} from 'polished';
+import {darken, lighten} from 'polished';
 
 const inputStandalone = css`
   border: ${({theme}) => `1px solid ${theme.colors['gray.100']}`};
@@ -57,6 +57,23 @@ const PasswordVisibilityToggler = styled.button`
   }
 `;
 
+const $TextArea = styled.textarea`
+  background-color: ${({theme}) => theme.colors['gray.50']};
+  border: 0;
+  padding: 0.8rem;
+  font-size: 1rem;
+  width: 100%;
+  color: ${({theme}) => theme.colors['black.100']};
+  min-height: 100px;
+  resize: vertical;
+  display: block;
+
+  &:hover,
+  &:focus {
+    background-color: ${({theme}) => darken(0.02, theme.colors['gray.50'])};
+  }
+`;
+
 export const PasswordInput = React.forwardRef((props, ref) => {
   const {id, name, placeholder} = props;
   const [isPasswordVisible, setPasswordVisibility] = React.useState(false);
@@ -83,3 +100,7 @@ export const PasswordInput = React.forwardRef((props, ref) => {
     </InputWrapper>
   );
 });
+
+export function Textarea() {
+  return <$TextArea />;
+}

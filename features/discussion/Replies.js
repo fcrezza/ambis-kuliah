@@ -6,13 +6,15 @@ import {Button} from 'components/Button';
 
 import Post from 'components/Post';
 import axios from 'utils/axios';
+import {useUser} from 'utils/user';
+import {upvotePost, downvotePost} from 'utils/common/vote';
 
 function fetcher(url) {
   return axios.get(url).then(({data}) => data.data);
 }
 
 function getKey(pageIndex, previousPageData, query) {
-  if (!query) {
+  if (!Object.keys(query).length) {
     return null;
   }
 
@@ -24,14 +26,15 @@ function getKey(pageIndex, previousPageData, query) {
     return null;
   }
 
-  return `/posts/${query.id[0]}/${query.id[1]}/replies?limit=${startOffset},${endOffset}`;
+  return `/posts/${query.authorUsername}/${query.postId}/replies?limit=${startOffset},${endOffset}`;
 }
 
 function ReplyDiscussion() {
-  const router = useRouter();
+  const {query} = useRouter();
+  const {userData} = useUser();
   let hasMore = true;
   const key = (pageIndex, previousPageData) =>
-    getKey(pageIndex, previousPageData, router.query);
+    getKey(pageIndex, previousPageData, query);
   const {data, error, mutate, isValidating, setSize} = useSWRInfinite(
     key,
     fetcher
@@ -44,6 +47,26 @@ function ReplyDiscussion() {
     hasMore = true;
   }
 
+  const handleUpvote = postId => {
+    if (!Object.keys(userData).length) {
+      console.log('youre not login');
+      return;
+    }
+    mutate(prevData => upvotePost(postId, userData.id, prevData.flat()), false);
+  };
+
+  const handleDownvote = postId => {
+    if (!Object.keys(userData).length) {
+      console.log('youre not login');
+      return;
+    }
+
+    mutate(
+      prevData => downvotePost(postId, userData.id, prevData.flat()),
+      false
+    );
+  };
+
   return (
     <InfiniteScroll
       dataLength={replies.length}
@@ -55,17 +78,20 @@ function ReplyDiscussion() {
       {replies.map(post => (
         <Post
           key={post.id}
-          postID={post.id}
+          id={post.id}
           title={post.title}
-          text={post.contents}
+          description={post.contents}
           replyTo={post.replyTo}
-          tags={post.topics}
-          stats={post.stats}
+          voteStats={post.stats.upvotes - post.stats.downvotes}
+          replyStats={post.stats.replies}
           timestamp={post.timestamp}
-          fullname={post.author.fullname}
-          username={post.author.username}
-          avatar={post.author.avatarUrl}
-          showControl
+          authorFullname={post.author.fullname}
+          authorUsername={post.author.username}
+          authorAvatar={post.author.avatar.url}
+          isUpvote={post?.feedback?.upvotes}
+          isDownvote={post?.feedback?.downvotes}
+          handleUpvote={() => handleUpvote(post.id)}
+          handleDownvote={() => handleDownvote(post.id)}
         />
       ))}
       {error && !isValidating && (

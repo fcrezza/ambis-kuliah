@@ -9,7 +9,7 @@ function ProfileAvatar() {
     <Link href={`/profile/${userData?.username}`} passHref>
       <ProfileLink>
         <Avatar
-          src={userData?.avatarUrl}
+          src={userData?.avatar.url}
           alt={`${userData?.username} avatar`}
         />
       </ProfileLink>

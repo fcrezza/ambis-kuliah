@@ -47,21 +47,16 @@ function ProfilePosts({username}) {
   } else {
     hasMore = true;
   }
-  const onUpvote = postId => {
-    if (!Object.keys(userData).length) {
-      console.log('youre not login');
-      return;
-    }
-    mutate(prevData => upvotePost(postId, userData.id, prevData), false);
+
+  const handleUpvote = postId => {
+    mutate(prevData => upvotePost(postId, userData.id, prevData.flat()), false);
   };
 
-  const onDownvote = postId => {
-    if (!Object.keys(userData).length) {
-      console.log('youre not login');
-      return;
-    }
-
-    mutate(prevData => downvotePost(postId, userData.id, prevData), false);
+  const handleDownvote = postId => {
+    mutate(
+      prevData => downvotePost(postId, userData.id, prevData.flat()),
+      false
+    );
   };
 
   return (
@@ -75,20 +70,21 @@ function ProfilePosts({username}) {
       {postData.map(post => (
         <Post
           key={post.id}
-          postID={post.id}
+          id={post.id}
           title={post.title}
-          text={post.contents}
-          tags={post.topics}
-          stats={post.stats.upvotes - post.stats.downvotes}
+          description={post.contents}
+          topics={post.topics}
+          voteStats={post.stats.upvotes - post.stats.downvotes}
+          replyStats={post.stats.replies}
           timestamp={post.timestamp}
-          fullname={post.author.fullname}
-          username={post.author.username}
-          avatar={post.author.avatar.url}
+          authorFullname={post.author.fullname}
+          authorUsername={post.author.username}
+          authorAvatar={post.author.avatar.url}
           isUpvote={post?.feedback?.upvotes}
           isDownvote={post?.feedback?.downvotes}
-          onUpvote={() => onUpvote(post.id)}
-          onDownvote={() => onDownvote(post.id)}
-          showControl
+          handleUpvote={() => handleUpvote(post.id)}
+          handleDownvote={() => handleDownvote(post.id)}
+          hasAuth={userData.id === post.author.id}
         />
       ))}
       {error && !isValidating && (

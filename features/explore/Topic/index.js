@@ -1,14 +1,38 @@
 import React from 'react';
-import useSWR from 'swr';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import {useSWRInfinite} from 'swr';
 import {useRouter} from 'next/router';
 
 import Head from 'components/Head';
 import Post from 'components/Post';
 import {Button} from 'components/Button';
-import {PostSkeleton} from 'components/Skeleton';
 import axios from 'utils/axios';
-import {Container, Title, TitleContainer} from './utils';
 import {useAuth} from 'utils/auth';
+import {upvotePost, downvotePost} from 'utils/common/vote';
+import {Container, Title, TitleContainer} from './utils';
+
+function fetcher(url) {
+  const fetchOptions = {
+    withCredentials: true
+  };
+  return axios.get(url, fetchOptions).then(({data}) => data.data);
+}
+
+function getKey(pageIndex, previousPageData, topic) {
+  if (!topic) {
+    return null;
+  }
+
+  // change this offset
+  const startOffset = 2 * pageIndex + 1;
+  const endOffset = startOffset + 1;
+
+  if (previousPageData && !previousPageData.length) {
+    return null;
+  }
+
+  return `/posts?topics=${topic}&limit=${startOffset},${endOffset}`;
+}
 
 function ExploreTag() {
   const {query} = useRouter();
@@ -19,16 +43,37 @@ function ExploreTag() {
     const isExist = userTopics.includes(tag);
     return isExist;
   });
-  const {data: postsData, mutate, error, isValidating} = useSWR(
-    tag ? ['/posts', tag] : null,
-    (url, arg) => {
-      const combinedUrl = `${url}?topics=${arg}`;
-      const fetchOptions = {
-        withCredentials: true
-      };
-      return axios.get(combinedUrl, fetchOptions).then(({data}) => data.data);
-    }
+  const key = (pageIndex, previousPageData) =>
+    getKey(pageIndex, previousPageData, tag);
+  const {data, error, mutate, isValidating, setSize} = useSWRInfinite(
+    key,
+    fetcher
   );
+  let hasMore = true;
+  const postData = Array.isArray(data) ? data.flat() : [];
+
+  if ((Array.isArray(data) && !data[data.length - 1].length) || error) {
+    hasMore = false;
+  } else {
+    hasMore = true;
+  }
+
+  const onUpvote = postId => {
+    if (!Object.keys(userData).length) {
+      console.log('youre not login');
+      return;
+    }
+    mutate(prevData => upvotePost(postId, userData.id, prevData), false);
+  };
+
+  const onDownvote = postId => {
+    if (!Object.keys(userData).length) {
+      console.log('youre not login');
+      return;
+    }
+
+    mutate(prevData => downvotePost(postId, userData.id, prevData), false);
+  };
 
   const onFollowButtonClick = () => {
     setIsFollowed(prevState => !prevState);
@@ -46,43 +91,44 @@ function ExploreTag() {
           {isFollowed ? 'Diikuti' : 'Ikuti'}
         </Button>
       </TitleContainer>
-      {/* display error message when can't fetch posts data */}
-      {error ? (
-        <div>
-          <h2>Tidak dapat memuat data</h2>
-          <Button onClick={mutate}>Coba lagi</Button>
-        </div>
-      ) : null}
-      {/* display posts */}
-      {postsData?.length && !error
-        ? postsData.map(post => (
+      <InfiniteScroll
+        dataLength={postData.length}
+        next={() => setSize(size => size + 1)}
+        hasMore={isValidating || hasMore}
+        loader={<p style={{textAlign: 'center'}}>Memuat lebih banyak...</p>}
+        scrollThreshold="0px"
+      >
+        {postData.length ? (
+          postData.map(post => (
             <Post
               key={post.id}
               postID={post.id}
               title={post.title}
               text={post.contents}
               tags={post.topics}
-              stats={post.stats}
+              voteStats={post.stats.upvotes - post.stats.downvotes}
+              replyStats={post.stats.replies}
               timestamp={post.timestamp}
               fullname={post.author.fullname}
               username={post.author.username}
-              avatar={post.author.avatarUrl}
+              avatar={post.author.avatar.url}
+              isUpvote={post?.feedback?.upvotes}
+              isDownvote={post?.feedback?.downvotes}
+              onUpvote={() => onUpvote(post.id)}
+              onDownvote={() => onDownvote(post.id)}
               showControl
             />
           ))
-        : null}
-      {/* display message when there are no posts related to user topics */}
-      {!isValidating && !postsData?.length && !error ? (
-        <div>Tidak ada apa-apa disini</div>
-      ) : null}
-      {/* display loading skeleton when fetching the data */}
-      {isValidating && !error ? (
-        <div>
-          <PostSkeleton uniqueKey="post-skeleton-1" />
-          <PostSkeleton uniqueKey="post-skeleton-2" />
-          <PostSkeleton uniqueKey="post-skeleton-3" />
-        </div>
-      ) : null}
+        ) : (
+          <div>Tidak ada apa-apa disini</div>
+        )}
+        {error && !isValidating && (
+          <div style={{textAlign: 'center'}}>
+            <h2 style={{padding: '2rem'}}>Tidak dapat memuat data</h2>
+            <Button onClick={() => mutate()}>Coba lagi</Button>
+          </div>
+        )}
+      </InfiniteScroll>
     </Container>
   );
 }

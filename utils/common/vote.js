@@ -1,66 +1,37 @@
 import axios from 'utils/axios';
+import produce from 'immer';
 
 export function upvotePost(postId, userId, prevData) {
   let hasUpvote = false;
   let hasDownvote = false;
-  const newData = prevData.flat().map(post => {
-    if (post.id === postId) {
-      if (post.feedback.upvotes) {
-        hasUpvote = true;
-        post = {
-          ...post,
-          feedback: {
-            ...post.feedback,
-            upvotes: false
-          },
-          stats: {
-            ...post.stats,
-            upvotes: post.stats.upvotes - 1
-          }
-        };
-
-        return post;
-      }
-
-      if (post.feedback.downvotes) {
-        hasDownvote = true;
-        post = {
-          ...post,
-          feedback: {
-            upvotes: true,
-            downvotes: false
-          },
-          stats: {
-            upvotes: post.stats.upvotes + 1,
-            downvotes: post.stats.downvotes - 1
-          }
-        };
-        return post;
-      }
-
-      post = {
-        ...post,
-        feedback: {
-          ...post.feedback,
-          upvotes: true
-        },
-        stats: {
-          ...post.stats,
-          upvotes: post.stats.upvotes + 1
-        }
-      };
-      return post;
+  const newData = produce(prevData, draft => {
+    const post = Array.isArray(draft)
+      ? draft.find(p => p.id === postId)
+      : draft;
+    if (post.feedback.upvotes) {
+      hasUpvote = true;
+      post.feedback.upvotes = false;
+      post.stats.upvotes--;
+    } else if (post.feedback.downvotes) {
+      hasDownvote = true;
+      post.feedback.downvotes = false;
+      post.feedback.upvotes = true;
+      post.stats.downvotes--;
+      post.stats.upvotes++;
+    } else {
+      post.feedback.upvotes = true;
+      post.stats.upvotes++;
     }
-
-    return post;
   });
 
   if (hasUpvote) {
-    unUpvote(postId, userId);
+    unUpvote(Number(postId), Number(userId));
   } else if (hasDownvote) {
-    unDownvote(postId, userId).then(() => upvote(postId, userId));
+    unDownvote(Number(postId), Number(userId)).then(() =>
+      upvote(Number(postId), Number(userId))
+    );
   } else {
-    upvote(postId, userId);
+    upvote(Number(postId), Number(userId));
   }
 
   return newData;
@@ -69,92 +40,62 @@ export function upvotePost(postId, userId, prevData) {
 export function downvotePost(postId, userId, prevData) {
   let hasUpvote = false;
   let hasDownvote = false;
-  const newData = prevData.flat().map(post => {
-    if (post.id === postId) {
-      if (post.feedback.downvotes) {
-        hasDownvote = true;
-        post = {
-          ...post,
-          feedback: {
-            ...post.feedback,
-            downvotes: false
-          },
-          stats: {
-            ...post.stats,
-            downvotes: post.stats.downvotes - 1
-          }
-        };
-        return post;
-      }
-
-      if (post.feedback.upvotes) {
-        hasUpvote = true;
-        post = {
-          ...post,
-          feedback: {
-            upvotes: false,
-            downvotes: true
-          },
-          stats: {
-            upvotes: post.stats.upvotes - 1,
-            downvotes: post.stats.downvotes + 1
-          }
-        };
-        return post;
-      }
-
-      post = {
-        ...post,
-        feedback: {
-          ...post.feedback,
-          downvotes: true
-        },
-        stats: {
-          ...post.stats,
-          downvotes: post.stats.downvotes + 1
-        }
-      };
-      return post;
+  const newData = produce(prevData, draft => {
+    const post = Array.isArray(draft)
+      ? draft.find(p => p.id === postId)
+      : draft;
+    if (post.feedback.downvotes) {
+      hasDownvote = true;
+      post.feedback.downvotes = false;
+      post.stats.downvotes--;
+    } else if (post.feedback.upvotes) {
+      hasUpvote = true;
+      post.feedback.upvotes = false;
+      post.feedback.downvotes = true;
+      post.stats.upvotes--;
+      post.stats.downvotes++;
+    } else {
+      post.feedback.downvotes = true;
+      post.stats.downvotes++;
     }
-
-    return post;
   });
 
   if (hasDownvote) {
-    unDownvote(postId, userId);
+    unDownvote(Number(postId), Number(userId));
   } else if (hasUpvote) {
-    unUpvote(postId, userId).then(() => downvote(postId, userId));
+    unUpvote(Number(postId), Number(userId)).then(() =>
+      downvote(Number(postId), Number(userId))
+    );
   } else {
-    downvote(postId, userId);
+    downvote(Number(postId), Number(userId));
   }
 
   return newData;
 }
 
-// handle server request and catch/ignore error when error happen
+/**
+ * functions bellow handle server request and
+ * catch/ignore error when error happen
+ */
 
 function downvote(postId, userId) {
   const url = `/posts/${postId}/downvotes`;
-  const data = {postId, userId: Number(userId)};
-  const options = {withCredentials: true};
-  axios.post(url, data, options).catch(() => null);
+  const data = {postId, userId};
+  axios.post(url, data).catch(() => null);
 }
 
 function upvote(postId, userId) {
   const url = `/posts/${postId}/upvotes`;
-  const data = {postId, userId: Number(userId)};
-  const options = {withCredentials: true};
-  axios.post(url, data, options).catch(() => null);
+  const data = {postId, userId};
+  axios.post(url, data).catch(() => null);
 }
 
 function unUpvote(postId, userId) {
   const url = `/posts/${postId}/upvotes/${userId}`;
-  const options = {withCredentials: true};
-  return axios.delete(url, options).catch(() => null);
+  return axios.delete(url).catch(() => null);
 }
 
 function unDownvote(postId, userId) {
   const url = `/posts/${postId}/downvotes/${userId}`;
-  const options = {withCredentials: true};
-  return axios.delete(url, options).catch(() => null);
+  return axios.delete(url).catch(() => null);
 }

@@ -4,6 +4,7 @@ import 'focus-visible/dist/focus-visible.min.js';
 import 'fontsource-inter/400-normal.css';
 import 'fontsource-inter/500-normal.css';
 import 'fontsource-inter/700-normal.css';
+import {enableES5} from 'immer';
 
 import Navigation from 'features/navigation';
 import HotTopics from 'features/hotTopics';
@@ -15,6 +16,7 @@ import {ThemeProvider} from 'utils/styles/Theme';
 import GlobalSWRConfig from 'utils/swr';
 
 ReactModal.setAppElement('#__next');
+enableES5();
 
 function MyApp({Component, pageProps}) {
   return (
