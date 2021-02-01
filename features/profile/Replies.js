@@ -5,7 +5,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Post from 'components/Post';
 import {Button} from 'components/Button';
 import axios from 'utils/axios';
-import {upvotePost, downvotePost} from 'utils/common/vote';
+import {upvotePost, downvotePost, deletePost} from 'utils/common/post';
 import {useUser} from 'utils/user';
 
 function fetcher(url) {
@@ -68,6 +68,17 @@ function ProfileReplies({username}) {
     );
   };
 
+  const handleDelete = postId => {
+    try {
+      mutate(
+        prevData => deletePost(postId, userData.username, prevData.flat()),
+        false
+      );
+    } catch (e) {
+      alert('upzzz ada yang tidak beres, coba lagi');
+    }
+  };
+
   return (
     <InfiniteScroll
       dataLength={postData.length}
@@ -93,6 +104,7 @@ function ProfileReplies({username}) {
           isDownvote={post?.feedback?.downvotes}
           handleUpvote={() => handleUpvote(post.id)}
           handleDownvote={() => handleDownvote(post.id)}
+          handleDelete={() => handleDelete(post.id)}
           hasAuth={userData.id === post.author.id}
         />
       ))}

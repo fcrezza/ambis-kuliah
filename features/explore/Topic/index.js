@@ -8,7 +8,7 @@ import Post from 'components/Post';
 import {Button} from 'components/Button';
 import axios from 'utils/axios';
 import {useAuth} from 'utils/auth';
-import {upvotePost, downvotePost} from 'utils/common/vote';
+import {upvotePost, downvotePost} from 'utils/common/post';
 import {Container, Title, TitleContainer} from './utils';
 
 function fetcher(url) {

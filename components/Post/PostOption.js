@@ -61,7 +61,7 @@ const PopoverOverlay = styled.div`
  * - Make Component Keyboard Accesibble (ie: trap focus when popover open, hide popover when press esc key)
  */
 
-function PostOption({hasAuth, postId, authorUsername}) {
+function PostOption({hasAuth, postId, authorUsername, handleDelete}) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isOptionVisible, setOptionVisibility] = React.useState(false);
   const popoverOvelayRef = React.useRef();
@@ -70,7 +70,9 @@ function PostOption({hasAuth, postId, authorUsername}) {
     setIsModalOpen(false);
   };
 
-  const handleDelete = () => {};
+  const onClickDelete = () => {
+    handleDelete();
+  };
 
   const handleReply = () => {
     setOptionVisibility(false);
@@ -104,7 +106,7 @@ function PostOption({hasAuth, postId, authorUsername}) {
         content={
           <OptionContainer>
             {hasAuth ? (
-              <OptionItem onClick={handleDelete}>Hapus</OptionItem>
+              <OptionItem onClick={onClickDelete}>Hapus</OptionItem>
             ) : null}
             <OptionItem onClick={handleReply}>Balas</OptionItem>
           </OptionContainer>

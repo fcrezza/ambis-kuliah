@@ -7,7 +7,7 @@ import {Button} from 'components/Button';
 import Post from 'components/Post';
 import axios from 'utils/axios';
 import {useUser} from 'utils/user';
-import {upvotePost, downvotePost} from 'utils/common/vote';
+import {upvotePost, downvotePost} from 'utils/common/post';
 
 function fetcher(url) {
   return axios.get(url).then(({data}) => data.data);

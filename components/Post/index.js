@@ -82,7 +82,8 @@ function Post(props) {
     isDownvote,
     isUpvote,
     handleUpvote,
-    handleDownvote
+    handleDownvote,
+    handleDelete
   } = props;
 
   const router = useRouter();
@@ -115,6 +116,7 @@ function Post(props) {
           authorUsername={authorUsername}
           postId={id}
           hasAuth={hasAuth}
+          handleDelete={handleDelete}
         />
         <PostContent title={title} description={description} image={image} />
         <PostFooter>

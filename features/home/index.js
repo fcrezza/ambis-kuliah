@@ -7,7 +7,7 @@ import useRoute from 'utils/route';
 import axios from 'utils/axios';
 import {Button} from 'components/Button';
 import {useAuth} from 'utils/auth';
-import {upvotePost, downvotePost} from 'utils/common/vote';
+import {upvotePost, downvotePost} from 'utils/common/post';
 import {
   HomeContainer,
   TitleContainer,

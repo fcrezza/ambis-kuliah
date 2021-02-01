@@ -5,7 +5,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Post from 'components/Post';
 import {Button} from 'components/Button';
 import axios from 'utils/axios';
-import {upvotePost, downvotePost} from 'utils/common/vote';
+import {upvotePost, downvotePost, deletePost} from 'utils/common/post';
 import {useUser} from 'utils/user';
 
 function fetcher(url) {
@@ -41,8 +41,10 @@ function ProfilePosts({username}) {
   );
   let hasMore = true;
   const postData = Array.isArray(data) ? data.flat() : [];
-
-  if ((Array.isArray(data) && !data[data.length - 1].length) || error) {
+  if (
+    (Array.isArray(data) && data.length && !data[data.length - 1].length) ||
+    error
+  ) {
     hasMore = false;
   } else {
     hasMore = true;
@@ -57,6 +59,17 @@ function ProfilePosts({username}) {
       prevData => downvotePost(postId, userData.id, prevData.flat()),
       false
     );
+  };
+
+  const handleDelete = postId => {
+    try {
+      mutate(
+        prevData => deletePost(postId, userData.username, prevData.flat()),
+        false
+      );
+    } catch (e) {
+      alert('upzzz ada yang tidak beres, coba lagi');
+    }
   };
 
   return (
@@ -84,6 +97,7 @@ function ProfilePosts({username}) {
           isDownvote={post?.feedback?.downvotes}
           handleUpvote={() => handleUpvote(post.id)}
           handleDownvote={() => handleDownvote(post.id)}
+          handleDelete={() => handleDelete(post.id)}
           hasAuth={userData.id === post.author.id}
         />
       ))}

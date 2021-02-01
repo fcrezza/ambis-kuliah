@@ -73,6 +73,12 @@ export function downvotePost(postId, userId, prevData) {
   return newData;
 }
 
+export function deletePost(postId, username, prevData) {
+  const newData = prevData.filter(p => Number(p.id) !== Number(postId));
+  axios.delete(`/posts/${username}/${postId}`);
+  return newData;
+}
+
 /**
  * functions bellow handle server request and
  * catch/ignore error when error happen
