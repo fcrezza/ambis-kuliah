@@ -1,19 +1,19 @@
 import styled from 'styled-components';
 import {darken} from 'polished';
 
-export const InputGroup = styled.div`
+const EditorContainer = styled.div`
   border-radius: 5px;
   width: 100%;
   border: 1px solid ${({theme}) => theme.colors['gray.150']};
 `;
 
-export const Divider = styled.div`
+const Divider = styled.div`
   height: 1px;
   width: 100%;
   background-color: ${({theme}) => theme.colors['gray.150']};
 `;
 
-export const TitleInput = styled.input`
+const TitleInput = styled.input`
   padding: 0.8rem;
   width: 100%;
   background-color: ${({theme}) => theme.colors['gray.50']};
@@ -27,7 +27,7 @@ export const TitleInput = styled.input`
   }
 `;
 
-export const DescriptionInput = styled.textarea`
+const DescriptionInput = styled.textarea`
   background-color: ${({theme}) => theme.colors['gray.50']};
   border: 0;
   padding: 0.8rem;
@@ -43,3 +43,23 @@ export const DescriptionInput = styled.textarea`
     background-color: ${({theme}) => darken(0.02, theme.colors['gray.50'])};
   }
 `;
+
+function Input({title, onChangeTitle, description, onChangeDescription}) {
+  return (
+    <EditorContainer>
+      <TitleInput
+        value={title}
+        onChange={onChangeTitle}
+        placeholder="Judul Diskusi..."
+      />
+      <Divider />
+      <DescriptionInput
+        placeholder="Deskripsi Diskusi..."
+        value={description}
+        onChange={onChangeDescription}
+      />
+    </EditorContainer>
+  );
+}
+
+export default Input;

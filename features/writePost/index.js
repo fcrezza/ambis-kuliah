@@ -1,40 +1,106 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import UserAvatar from './UserAvatar';
-import WritePostInput from './Inputs';
-import WritePostAttachments from './Attachments';
-import WritePostButtons from './Buttons';
-import {WritePostContainer, EditorContainer} from './utils';
+import Input from './Input';
+import AttachmentValue from './AttachmentValue';
+import AttachementButton from './AttachmentButton';
+import axios from 'utils/axios';
+import {useUser} from 'utils/user';
 
-function WritePost() {
-  const [titleValue, setInputTitle] = React.useState('');
-  const [imageAttachment, setImageAttachment] = React.useState(null);
-  const [tags, setTags] = React.useState([]);
-  const imgAttachmentRef = React.useRef();
+export const WritePostContainer = styled.div`
+  padding: 2rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  border: 1px solid ${({theme}) => theme.colors['gray.150']};
+`;
 
-  const onChange = e => {
-    setImageAttachment(e.target.files[0]);
+export const EditorContainer = styled.div`
+  margin-left: 2rem;
+  width: 100%;
+`;
+
+export const ErrorMessage = styled.p`
+  margin: 1rem 0;
+  font-size: 1rem;
+  color: ${({theme}) => theme.colors['red.50']};
+`;
+
+function WritePost({onSubmitPost = () => {}}) {
+  const {userData} = useUser();
+  const [title, setTitle] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [topics, setTopics] = React.useState([]);
+  const [image, setImage] = React.useState(null);
+  const imageInputRef = React.useRef();
+  const [requestStatus, setRequestStatus] = React.useState('iddle');
+  const [error, setError] = React.useState('');
+
+  const onChangeImage = e => {
+    setImage(e.target.files[0]);
   };
 
-  const onSelectedImage = () => {
-    imgAttachmentRef.current.click();
+  const onClickImage = () => {
+    imageInputRef.current.click();
   };
 
-  const onCancelImage = () => {
-    setImageAttachment(null);
+  const onClickCancelImage = () => {
+    setImage(null);
   };
 
-  const onTitleChange = e => {
-    setInputTitle(e.target.value);
+  const onChangeTitle = e => {
+    setTitle(e.target.value);
   };
 
-  const onClickTag = newTag => {
-    if (tags.includes(newTag)) {
-      return setTags(prevState => prevState.filter(tag => tag !== newTag));
+  const onChangeDescription = e => {
+    setDescription(e.target.value);
+  };
+
+  const onClickTopic = topic => {
+    if (topics.includes(topic)) {
+      return setTopics(prevState => prevState.filter(t => t.id !== topic.id));
     }
 
-    if (tags.length < 3) {
-      setTags(prevState => [...prevState, newTag]);
+    if (topics.length < 3) {
+      setTopics(prevState => [...prevState, topic]);
+    }
+  };
+
+  const onSubmit = async () => {
+    try {
+      if (!topics.length) {
+        setError('Postingan harus memiliki minimal 1 topik');
+        return;
+      }
+      setError('');
+      setRequestStatus('loading');
+      const fd = new FormData();
+
+      if (image) {
+        fd.append('image', image);
+      }
+
+      fd.append('title', title);
+      fd.append('description', description);
+      fd.append(
+        'topics',
+        JSON.stringify(topics.map(topic => Number(topic.id)))
+      );
+      await axios.post(`/posts/${userData.username}`, fd);
+      setRequestStatus('success');
+      setImage(null);
+      setTopics([]);
+      setTitle('');
+      setDescription('');
+      alert('berhasil!');
+      onSubmitPost();
+    } catch (error) {
+      if (error.response) {
+        setError(error.response.data.data.message);
+      } else {
+        setError('Upss, ada yang salah');
+      }
+      setRequestStatus('failed');
     }
   };
 
@@ -42,21 +108,29 @@ function WritePost() {
     <WritePostContainer>
       <UserAvatar />
       <EditorContainer>
-        <WritePostInput titleValue={titleValue} onTitleChange={onTitleChange} />
-        <WritePostAttachments
-          imageAttachment={imageAttachment}
-          onCancelImage={onCancelImage}
-          tags={tags}
-          onClickTag={onClickTag}
+        <Input
+          title={title}
+          description={description}
+          onChangeTitle={onChangeTitle}
+          onChangeDescription={onChangeDescription}
         />
-        <WritePostButtons
-          onSelectedImage={onSelectedImage}
-          imageAttachment={imageAttachment}
-          imgAttachmentRef={imgAttachmentRef}
-          onChange={onChange}
-          tags={tags}
-          onClickTag={onClickTag}
-          titleValue={titleValue}
+        {error ? <ErrorMessage>{error}</ErrorMessage> : null}
+        <AttachmentValue
+          imageName={image?.name && `${image.name.substring(0, 20)}...`}
+          topics={topics}
+          onClickCancelImage={onClickCancelImage}
+          onClickTopic={onClickTopic}
+        />
+        <AttachementButton
+          isTitlePresent={Boolean(title)}
+          isImagePresent={Boolean(image)}
+          isSubmitting={requestStatus === 'loading'}
+          topics={topics}
+          imageInputRef={imageInputRef}
+          onSubmit={onSubmit}
+          onClickImage={onClickImage}
+          onChangeImage={onChangeImage}
+          onClickTopic={onClickTopic}
         />
       </EditorContainer>
     </WritePostContainer>
@@ -64,3 +138,10 @@ function WritePost() {
 }
 
 export default WritePost;
+
+/**
+ * 1. Make sure title filled (if not disable the button)
+ * 2. Make sure not more than 3 topics (if not show alert/warning or whatever)
+ * 3. handle submit
+ * 4. handle exception
+ */

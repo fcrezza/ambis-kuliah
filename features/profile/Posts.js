@@ -21,8 +21,8 @@ function getKey(pageIndex, previousPageData, username) {
   }
 
   // change this offset
-  const startOffset = 2 * pageIndex + 1;
-  const endOffset = startOffset + 1;
+  const startOffset = 20 * pageIndex || 1;
+  const endOffset = 20;
 
   if (previousPageData && !previousPageData.length) {
     return null;
@@ -80,27 +80,33 @@ function ProfilePosts({username}) {
       loader={<p style={{textAlign: 'center'}}>Memuat lebih banyak...</p>}
       scrollThreshold="0px"
     >
-      {postData.map(post => (
-        <Post
-          key={post.id}
-          id={post.id}
-          title={post.title}
-          description={post.contents}
-          topics={post.topics}
-          voteStats={post.stats.upvotes - post.stats.downvotes}
-          replyStats={post.stats.replies}
-          timestamp={post.timestamp}
-          authorFullname={post.author.fullname}
-          authorUsername={post.author.username}
-          authorAvatar={post.author.avatar.url}
-          isUpvote={post?.feedback?.upvotes}
-          isDownvote={post?.feedback?.downvotes}
-          handleUpvote={() => handleUpvote(post.id)}
-          handleDownvote={() => handleDownvote(post.id)}
-          handleDelete={() => handleDelete(post.id)}
-          hasAuth={userData.id === post.author.id}
-        />
-      ))}
+      {postData.length ? (
+        postData.map(post => (
+          <Post
+            key={post.id}
+            id={post.id}
+            title={post.title}
+            description={post.contents}
+            topics={post.topics}
+            voteStats={post.stats.upvotes - post.stats.downvotes}
+            replyStats={post.stats.replies}
+            timestamp={post.timestamp}
+            authorFullname={post.author.fullname}
+            authorUsername={post.author.username}
+            authorAvatar={post.author.avatar.url}
+            isUpvote={post?.feedback?.upvotes}
+            isDownvote={post?.feedback?.downvotes}
+            handleUpvote={() => handleUpvote(post.id)}
+            handleDownvote={() => handleDownvote(post.id)}
+            handleDelete={() => handleDelete(post.id)}
+            hasAuth={userData.id === post.author.id}
+          />
+        ))
+      ) : (
+        <div style={{textAlign: 'center', padding: '2rem'}}>
+          Tidak ada apa-apa disini
+        </div>
+      )}
       {error && !isValidating && (
         <div style={{textAlign: 'center'}}>
           <h2 style={{padding: '2rem'}}>Tidak dapat memuat data</h2>

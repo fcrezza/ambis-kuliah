@@ -18,6 +18,7 @@ const ProfileContainer = styled.main`
   flex: 1;
   border-radius: 5px;
   border: 1px solid #d9d9d9;
+  min-height: 100vh;
 
   @media screen and (max-width: 768px) {
     border: 0;

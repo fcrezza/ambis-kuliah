@@ -5,7 +5,7 @@ import useLayout from './useLayout';
 const LayoutContainer = styled.div`
   max-width: 1440px;
   margin: 0 auto;
-  padding: 40px 100px;
+  padding: 40px 100px 0;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;

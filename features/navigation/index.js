@@ -17,7 +17,7 @@ function Navigation() {
         onClose={onModalClose}
         isOpen={isModalOpen}
       >
-        <WritePost />
+        <WritePost onSubmitPost={onModalClose} />
       </Modal>
       <DesktopNavigation isShowed={isShowed} onClickWrite={onClickWrite} />
       {!isModalOpen && (
