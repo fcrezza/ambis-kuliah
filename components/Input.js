@@ -72,6 +72,8 @@ const $TextArea = styled.textarea`
   &:focus {
     background-color: ${({theme}) => darken(0.02, theme.colors['gray.50'])};
   }
+
+  ${({styles}) => ({...styles})};
 `;
 
 export const PasswordInput = React.forwardRef((props, ref) => {
@@ -101,6 +103,14 @@ export const PasswordInput = React.forwardRef((props, ref) => {
   );
 });
 
-export function Textarea() {
-  return <$TextArea />;
+export function Textarea({onChange, value, placeholder, name, styles}) {
+  return (
+    <$TextArea
+      name={name}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      styles={styles}
+    />
+  );
 }

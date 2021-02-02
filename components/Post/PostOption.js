@@ -7,7 +7,6 @@ import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
 
 import {IconButton} from 'components/Button';
-import PostReplyModal from './PostReplyModal';
 import {PreventBubblingComponent} from './utils';
 
 const OptionButtonContainer = styled.div`
@@ -61,22 +60,12 @@ const PopoverOverlay = styled.div`
  * - Make Component Keyboard Accesibble (ie: trap focus when popover open, hide popover when press esc key)
  */
 
-function PostOption({hasAuth, postId, authorUsername, handleDelete}) {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+function PostOption({hasAuth, handleDelete}) {
   const [isOptionVisible, setOptionVisibility] = React.useState(false);
   const popoverOvelayRef = React.useRef();
 
-  const onModalClose = () => {
-    setIsModalOpen(false);
-  };
-
   const onClickDelete = () => {
     handleDelete();
-  };
-
-  const handleReply = () => {
-    setOptionVisibility(false);
-    setIsModalOpen(true);
   };
 
   const handleShowOption = () => {
@@ -87,47 +76,40 @@ function PostOption({hasAuth, postId, authorUsername, handleDelete}) {
     setOptionVisibility(false);
   };
 
-  return (
-    <PreventBubblingComponent>
-      {hasAuth ? (
-        <PostReplyModal
-          postId={postId}
-          postUsername={authorUsername}
-          isModalOpen={isModalOpen}
-          onModalClose={onModalClose}
+  if (hasAuth) {
+    return (
+      <PreventBubblingComponent>
+        <PopoverOverlay
+          ref={popoverOvelayRef}
+          isOpen={isOptionVisible}
+          onClick={handleHideOption}
         />
-      ) : null}
-      <PopoverOverlay
-        ref={popoverOvelayRef}
-        isOpen={isOptionVisible}
-        onClick={handleHideOption}
-      />
-      <Tippy
-        content={
-          <OptionContainer>
-            {hasAuth ? (
+        <Tippy
+          content={
+            <OptionContainer>
               <OptionItem onClick={onClickDelete}>Hapus</OptionItem>
-            ) : null}
-            <OptionItem onClick={handleReply}>Balas</OptionItem>
-          </OptionContainer>
-        }
-        appendTo={popoverOvelayRef.current}
-        animation={false}
-        visible={isOptionVisible}
-        placement="left-start"
-        theme="light"
-        arrow={false}
-        offset={[0, -37]}
-        interactive
-      >
-        <OptionButtonContainer>
-          <IconButton onClick={handleShowOption}>
-            <ButtonIcon />
-          </IconButton>
-        </OptionButtonContainer>
-      </Tippy>
-    </PreventBubblingComponent>
-  );
+            </OptionContainer>
+          }
+          appendTo={popoverOvelayRef.current}
+          animation={false}
+          visible={isOptionVisible}
+          placement="left-start"
+          theme="light"
+          arrow={false}
+          offset={[0, -37]}
+          interactive
+        >
+          <OptionButtonContainer>
+            <IconButton onClick={handleShowOption}>
+              <ButtonIcon />
+            </IconButton>
+          </OptionButtonContainer>
+        </Tippy>
+      </PreventBubblingComponent>
+    );
+  }
+
+  return null;
 }
 
 export default PostOption;

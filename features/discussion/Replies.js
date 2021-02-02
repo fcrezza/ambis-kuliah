@@ -1,20 +1,15 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {useRouter} from 'next/router';
 import {useSWRInfinite} from 'swr';
 import {Button} from 'components/Button';
 
 import Post from 'components/Post';
 import axios from 'utils/axios';
 import {useUser} from 'utils/user';
-import {upvotePost, downvotePost} from 'utils/common/post';
+import {upvotePost, downvotePost, deletePost} from 'utils/common/post';
 
-function fetcher(url) {
-  return axios.get(url).then(({data}) => data.data);
-}
-
-function getKey(pageIndex, previousPageData, query) {
-  if (!Object.keys(query).length) {
+function getKey(pageIndex, previousPageData, postContext) {
+  if (!Object.keys(postContext).length) {
     return null;
   }
 
@@ -26,18 +21,17 @@ function getKey(pageIndex, previousPageData, query) {
     return null;
   }
 
-  return `/posts/${query.authorUsername}/${query.postId}/replies?limit=${startOffset},${endOffset}`;
+  return `/posts/${postContext.authorUsername}/${postContext.postId}/replies?limit=${startOffset},${endOffset}`;
 }
 
-function ReplyDiscussion() {
-  const {query} = useRouter();
+function ReplyDiscussion({postId, authorUsername}) {
   const {userData} = useUser();
   let hasMore = true;
   const key = (pageIndex, previousPageData) =>
-    getKey(pageIndex, previousPageData, query);
+    getKey(pageIndex, previousPageData, {postId, authorUsername});
   const {data, error, mutate, isValidating, setSize} = useSWRInfinite(
     key,
-    fetcher
+    url => axios.get(url).then(({data}) => data.data)
   );
   const replies = Array.isArray(data) ? [].concat(...data) : [];
 
@@ -67,6 +61,17 @@ function ReplyDiscussion() {
     );
   };
 
+  const handleDelete = postId => {
+    try {
+      mutate(
+        prevData => deletePost(postId, userData.username, prevData.flat()),
+        false
+      );
+    } catch (e) {
+      alert('upzzz ada yang tidak beres, coba lagi');
+    }
+  };
+
   return (
     <InfiniteScroll
       dataLength={replies.length}
@@ -92,6 +97,8 @@ function ReplyDiscussion() {
           isDownvote={post?.feedback?.downvotes}
           handleUpvote={() => handleUpvote(post.id)}
           handleDownvote={() => handleDownvote(post.id)}
+          handleDelete={() => handleDelete(post.id)}
+          hasAuth={post.author.username === userData?.username}
         />
       ))}
       {error && !isValidating && (

@@ -3,7 +3,7 @@ import React from 'react';
 import MobileNavigation from './MobileNavigation';
 import DesktopNavigation from './DesktopNavigation';
 import useNavigation from './useNavigation';
-import WritePost from 'features/writePost';
+import WritePost from 'components/writePost';
 import Modal from 'components/Modal';
 
 function Navigation() {

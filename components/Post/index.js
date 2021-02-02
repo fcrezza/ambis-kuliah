@@ -92,14 +92,14 @@ function Post(props) {
     locale: localeId
   });
 
-  const onClickPost = (authorUsername, postId) => {
-    router.push(`/discussion/${authorUsername}/${postId}`);
+  const onClick = () => {
+    router.push(`/discussion/${authorUsername}/${id}`);
   };
 
   return (
     <PostContainer
       tabIndex="0"
-      onClick={type === 'detail' ? null : () => onClickPost(authorUsername, id)}
+      onClick={type === 'detail' ? null : onClick}
       type={type}
     >
       <PostVote
@@ -112,12 +112,7 @@ function Post(props) {
       <PostContentContainer>
         {replyTo ? <PostReply replyTo={replyTo} /> : null}
         {topics ? <PostTopic topics={topics} /> : null}
-        <PostOption
-          authorUsername={authorUsername}
-          postId={id}
-          hasAuth={hasAuth}
-          handleDelete={handleDelete}
-        />
+        <PostOption hasAuth={hasAuth} handleDelete={handleDelete} />
         <PostContent title={title} description={description} image={image} />
         <PostFooter>
           <PostAuthor

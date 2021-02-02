@@ -74,7 +74,9 @@ export function downvotePost(postId, userId, prevData) {
 }
 
 export function deletePost(postId, username, prevData) {
-  const newData = prevData.filter(p => Number(p.id) !== Number(postId));
+  const newData = prevData
+    ? prevData.filter(p => Number(p.id) !== Number(postId))
+    : null;
   axios.delete(`/posts/${username}/${postId}`);
   return newData;
 }

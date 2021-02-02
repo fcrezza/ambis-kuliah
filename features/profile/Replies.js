@@ -106,7 +106,7 @@ function ProfileReplies({username}) {
             handleUpvote={() => handleUpvote(post.id)}
             handleDownvote={() => handleDownvote(post.id)}
             handleDelete={() => handleDelete(post.id)}
-            hasAuth={userData.id === post.author.id}
+            hasAuth={userData?.id === post.author.id}
           />
         ))
       ) : (

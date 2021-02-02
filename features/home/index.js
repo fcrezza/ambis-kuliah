@@ -1,7 +1,7 @@
 import {useSWRInfinite} from 'swr';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-import WritePost from 'features/writePost';
+import WritePost from 'components/writePost';
 import Post from 'components/Post';
 import useRoute from 'utils/route';
 import axios from 'utils/axios';
