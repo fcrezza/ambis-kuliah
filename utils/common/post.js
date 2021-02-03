@@ -1,10 +1,10 @@
 import axios from 'utils/axios';
-import produce from 'immer';
+import IProduce from 'immer';
 
 export function upvotePost(postId, userId, prevData) {
   let hasUpvote = false;
   let hasDownvote = false;
-  const newData = produce(prevData, draft => {
+  const newData = IProduce(prevData, draft => {
     const post = Array.isArray(draft)
       ? draft.find(p => p.id === postId)
       : draft;
@@ -40,7 +40,7 @@ export function upvotePost(postId, userId, prevData) {
 export function downvotePost(postId, userId, prevData) {
   let hasUpvote = false;
   let hasDownvote = false;
-  const newData = produce(prevData, draft => {
+  const newData = IProduce(prevData, draft => {
     const post = Array.isArray(draft)
       ? draft.find(p => p.id === postId)
       : draft;

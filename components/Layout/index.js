@@ -3,9 +3,9 @@ import styled from 'styled-components';
 import useLayout from './useLayout';
 
 const LayoutContainer = styled.div`
-  max-width: 1440px;
+  max-width: 1144px;
   margin: 0 auto;
-  padding: 40px 100px 0;
+  padding: 20px 0 0;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
