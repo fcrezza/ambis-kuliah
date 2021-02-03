@@ -17,15 +17,12 @@ const PostContainer = styled.div`
   display: flex;
   cursor: ${({type}) => (type !== 'detail' ? 'pointer' : 'default')};
   position: relative;
+  border-bottom: 1px solid ${({theme}) => theme.colors['gray.100']};
 
   &:focus,
   &:hover {
     background-color: ${({theme, type}) =>
       type !== 'detail' ? lighten(0.01, theme.colors['gray.50']) : null};
-  }
-
-  &:not(:last-child) {
-    border-bottom: 1px solid ${({theme}) => theme.colors['gray.100']};
   }
 `;
 

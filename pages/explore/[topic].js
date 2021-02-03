@@ -8,8 +8,22 @@ import Post from 'components/Post';
 import {Button} from 'components/Button';
 import axios from 'utils/axios';
 import {useAuth} from 'utils/auth';
-import {upvotePost, downvotePost} from 'utils/common/post';
-import {Container, Title, TitleContainer} from './utils';
+import {upvotePost, downvotePost, deletePost} from 'utils/common/post';
+
+import styled from 'styled-components';
+
+const Container = styled.main`
+  flex: 1;
+  border-radius: 5px;
+  border: 1px solid #d9d9d9;
+  min-height: calc(100vh - 150px);
+  padding-bottom: 20px;
+  position: relative;
+
+  @media screen and (max-width: 768px) {
+    border: 0;
+  }
+`;
 
 function fetcher(url) {
   const fetchOptions = {
@@ -24,8 +38,8 @@ function getKey(pageIndex, previousPageData, topic) {
   }
 
   // change this offset
-  const startOffset = 2 * pageIndex + 1;
-  const endOffset = startOffset + 1;
+  const startOffset = 20 * pageIndex || 1;
+  const endOffset = 20;
 
   if (previousPageData && !previousPageData.length) {
     return null;
@@ -34,17 +48,12 @@ function getKey(pageIndex, previousPageData, topic) {
   return `/posts?topics=${topic}&limit=${startOffset},${endOffset}`;
 }
 
-function ExploreTag() {
+function Topic() {
   const {query} = useRouter();
-  const tag = query.tag;
+  const topic = query.topic;
   const {userData} = useAuth();
-  const [isFollowed, setIsFollowed] = React.useState(() => {
-    const userTopics = userData.topics.map(({name}) => name);
-    const isExist = userTopics.includes(tag);
-    return isExist;
-  });
   const key = (pageIndex, previousPageData) =>
-    getKey(pageIndex, previousPageData, tag);
+    getKey(pageIndex, previousPageData, topic);
   const {data, error, mutate, isValidating, setSize} = useSWRInfinite(
     key,
     fetcher
@@ -52,45 +61,52 @@ function ExploreTag() {
   let hasMore = true;
   const postData = Array.isArray(data) ? data.flat() : [];
 
-  if ((Array.isArray(data) && !data[data.length - 1].length) || error) {
+  if (
+    (Array.isArray(data) && data.length && !data[data.length - 1].length) ||
+    error
+  ) {
     hasMore = false;
   } else {
     hasMore = true;
   }
 
-  const onUpvote = postId => {
+  const handleUpvote = postId => {
     if (!Object.keys(userData).length) {
       console.log('youre not login');
       return;
     }
-    mutate(prevData => upvotePost(postId, userData.id, prevData), false);
+    mutate(prevData => upvotePost(postId, userData.id, prevData.flat()), false);
   };
 
-  const onDownvote = postId => {
+  const handleDownvote = postId => {
     if (!Object.keys(userData).length) {
       console.log('youre not login');
       return;
     }
 
-    mutate(prevData => downvotePost(postId, userData.id, prevData), false);
+    mutate(
+      prevData => downvotePost(postId, userData.id, prevData.flat()),
+      false
+    );
   };
 
-  const onFollowButtonClick = () => {
-    setIsFollowed(prevState => !prevState);
+  const handleDelete = postId => {
+    try {
+      mutate(
+        prevData => deletePost(postId, userData.username, prevData.flat()),
+        false
+      );
+    } catch (e) {
+      alert('upzzz ada yang tidak beres, coba lagi');
+    }
   };
 
   return (
     <Container>
       <Head
-        title={`${tag} - Ambis Kuliah`}
-        description={`Eksplor diskusi yang menggunakan tag ${tag}`}
+        title={`${topic} - Ambis Kuliah`}
+        description={`Eksplor diskusi yang menggunakan topik ${topic}`}
       />
-      <TitleContainer>
-        <Title>{tag}</Title>
-        <Button onClick={onFollowButtonClick}>
-          {isFollowed ? 'Diikuti' : 'Ikuti'}
-        </Button>
-      </TitleContainer>
       <InfiniteScroll
         dataLength={postData.length}
         next={() => setSize(size => size + 1)}
@@ -102,25 +118,36 @@ function ExploreTag() {
           postData.map(post => (
             <Post
               key={post.id}
-              postID={post.id}
+              id={post.id}
               title={post.title}
-              text={post.contents}
-              tags={post.topics}
+              description={post.contents}
+              topics={post.topics}
               voteStats={post.stats.upvotes - post.stats.downvotes}
               replyStats={post.stats.replies}
               timestamp={post.timestamp}
-              fullname={post.author.fullname}
-              username={post.author.username}
-              avatar={post.author.avatar.url}
+              authorFullname={post.author.fullname}
+              authorUsername={post.author.username}
+              authorAvatar={post.author.avatar.url}
               isUpvote={post?.feedback?.upvotes}
               isDownvote={post?.feedback?.downvotes}
-              onUpvote={() => onUpvote(post.id)}
-              onDownvote={() => onDownvote(post.id)}
-              showControl
+              handleUpvote={() => handleUpvote(post.id)}
+              handleDownvote={() => handleDownvote(post.id)}
+              handleDelete={() => handleDelete(post.id)}
+              hasAuth={userData?.username === post.author.username}
             />
           ))
         ) : (
-          <div>Tidak ada apa-apa disini</div>
+          <div
+            style={{
+              textAlign: 'center',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)'
+            }}
+          >
+            Tidak ada apa-apa disini
+          </div>
         )}
         {error && !isValidating && (
           <div style={{textAlign: 'center'}}>
@@ -133,4 +160,4 @@ function ExploreTag() {
   );
 }
 
-export default ExploreTag;
+export default Topic;

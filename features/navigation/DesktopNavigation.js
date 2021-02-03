@@ -139,8 +139,14 @@ function DesktopNavigation({isShowed, onClickWrite}) {
 }
 
 function NavigationSearch() {
-  const router = useRouter();
-  const [searchValue, setSearchValue] = React.useState('');
+  const {push, pathname, query} = useRouter();
+  const [searchValue, setSearchValue] = React.useState(() => {
+    if (pathname === '/search') {
+      return query.keywords;
+    }
+
+    return '';
+  });
 
   const onChangeSearch = e => setSearchValue(e.target.value);
 
@@ -149,7 +155,12 @@ function NavigationSearch() {
       return;
     }
 
-    console.log(searchValue);
+    push({
+      pathname: '/search',
+      query: {
+        keywords: searchValue
+      }
+    });
   };
 
   return (
