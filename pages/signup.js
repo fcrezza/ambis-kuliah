@@ -6,21 +6,22 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+import Head from 'components/Head';
 import Label from 'components/Label';
-import ErrorMessage from 'components/ErrorMessage';
-import {Input, InputGroup, PasswordInput} from 'components/Input';
+import {Input, InputGroup, PasswordInput, ErrorMessage} from 'components/Input';
 import {Button} from 'components/Button';
 import {useAuth} from 'utils/auth';
 import {UnauthenticatedRoute} from 'components/Route';
+import useRequest from 'utils/useRequest';
 
 const SignupContainer = styled.div`
-  margin-bottom: 100px;
+  margin: 0 auto 100px;
 `;
 
 const SignupFormWrapper = styled.div`
+  background-color: ${({theme}) => theme.colors['white.50']};
   border-radius: 20px;
-  margin: 20px auto 0;
-  max-width: 450px;
+  width: 450px;
   border: ${({theme}) => `1px solid ${theme.colors['gray.100']}`};
   padding: 2rem;
 
@@ -31,13 +32,13 @@ const SignupFormWrapper = styled.div`
 
 const SignupForm = styled.form`
   & > *:not(:last-child) {
-    margin-bottom: 1.3rem;
+    margin-bottom: 1.5rem;
   }
 `;
 
 const SignupTitle = styled.h1`
   margin: 0;
-  color: ${({theme}) => theme.colors['black.150']};
+  color: ${({theme}) => theme.colors['black.100']};
 `;
 
 const LoginOptionContainer = styled.div``;
@@ -50,7 +51,7 @@ const LoginOptionText = styled.p`
 
 const LoginOptionLink = styled.a`
   font-size: 1rem;
-  color: ${({theme}) => theme.colors['orange.50']};
+  color: ${({theme}) => theme.colors['black.100']};
   font-weight: 700;
   text-decoration: none;
 `;
@@ -64,22 +65,21 @@ const schemaValidation = yup.object().shape({
     .required('Masukan alamat email yang valid'),
   password: yup
     .string()
-    .min(8, 'Password minimal mengandung 8 karakter')
+    .min(4, 'Password minimal mengandung 4 karakter')
     .required('Masukan password yang valid')
 });
 
 function Signup() {
-  const [requestStatus, setRequestStatus] = React.useState('iddle');
-  const {register, handleSubmit, errors, setError, clearErrors} = useForm({
+  const {requestStatus, changeRequestStatus} = useRequest();
+  const {register, handleSubmit, errors} = useForm({
     resolver: yupResolver(schemaValidation)
   });
   const {signup} = useAuth();
-  const router = useRouter();
+  const {push} = useRouter();
 
   const onSubmit = async data => {
     try {
-      clearErrors('server');
-      setRequestStatus('loading');
+      changeRequestStatus('loading', null);
       const randomNum = Math.round(Math.random() * 3 + 1);
       const defaultAvatarURl = `/images/avatars/default-avatar-${randomNum}.png`;
       const inputData = {
@@ -87,32 +87,23 @@ function Signup() {
         avatarUrl: defaultAvatarURl
       };
       await signup(inputData);
-      setRequestStatus('success');
-      router.push(
-        {
-          pathname: '/signup/topics',
-          query: {
-            registration: 1
-          }
-        },
-        '/signup/topics'
-      );
+      push('/auth/choose-topics');
     } catch (error) {
       if (error.response) {
-        setError('server', {
+        changeRequestStatus('error', {
           message: error.response.data.data.message
         });
       } else {
-        setError('server', {
+        changeRequestStatus('error', {
           message: 'Upss, ada yang salah'
         });
       }
-      setRequestStatus('failed');
     }
   };
 
   return (
     <UnauthenticatedRoute>
+      <Head title="Daftar - Ambis Kuliah" description="Halaman daftar" />
       <SignupContainer>
         <SignupFormWrapper>
           <SignupTitle>Daftar</SignupTitle>
@@ -125,10 +116,11 @@ function Signup() {
                 id="email"
                 name="email"
                 ref={register}
-                standalone
               />
             </InputGroup>
-            <ErrorMessage errors={errors} name="email" />
+            {errors.email ? (
+              <ErrorMessage message={errors.email.message} />
+            ) : null}
             <InputGroup>
               <Label htmlFor="fullname">Nama Lengkap</Label>
               <Input
@@ -137,10 +129,11 @@ function Signup() {
                 id="fullname"
                 name="fullname"
                 ref={register}
-                standalone
               />
             </InputGroup>
-            <ErrorMessage errors={errors} name="fullname" />
+            {errors.fullname ? (
+              <ErrorMessage message={errors.fullname.message} />
+            ) : null}
             <InputGroup>
               <Label htmlFor="username">Nama Pengguna</Label>
               <Input
@@ -149,10 +142,11 @@ function Signup() {
                 id="username"
                 name="username"
                 ref={register}
-                standalone
               />
             </InputGroup>
-            <ErrorMessage errors={errors} name="username" />
+            {errors.username ? (
+              <ErrorMessage message={errors.username.message} />
+            ) : null}
             <InputGroup>
               <Label htmlFor="password">Password</Label>
               <PasswordInput
@@ -162,8 +156,12 @@ function Signup() {
                 ref={register}
               />
             </InputGroup>
-            <ErrorMessage errors={errors} name="password" />
-            <ErrorMessage errors={errors} name="server" />
+            {errors.password ? (
+              <ErrorMessage message={errors.password.message} />
+            ) : null}
+            {requestStatus.name === 'error' ? (
+              <ErrorMessage message={requestStatus.data.message} />
+            ) : null}
             <Button disabled={requestStatus === 'loading'}>Daftar</Button>
           </SignupForm>
           <LoginOptionContainer>

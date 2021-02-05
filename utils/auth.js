@@ -15,31 +15,36 @@ export function AuthProvider({children}) {
   useErrorHandler(error);
 
   const login = async data => {
-    const response = await axios.post('/auth/login', data, {
-      withCredentials: true
-    });
+    const response = await axios.post('/auth/login', data);
     mutate(response.data.data, false);
   };
 
   const signup = async data => {
-    const response = await axios.post('/auth/signup', data, {
-      withCredentials: true
-    });
-    mutate(response.data.data, false);
+    const response = await axios.post('/auth/signup', data);
+    mutate({signup: true, ...response.data.data}, false);
   };
 
   const logout = async () => {
-    await axios.delete('/auth/logout', {
-      withCredentials: true
-    });
+    await axios.delete('/auth/logout');
     mutate({}, false);
+  };
+
+  const updateProfile = newData => {
+    mutate(
+      prevData => ({
+        ...prevData,
+        ...newData
+      }),
+      false
+    );
   };
 
   const contextValue = {
     login,
     signup,
     logout,
-    userData
+    userData,
+    updateProfile
   };
 
   return (

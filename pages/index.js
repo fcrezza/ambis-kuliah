@@ -111,8 +111,8 @@ function LandingPage() {
   return (
     <UnauthenticatedRoute>
       <Head
-        title="Ambis Kuliah - Biarkan orang lain tahu, bagikan dan diskusikan hal apa yang membuat kamu berambisi"
-        description="Biarkan orang lain tahu, bagikan dan diskusikan hal apa yang membuat kamu berambisi"
+        title="Ambis Kuliah - Dimana Mahasiswa Membahas Ide Dan Hal yang Menarik"
+        description="Temukan dan ikuti diskusi menarik seputar kehidupan mahasiswa"
       />
       <Wrapper>
         <Container>

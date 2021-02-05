@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 
-import useLayout from './useLayout';
-
 const LayoutContainer = styled.div`
   max-width: 1144px;
   margin: 0 auto;
@@ -20,13 +18,7 @@ const LayoutContainer = styled.div`
 `;
 
 function Layout({children}) {
-  const {isShowed} = useLayout();
-
-  if (isShowed) {
-    return <LayoutContainer>{children}</LayoutContainer>;
-  }
-
-  return children;
+  return <LayoutContainer>{children}</LayoutContainer>;
 }
 
 export default Layout;

@@ -6,7 +6,7 @@ export function UnauthenticatedRoute({children}) {
   const {userData} = useAuth();
   const {replace} = useRouter();
 
-  if (!Object.keys(userData).length) {
+  if (!Object.keys(userData).length || userData.signup) {
     return children;
   }
 

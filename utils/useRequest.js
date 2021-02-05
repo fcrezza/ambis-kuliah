@@ -6,20 +6,21 @@ const requestStatusOption = {
   success: 'success',
   error: 'error'
 };
+
 function useRequest() {
   const [requestStatus, setRequestStatus] = React.useState({
     name: requestStatusOption.iddle,
     data: null
   });
 
-  const onChangeRequestStatus = (status, data) => {
+  const changeRequestStatus = (name, data = null) => {
     setRequestStatus({
-      name: requestStatusOption[status],
-      data: data || requestStatus.data
+      name: requestStatusOption[name],
+      data
     });
   };
 
-  return {requestStatus, onChangeRequestStatus};
+  return {requestStatus, changeRequestStatus};
 }
 
 export default useRequest;

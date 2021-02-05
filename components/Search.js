@@ -16,6 +16,7 @@ const SearchContainer = styled.div`
   }
 
   &:focus-within {
+    background-color: ${({theme}) => darken(0.02, theme.colors['gray.50'])};
     outline: 2px solid #000;
   }
 `;

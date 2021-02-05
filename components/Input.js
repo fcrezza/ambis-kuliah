@@ -1,24 +1,23 @@
 import React from 'react';
-import styled, {css} from 'styled-components';
-import {darken, lighten} from 'polished';
+import styled from 'styled-components';
+import {darken} from 'polished';
+import {AiOutlineEye, AiOutlineEyeInvisible} from 'react-icons/ai';
+import {IconButton} from './Button';
 
-const inputStandalone = css`
-  border: ${({theme}) => `1px solid ${theme.colors['gray.100']}`};
-
-  &:focus {
-    border-color: ${({theme}) => theme.colors['orange.50']};
-  }
+const $ErrorMessage = styled.p`
+  color: ${({theme}) => theme.colors['red.50']};
+  font-size: 1rem;
+  margin: 1rem 0;
 `;
 
 export const InputGroup = styled.div`
   & > label {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 `;
 
-export const Input = styled.input`
+const $Input = styled.input`
   border: 0;
-  border-radius: 20px;
   padding: 0.8rem 1rem;
   display: block;
   width: 100%;
@@ -26,35 +25,28 @@ export const Input = styled.input`
   background: transparent;
   color: ${({theme}) => theme.colors['black.150']};
   outline: none;
-  ${({standalone}) => standalone && inputStandalone};
 `;
 
 const InputWrapper = styled.div`
-  border-radius: 20px;
+  border-radius: 5px;
   border: ${({theme}) => `1px solid ${theme.colors['gray.100']}`};
   display: flex;
+  background-color: ${({theme}) => theme.colors['gray.50']};
+
+  &:hover {
+    background-color: ${({theme}) => darken(0.02, theme.colors['gray.50'])};
+  }
 
   &:focus-within {
-    border-color: ${({theme}) => theme.colors['orange.50']};
+    background-color: ${({theme}) => darken(0.02, theme.colors['gray.50'])};
+    outline: 2px solid ${({theme}) => theme.colors['black.100']};
   }
 `;
 
 const PasswordVisibilityToggler = styled.button`
-  color: ${({theme}) => theme.colors['orange.50']};
-  padding: 5px;
-  margin-right: 14px;
+  color: ${({theme}) => theme.colors['black.100']};
   align-self: center;
-  cursor: pointer;
-  font-weight: 500;
-  border: 0;
-  border-radius: 5px;
-  background: none;
-  font-size: 14px;
-
-  &:focus,
-  &:hover {
-    background: ${({theme}) => lighten(0.23, theme.colors['orange.50'])};
-  }
+  margin-right: 10px;
 `;
 
 const $TextArea = styled.textarea`
@@ -76,6 +68,24 @@ const $TextArea = styled.textarea`
   ${({styles}) => ({...styles})};
 `;
 
+const PasswordVisibleIcon = styled(AiOutlineEye)`
+  font-size: 1.4rem;
+`;
+
+const PasswordHiddenIcon = styled(AiOutlineEyeInvisible)`
+  font-size: 1.4rem;
+`;
+
+export const Input = React.forwardRef((props, ref) => {
+  const {id, name, placeholder} = props;
+
+  return (
+    <InputWrapper>
+      <$Input id={id} name={name} placeholder={placeholder} ref={ref} />
+    </InputWrapper>
+  );
+});
+
 export const PasswordInput = React.forwardRef((props, ref) => {
   const {id, name, placeholder} = props;
   const [isPasswordVisible, setPasswordVisibility] = React.useState(false);
@@ -86,7 +96,7 @@ export const PasswordInput = React.forwardRef((props, ref) => {
 
   return (
     <InputWrapper>
-      <Input
+      <$Input
         id={id}
         name={name}
         type={isPasswordVisible ? 'text' : 'password'}
@@ -94,10 +104,11 @@ export const PasswordInput = React.forwardRef((props, ref) => {
         ref={ref}
       />
       <PasswordVisibilityToggler
+        as={IconButton}
         type="button"
         onClick={onTogglePasswordVisibility}
       >
-        {isPasswordVisible ? 'Sembunyikan' : 'Tampilkan'}
+        {isPasswordVisible ? <PasswordHiddenIcon /> : <PasswordVisibleIcon />}
       </PasswordVisibilityToggler>
     </InputWrapper>
   );
@@ -113,4 +124,8 @@ export function Textarea({onChange, value, placeholder, name, styles}) {
       styles={styles}
     />
   );
+}
+
+export function ErrorMessage({message}) {
+  return <$ErrorMessage>{message}</$ErrorMessage>;
 }

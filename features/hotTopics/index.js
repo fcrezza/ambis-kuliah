@@ -35,9 +35,9 @@ const Title = styled.h2`
 
 function HotPosts() {
   const router = useRouter();
-  const isShowed = !['/', '/login', '/signup', '/signup/topics'].includes(
-    router.pathname
-  );
+  const isShowed =
+    router.pathname !== '/' &&
+    !['/login', '/signup'].find(route => router.pathname.startsWith(route));
 
   if (isShowed) {
     return (
