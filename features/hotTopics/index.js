@@ -1,14 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useRouter} from 'next/router';
+import {ErrorBoundary} from 'react-error-boundary';
+
+import Post from './Post';
+import ErrorFallback from './ErrorFallback';
 
 const Container = styled.div`
-  width: 500px;
+  width: 400px;
   margin-left: 3rem;
-
-  & > *:not(:last-child) {
-    margin-bottom: 1.5rem;
-  }
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
+  background: ${({theme}) => theme.colors['white.50']};
 
   @media screen and (max-width: 1440px) {
     max-width: 340px;
@@ -19,37 +22,18 @@ const Container = styled.div`
   }
 `;
 
-const Copyright = styled.p`
-  color: ${({theme}) => theme.colors['black.50']};
-  font-size: 0.8rem;
-  margin: 0;
-`;
-
-const PostsContainer = styled.div`
-  border: 1px solid ${({theme}) => theme.colors['gray.100']};
-  border-radius: 5px;
-  width: 100%;
-
-  & > div:not(:last-child) {
-    border-bottom: 1px solid ${({theme}) => theme.colors['gray.100']};
-  }
-`;
-
 const TitleContainer = styled.div`
-  padding: 1rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 1.2rem;
   border-bottom: 1px solid ${({theme}) => theme.colors['gray.100']};
 `;
 
 const Title = styled.h2`
   color: ${({theme}) => theme.colors['black.150']};
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   margin: 0;
 `;
 
-function HotTopics() {
+function HotPosts() {
   const router = useRouter();
   const isShowed = !['/', '/login', '/signup', '/signup/topics'].includes(
     router.pathname
@@ -58,12 +42,12 @@ function HotTopics() {
   if (isShowed) {
     return (
       <Container>
-        <PostsContainer>
-          <TitleContainer>
-            <Title>Diskusi Terhangat</Title>
-          </TitleContainer>
-        </PostsContainer>
-        <Copyright>© 2020 Ambis Kuliah. All rights reserved</Copyright>
+        <TitleContainer>
+          <Title>Diskusi Terhangat</Title>
+        </TitleContainer>
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <Post />
+        </ErrorBoundary>
       </Container>
     );
   }
@@ -71,4 +55,4 @@ function HotTopics() {
   return null;
 }
 
-export default HotTopics;
+export default HotPosts;
