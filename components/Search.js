@@ -25,21 +25,23 @@ const SearchInput = styled.input`
   padding: 0.5rem 1rem 0.5rem 0.5rem;
   border: 0;
   background: inherit;
-  color: ${({theme}) => theme.colors['black.50']};
+  color: ${({theme}) => theme.colors['black.100']};
   font-size: ${({size}) => (size === 'small' ? '0.9rem' : '1rem')};
   outline: none;
+  font-weight: 400;
 `;
 
 const IconContainer = styled.div`
   padding: ${({size}) =>
     size === 'small'
       ? '0.3rem 0.3rem 0.3rem 0.8rem'
-      : '0.8em 0.7rem 0.7rem 1.2rem'};
+      : '0.6rem 0.6rem 0.6rem 1rem'};
 `;
 
 const SearchIcon = styled(IoIosSearch)`
   color: ${({theme}) => theme.colors['black.50']};
   font-size: 1.3rem;
+  display: block;
 `;
 
 function Search({placeholder, size, value, onChange, onSearch}) {

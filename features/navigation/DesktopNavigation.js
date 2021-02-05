@@ -7,10 +7,10 @@ import {HiOutlineHome} from 'react-icons/hi';
 
 import Search from 'components/Search';
 import {Button, IconButton} from 'components/Button';
-import {useUser} from 'utils/user';
+import {useAuth} from 'utils/auth';
 
 const DesktopContainer = styled.div`
-  padding: 20px;
+  padding: 1rem;
   z-index: 999;
   max-width: 1144px;
   margin: 20px auto;
@@ -24,10 +24,6 @@ const DesktopContainer = styled.div`
     padding: 40px 70px;
   }
 
-  @media screen and (max-width: 768px) {
-    ${({isShowed}) => (isShowed ? 'display: none' : 'padding: 40px 50px')}
-  }
-
   @media screen and (max-width: 480px) {
     padding: 40px 1.5rem;
   }
@@ -38,7 +34,7 @@ const LogoLink = styled.a`
 `;
 
 const LogoImage = styled.img`
-  width: 195px;
+  width: 200px;
   display: block;
 
   @media screen and (max-width: 480px) {
@@ -67,11 +63,6 @@ const AvatarContainer = styled.a`
   width: 45px;
   height: 45px;
   overflow: hidden;
-
-  &:focus,
-  &:hover {
-    box-shadow: 0 0 10px ${({theme}) => theme.colors['orange.50']};
-  }
 `;
 
 const Avatar = styled.div`
@@ -86,54 +77,58 @@ const Avatar = styled.div`
 
 const HomeIcon = styled(HiOutlineHome)`
   font-size: 2rem;
-  color: ${({theme}) => theme.colors['orange.50']};
+  color: ${({theme}) => theme.colors['black.100']};
 `;
 
 const ExploreIcon = styled(FaRegCompass)`
-  color: ${({theme}) => theme.colors['orange.50']};
+  color: ${({theme}) => theme.colors['black.100']};
   font-size: 1.8rem;
 `;
 
-function DesktopNavigation({isShowed, onClickWrite}) {
-  const {userData} = useUser();
+const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+function DesktopNavigation({onClickWrite, onClickLogin}) {
+  const {userData} = useAuth();
   const isAuth = Object.keys(userData).length;
 
   return (
-    <DesktopContainer isShowed={isShowed}>
-      <Link href="/" passHref>
-        <LogoLink>
-          <LogoImage src="/images/logo.svg" alt="logo" />
-        </LogoLink>
-      </Link>
-      {isShowed ? (
-        <>
-          <NavigationSearch />
-          <NavigationLinkContainer>
-            {isAuth ? (
-              <Link href="/home" passHref>
-                <IconButton as="a">
-                  <HomeIcon />
-                </IconButton>
-              </Link>
-            ) : null}
-            <Link href="/explore" passHref>
-              <IconButton as="a">
-                <ExploreIcon />
-              </IconButton>
+    <DesktopContainer>
+      <Wrapper>
+        <Link href="/" passHref>
+          <LogoLink>
+            <LogoImage src="/images/logo.svg" alt="logo" />
+          </LogoLink>
+        </Link>
+        <NavigationSearch />
+      </Wrapper>
+      <NavigationLinkContainer>
+        {isAuth ? (
+          <Link href="/home" passHref>
+            <IconButton as="a">
+              <HomeIcon />
+            </IconButton>
+          </Link>
+        ) : null}
+        <Link href="/explore" passHref>
+          <IconButton as="a">
+            <ExploreIcon />
+          </IconButton>
+        </Link>
+        {isAuth ? (
+          <>
+            <Link href={`/profile/${userData?.username}`} passHref>
+              <AvatarContainer>
+                <Avatar imageUrl={userData?.avatar.url} />
+              </AvatarContainer>
             </Link>
-            {isAuth ? (
-              <>
-                <Link href={`/profile/${userData?.username}`} passHref>
-                  <AvatarContainer>
-                    <Avatar imageUrl={userData?.avatar.url} />
-                  </AvatarContainer>
-                </Link>
-                <Button onClick={onClickWrite}>Tulis</Button>
-              </>
-            ) : null}
-          </NavigationLinkContainer>
-        </>
-      ) : null}
+            <Button onClick={onClickWrite}>Tulis</Button>
+          </>
+        ) : null}
+        {!isAuth && <Button onClick={onClickLogin}>Masuk</Button>}
+      </NavigationLinkContainer>
     </DesktopContainer>
   );
 }

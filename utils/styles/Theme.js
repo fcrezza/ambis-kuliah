@@ -1,8 +1,8 @@
 import {ThemeProvider as StyledThemeProvider} from 'styled-components';
 
 const colors = {
-  'black.50': '#666',
-  'black.100': '#444',
+  'black.50': '#555',
+  'black.100': '#333',
   'black.150': '#222',
   'gray.50': '#f9f9f9',
   'gray.100': '#d9d9d9',

@@ -1,13 +1,26 @@
 import React from 'react';
+import {useRouter} from 'next/router';
 
 import MobileNavigation from './MobileNavigation';
 import DesktopNavigation from './DesktopNavigation';
-import useNavigation from './useNavigation';
 import WritePost from 'components/writePost';
 import Modal from 'components/Modal';
 
 function Navigation() {
-  const {isShowed, isModalOpen, onClickWrite, onModalClose} = useNavigation();
+  const [isModalOpen, setModalState] = React.useState(false);
+  const router = useRouter();
+
+  const onClickLogin = () => {
+    router.push('/login');
+  };
+
+  const onClickWrite = () => {
+    setModalState(true);
+  };
+
+  const onModalClose = () => {
+    setModalState(false);
+  };
 
   return (
     <>
@@ -19,10 +32,11 @@ function Navigation() {
       >
         <WritePost onSubmitPost={onModalClose} />
       </Modal>
-      <DesktopNavigation isShowed={isShowed} onClickWrite={onClickWrite} />
-      {!isModalOpen && (
-        <MobileNavigation isShowed={isShowed} onClickWrite={onClickWrite} />
-      )}
+      <DesktopNavigation
+        onClickWrite={onClickWrite}
+        onClickLogin={onClickLogin}
+      />
+      {!isModalOpen && <MobileNavigation onClickWrite={onClickWrite} />}
     </>
   );
 }

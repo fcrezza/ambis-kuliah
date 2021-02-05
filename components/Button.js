@@ -2,8 +2,8 @@ import styled, {css} from 'styled-components';
 import {darken, lighten} from 'polished';
 
 const outline = css`
-  border: 1px solid ${({theme}) => theme.colors['orange.50']};
-  color: ${({theme}) => theme.colors['orange.50']};
+  border: 1px solid ${({theme}) => theme.colors['black.100']};
+  color: ${({theme}) => theme.colors['black.100']};
   background-color: transparent;
 
   &:hover,
@@ -15,16 +15,16 @@ const outline = css`
 const original = css`
   border: 0;
   color: ${({theme}) => theme.colors['white.50']};
-  background-color: ${({theme}) => theme.colors['orange.50']};
+  background-color: ${({theme}) => theme.colors['black.100']};
 
   &:hover,
   &:focus {
-    background-color: ${({theme}) => darken(0.03, theme.colors['orange.50'])};
+    background-color: ${({theme}) => darken(0.03, theme.colors['black.100'])};
   }
 `;
 
-export const Button = styled.button`
-  padding: 0.8rem 2rem;
+const $Button = styled.button`
+  padding: 0.7rem 1.8rem;
   border-radius: 50px;
   font-weight: 700;
   font-size: 1.2rem;
@@ -33,6 +33,7 @@ export const Button = styled.button`
   opacity: ${({disabled}) => (disabled ? 0.7 : 1)};
 
   ${({variant}) => (variant === 'outline' ? outline : original)};
+  ${({styles}) => styles};
 `;
 
 export const IconButton = styled.button`
@@ -48,6 +49,14 @@ export const IconButton = styled.button`
   &:focus,
   &:hover {
     background: ${({theme, styles}) =>
-      styles?.backgroundColor || lighten(0.2, theme.colors['orange.50'])};
+      styles?.backgroundColor || lighten(0.7, theme.colors['black.100'])};
   }
 `;
+
+export function Button({onClick, disabled, variant, children}) {
+  return (
+    <$Button onClick={onClick} variant={variant} disabled={disabled}>
+      {children}
+    </$Button>
+  );
+}

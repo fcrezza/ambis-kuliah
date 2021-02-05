@@ -1,5 +1,4 @@
 import Head from 'components/Head';
-import Footer from 'components/Footer';
 import Topics from 'features/signupTopics';
 
 function topics() {
@@ -10,7 +9,6 @@ function topics() {
         description="Ikuti topik, diskusi tentang topik terkait akan mancul dihalaman utama kamu."
       />
       <Topics />
-      <Footer />
     </>
   );
 }

@@ -6,6 +6,10 @@ export const GlobalStyle = createGlobalStyle`
 		font-family: "Inter", sans-serif;
 	}
 
+	body {
+		background: #f7f7f7;
+	}
+
 
 	/* only show outline when using keyboard */
 	.js-focus-visible :focus:not(.focus-visible) {
