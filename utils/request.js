@@ -1,13 +1,12 @@
 import React from 'react';
 
+const requestStatusOption = {
+  iddle: 'iddle',
+  loading: 'loading',
+  success: 'success',
+  error: 'error'
+};
 function useRequest() {
-  const requestStatusOption = {
-    iddle: 'iddle',
-    loading: 'loading',
-    success: 'success',
-    error: 'error'
-  };
-
   const [requestStatus, setRequestStatus] = React.useState({
     name: requestStatusOption.iddle,
     data: null

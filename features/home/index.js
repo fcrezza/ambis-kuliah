@@ -3,7 +3,6 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 import WritePost from 'components/writePost';
 import Post from 'components/Post';
-import useRoute from 'utils/route';
 import axios from 'utils/axios';
 import {Button} from 'components/Button';
 import {useAuth} from 'utils/auth';
@@ -15,6 +14,7 @@ import {
   TitleText,
   WritePostWrapper
 } from './style';
+import {AuthenticatedRoute} from 'components/Route';
 
 function fetcher(url) {
   const fetchOptions = {
@@ -40,7 +40,6 @@ function getKey(pageIndex, previousPageData, topics) {
 }
 
 function Home() {
-  useRoute(null, '/login');
   const {userData} = useAuth();
   const topics = userData.topics.map(topic => topic.name).join(',');
   const key = (pageIndex, previousPageData) =>
@@ -76,49 +75,51 @@ function Home() {
   };
 
   return (
-    <HomeContainer>
-      <TitleContainer>
-        <TitleText>Beranda</TitleText>
-        <TitleIcon />
-      </TitleContainer>
-      <WritePostWrapper>
-        <WritePost />
-      </WritePostWrapper>
-      <InfiniteScroll
-        dataLength={postData.length}
-        next={() => setSize(size => size + 1)}
-        hasMore={isValidating || hasMore}
-        loader={<p style={{textAlign: 'center'}}>Memuat lebih banyak...</p>}
-        scrollThreshold="0px"
-      >
-        {postData.map(post => (
-          <Post
-            key={post.id}
-            postID={post.id}
-            title={post.title}
-            text={post.contents}
-            tags={post.topics}
-            voteStats={post.stats.upvotes - post.stats.downvotes}
-            replyStats={post.stats.replies}
-            timestamp={post.timestamp}
-            fullname={post.author.fullname}
-            username={post.author.username}
-            avatar={post.author.avatar.url}
-            isUpvote={post?.feedback?.upvotes}
-            isDownvote={post?.feedback?.downvotes}
-            onUpvote={() => onUpvote(post.id)}
-            onDownvote={() => onDownvote(post.id)}
-            showControl
-          />
-        ))}
-        {error && !isValidating && (
-          <div style={{textAlign: 'center'}}>
-            <h2 style={{padding: '2rem'}}>Tidak dapat memuat data</h2>
-            <Button onClick={() => mutate()}>Coba lagi</Button>
-          </div>
-        )}
-      </InfiniteScroll>
-    </HomeContainer>
+    <AuthenticatedRoute>
+      <HomeContainer>
+        <TitleContainer>
+          <TitleText>Beranda</TitleText>
+          <TitleIcon />
+        </TitleContainer>
+        <WritePostWrapper>
+          <WritePost />
+        </WritePostWrapper>
+        <InfiniteScroll
+          dataLength={postData.length}
+          next={() => setSize(size => size + 1)}
+          hasMore={isValidating || hasMore}
+          loader={<p style={{textAlign: 'center'}}>Memuat lebih banyak...</p>}
+          scrollThreshold="0px"
+        >
+          {postData.map(post => (
+            <Post
+              key={post.id}
+              postID={post.id}
+              title={post.title}
+              text={post.contents}
+              tags={post.topics}
+              voteStats={post.stats.upvotes - post.stats.downvotes}
+              replyStats={post.stats.replies}
+              timestamp={post.timestamp}
+              fullname={post.author.fullname}
+              username={post.author.username}
+              avatar={post.author.avatar.url}
+              isUpvote={post?.feedback?.upvotes}
+              isDownvote={post?.feedback?.downvotes}
+              onUpvote={() => onUpvote(post.id)}
+              onDownvote={() => onDownvote(post.id)}
+              showControl
+            />
+          ))}
+          {error && !isValidating && (
+            <div style={{textAlign: 'center'}}>
+              <h2 style={{padding: '2rem'}}>Tidak dapat memuat data</h2>
+              <Button onClick={() => mutate()}>Coba lagi</Button>
+            </div>
+          )}
+        </InfiniteScroll>
+      </HomeContainer>
+    </AuthenticatedRoute>
   );
 }
 

@@ -8,7 +8,7 @@ import {MdClose} from 'react-icons/md';
 import {Button, IconButton} from 'components/Button';
 
 import {Textarea} from 'components/Input';
-import {useUser} from 'utils/user';
+import {useAuth} from 'utils/auth';
 import axios from 'utils/axios';
 
 const WriteReplyContainer = styled.div`
@@ -122,7 +122,7 @@ export const ErrorMessage = styled.p`
 `;
 
 function WriteReply({postId, authorUsername}) {
-  const {userData} = useUser();
+  const {userData} = useAuth();
   const {colors} = useTheme();
   const [replyContent, setReplyContent] = React.useState('');
   const [imageAttachment, setImageAttachment] = React.useState(null);

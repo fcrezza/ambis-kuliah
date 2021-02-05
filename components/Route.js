@@ -1,6 +1,6 @@
-const {useRouter} = require('next/router');
+import {useRouter} from 'next/router';
 
-const {useAuth} = require('utils/auth');
+import {useAuth} from 'utils/auth';
 
 export function UnauthenticatedRoute({children}) {
   const {userData} = useAuth();

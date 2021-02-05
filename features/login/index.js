@@ -11,7 +11,7 @@ import ErrorMessage from 'components/ErrorMessage';
 import {Input, InputGroup, PasswordInput} from 'components/Input';
 import {Button} from 'components/Button';
 import {useAuth} from 'utils/auth';
-import useRoute from 'utils/route';
+import {UnauthenticatedRoute} from 'components/Route';
 
 const LoginContainer = styled.div``;
 
@@ -62,7 +62,6 @@ const schemaValidation = yup.object().shape({
 });
 
 function Login() {
-  useRoute('/home', null);
   const [requestStatus, setRequestStatus] = React.useState('iddle');
   const {login} = useAuth();
   const {register, handleSubmit, errors, setError, clearErrors} = useForm({
@@ -92,45 +91,47 @@ function Login() {
   };
 
   return (
-    <LoginContainer>
-      <LoginFormWrapper>
-        <LoginTitle>Masuk</LoginTitle>
-        <LoginForm onSubmit={handleSubmit(onSubmit)}>
-          <InputGroup>
-            <Label htmlFor="username">Username</Label>
-            <Input
-              type="text"
-              placeholder="Username"
-              id="username"
-              name="username"
-              ref={register}
-              standalone
-            />
-          </InputGroup>
-          <ErrorMessage errors={errors} name="username" />
-          <InputGroup>
-            <Label htmlFor="password">Password</Label>
-            <PasswordInput
-              placeholder="Password"
-              id="password"
-              name="password"
-              ref={register}
-            />
-          </InputGroup>
-          <ErrorMessage errors={errors} name="password" />
-          <ErrorMessage errors={errors} name="server" />
-          <Button disabled={requestStatus === 'loading'}>Masuk</Button>
-        </LoginForm>
-        <SignupOptionContainer>
-          <SignupOptionText>
-            Belum punya akun?{' '}
-            <Nextlink href="/signup" passHref>
-              <SinupOptionLink>Daftar</SinupOptionLink>
-            </Nextlink>
-          </SignupOptionText>
-        </SignupOptionContainer>
-      </LoginFormWrapper>
-    </LoginContainer>
+    <UnauthenticatedRoute>
+      <LoginContainer>
+        <LoginFormWrapper>
+          <LoginTitle>Masuk</LoginTitle>
+          <LoginForm onSubmit={handleSubmit(onSubmit)}>
+            <InputGroup>
+              <Label htmlFor="username">Username</Label>
+              <Input
+                type="text"
+                placeholder="Username"
+                id="username"
+                name="username"
+                ref={register}
+                standalone
+              />
+            </InputGroup>
+            <ErrorMessage errors={errors} name="username" />
+            <InputGroup>
+              <Label htmlFor="password">Password</Label>
+              <PasswordInput
+                placeholder="Password"
+                id="password"
+                name="password"
+                ref={register}
+              />
+            </InputGroup>
+            <ErrorMessage errors={errors} name="password" />
+            <ErrorMessage errors={errors} name="server" />
+            <Button disabled={requestStatus === 'loading'}>Masuk</Button>
+          </LoginForm>
+          <SignupOptionContainer>
+            <SignupOptionText>
+              Belum punya akun?{' '}
+              <Nextlink href="/signup" passHref>
+                <SinupOptionLink>Daftar</SinupOptionLink>
+              </Nextlink>
+            </SignupOptionText>
+          </SignupOptionContainer>
+        </LoginFormWrapper>
+      </LoginContainer>
+    </UnauthenticatedRoute>
   );
 }
 

@@ -6,7 +6,7 @@ import Input from './Input';
 import AttachmentValue from './AttachmentValue';
 import AttachementButton from './AttachmentButton';
 import axios from 'utils/axios';
-import {useUser} from 'utils/user';
+import {useAuth} from 'utils/auth';
 
 export const WritePostContainer = styled.div`
   padding: 2rem 1.5rem;
@@ -27,7 +27,7 @@ export const ErrorMessage = styled.p`
 `;
 
 function WritePost({onSubmitPost = () => {}}) {
-  const {userData} = useUser();
+  const {userData} = useAuth();
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [topics, setTopics] = React.useState([]);

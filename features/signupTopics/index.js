@@ -7,10 +7,10 @@ import {useRouter} from 'next/router';
 import TopicsItem from './TopicsItem';
 import {Button} from 'components/Button';
 import useTopics from './useTopics';
-import useRoute from 'utils/route';
 import axios from 'utils/axios';
 import LoadingSkeleton from './LoadingSkeleton';
 import useRequest from 'utils/request';
+import {AuthenticatedRoute} from 'components/Route';
 
 const TopicsContainer = styled.div`
   max-width: 750px;
@@ -111,9 +111,6 @@ function Topics() {
   const {data: topics, error, mutate} = useSWR('/topics', url =>
     axios.get(url, {withCredentials: true}).then(res => res.data)
   );
-  const isRegistration = 'registration' in router.query;
-  // eslint-disable-next-line
-  const route = useRoute(!isRegistration && '/home');
   const onRetry = () => {
     mutate();
   };
@@ -128,68 +125,70 @@ function Topics() {
   };
 
   return (
-    <TopicsWrapper>
-      <TopicsContainer>
-        <TopicsTitle>Ikuti Topik</TopicsTitle>
-        <TopicsDescription>
-          Pilih topik yang ingin kamu ikuti, diskusi tentang topik terkait akan
-          mancul dihalaman utama kamu.
-        </TopicsDescription>
-        {topics && !error ? (
-          <>
-            <TopicsList>
-              {topics.data.map(topic => {
-                const isSelected = selectedTopics.includes(topic.id);
-                return (
-                  <TopicsItem
-                    key={topic.id}
-                    isSelected={isSelected}
-                    title={topic.name}
-                    onToggleSelect={() => onToggleSelect(topic.id)}
-                  />
-                );
-              })}
-            </TopicsList>
-            {submitStatus.name === 'error' && (
-              <SubmitErrorMessage>
-                Upsss ada yang tidak beres, coba beberapa saat lagi
-              </SubmitErrorMessage>
-            )}
-            <ButtonContainer>
-              <NextLink href="/home" passHref>
-                <SkipLink>Lewati</SkipLink>
-              </NextLink>
-              <Button
-                onClick={onSubmit}
-                disabled={
-                  !selectedTopics.length || submitStatus.name === 'loading'
-                }
-              >
-                Simpan
-              </Button>
-            </ButtonContainer>
-          </>
-        ) : error ? (
-          <ErrorContainer>
-            <ErrorMessage>
-              Data tidak dapat dimuat, coba beberapa saat lagi
-            </ErrorMessage>
-            <Button onClick={onRetry}>Coba lagi</Button>
-          </ErrorContainer>
-        ) : (
-          Array(5)
-            .fill()
-            .map((_, idx) => (
-              <LoadingSkeleton
-                uniqueKey={`loading-skeleton-${idx}`}
-                width="100%"
-                viewBox="0 0 100% 100"
-                key={idx}
-              />
-            ))
-        )}
-      </TopicsContainer>
-    </TopicsWrapper>
+    <AuthenticatedRoute>
+      <TopicsWrapper>
+        <TopicsContainer>
+          <TopicsTitle>Ikuti Topik</TopicsTitle>
+          <TopicsDescription>
+            Pilih topik yang ingin kamu ikuti, diskusi tentang topik terkait
+            akan mancul dihalaman utama kamu.
+          </TopicsDescription>
+          {topics && !error ? (
+            <>
+              <TopicsList>
+                {topics.data.map(topic => {
+                  const isSelected = selectedTopics.includes(topic.id);
+                  return (
+                    <TopicsItem
+                      key={topic.id}
+                      isSelected={isSelected}
+                      title={topic.name}
+                      onToggleSelect={() => onToggleSelect(topic.id)}
+                    />
+                  );
+                })}
+              </TopicsList>
+              {submitStatus.name === 'error' && (
+                <SubmitErrorMessage>
+                  Upsss ada yang tidak beres, coba beberapa saat lagi
+                </SubmitErrorMessage>
+              )}
+              <ButtonContainer>
+                <NextLink href="/home" passHref>
+                  <SkipLink>Lewati</SkipLink>
+                </NextLink>
+                <Button
+                  onClick={onSubmit}
+                  disabled={
+                    !selectedTopics.length || submitStatus.name === 'loading'
+                  }
+                >
+                  Simpan
+                </Button>
+              </ButtonContainer>
+            </>
+          ) : error ? (
+            <ErrorContainer>
+              <ErrorMessage>
+                Data tidak dapat dimuat, coba beberapa saat lagi
+              </ErrorMessage>
+              <Button onClick={onRetry}>Coba lagi</Button>
+            </ErrorContainer>
+          ) : (
+            Array(5)
+              .fill()
+              .map((_, idx) => (
+                <LoadingSkeleton
+                  uniqueKey={`loading-skeleton-${idx}`}
+                  width="100%"
+                  viewBox="0 0 100% 100"
+                  key={idx}
+                />
+              ))
+          )}
+        </TopicsContainer>
+      </TopicsWrapper>
+    </AuthenticatedRoute>
   );
 }
 

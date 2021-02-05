@@ -8,9 +8,8 @@ import {enableES5} from 'immer';
 
 import Navigation from 'features/navigation';
 import HotTopics from 'features/hotTopics';
+import Init from 'features/Init';
 import Layout from 'components/Layout';
-import {AuthProvider} from 'utils/auth';
-import {UserProvider} from 'utils/user';
 import {GlobalStyle} from 'utils/styles/Global';
 import {ThemeProvider} from 'utils/styles/Theme';
 import GlobalSWRConfig from 'utils/swr';
@@ -23,15 +22,13 @@ function MyApp({Component, pageProps}) {
     <ThemeProvider>
       <GlobalStyle />
       <GlobalSWRConfig>
-        <AuthProvider>
-          <UserProvider>
-            <Navigation />
-            <Layout>
-              <Component {...pageProps} />
-              <HotTopics />
-            </Layout>
-          </UserProvider>
-        </AuthProvider>
+        <Init>
+          <Navigation />
+          <Layout>
+            <Component {...pageProps} />
+            <HotTopics />
+          </Layout>
+        </Init>
       </GlobalSWRConfig>
     </ThemeProvider>
   );

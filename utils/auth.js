@@ -1,4 +1,5 @@
 import React from 'react';
+import {useErrorHandler} from 'react-error-boundary';
 import useSWR from 'swr';
 
 import axios from 'utils/axios';
@@ -11,6 +12,7 @@ export function AuthProvider({children}) {
     url => axios.get(url, {withCredentials: true}).then(res => res.data.data),
     {revalidateOnFocus: false}
   );
+  useErrorHandler(error);
 
   const login = async data => {
     const response = await axios.post('/auth/login', data, {
@@ -37,8 +39,7 @@ export function AuthProvider({children}) {
     login,
     signup,
     logout,
-    userData,
-    error
+    userData
   };
 
   return (

@@ -5,7 +5,7 @@ import {Button} from 'components/Button';
 
 import Post from 'components/Post';
 import axios from 'utils/axios';
-import {useUser} from 'utils/user';
+import {useAuth} from 'utils/auth';
 import {upvotePost, downvotePost, deletePost} from 'utils/common/post';
 
 function getKey(pageIndex, previousPageData, postContext) {
@@ -25,7 +25,7 @@ function getKey(pageIndex, previousPageData, postContext) {
 }
 
 function ReplyDiscussion({postId, authorUsername}) {
-  const {userData} = useUser();
+  const {userData} = useAuth();
   let hasMore = true;
   const key = (pageIndex, previousPageData) =>
     getKey(pageIndex, previousPageData, {postId, authorUsername});

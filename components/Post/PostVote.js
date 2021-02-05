@@ -8,7 +8,7 @@ import {
 
 import {IconButton} from 'components/Button';
 import {PreventBubblingComponent} from './utils';
-import {useUser} from 'utils/user';
+import {useAuth} from 'utils/auth';
 
 const VoteContainer = styled.div`
   display: flex;
@@ -50,7 +50,7 @@ const VoteStats = styled.span`
 
 function PostVote(props) {
   const {isUpvote, isDownvote, voteStats, handleUpvote, handleDownvote} = props;
-  const {userData} = useUser();
+  const {userData} = useAuth();
 
   const onClickUpvote = () => {
     if (!Object.keys(userData).length) {

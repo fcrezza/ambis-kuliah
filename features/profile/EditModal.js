@@ -12,7 +12,7 @@ import Modal from 'components/Modal';
 import ErrorMessage from 'components/ErrorMessage';
 import {Button, IconButton} from 'components/Button';
 import axios from 'utils/axios';
-import {useUser} from 'utils/user';
+import {useAuth} from 'utils/auth';
 
 const ProfileEditContainer = styled.div`
   padding: 1.5rem;
@@ -125,7 +125,7 @@ function ProfileEdit(props) {
   const imgRef = React.useRef();
   const {colors} = useTheme();
   const router = useRouter();
-  const {userData} = useUser();
+  const {userData} = useAuth();
   const {
     register,
     handleSubmit,

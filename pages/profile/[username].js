@@ -7,7 +7,6 @@ import Head from 'components/Head';
 import axios from 'utils/axios';
 import {Button} from 'components/Button';
 import {useAuth} from 'utils/auth';
-import {useUser} from 'utils/user';
 import {
   ProfileDescription,
   ProfileMenu,
@@ -49,9 +48,8 @@ const fetchOptions = {
 
 function Profile() {
   const router = useRouter();
-  const {userData} = useUser();
+  const {userData, logout} = useAuth();
   const [isModalOpen, setModalState] = React.useState(false);
-  const {logout} = useAuth();
   const key =
     'username' in router.query ? `/users/${router.query.username}` : null;
   const {data: user, error, mutate, isValidating} = useSWR(

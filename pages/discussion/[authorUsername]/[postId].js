@@ -5,11 +5,11 @@ import useSWR from 'swr';
 
 import Head from 'components/Head';
 import Post from 'components/Post';
-import {PostSkeleton} from 'components/Skeleton';
-import {useUser} from 'utils/user';
+import {useAuth} from 'utils/auth';
 import axios from 'utils/axios';
 import {upvotePost, downvotePost, deletePost} from 'utils/common/post';
 import {ReplyDiscussion, WriteReply} from 'features/discussion';
+import Spinner from 'components/Spinner';
 
 const DiscussionContainer = styled.main`
   flex: 1;
@@ -40,7 +40,7 @@ const TitleText = styled.h1`
 `;
 
 function Discussion() {
-  const {userData} = useUser();
+  const {userData} = useAuth();
   const {query, back} = useRouter();
   const key = Object.keys(query).length
     ? `/posts/${query.authorUsername}/${query.postId}`
@@ -143,7 +143,7 @@ function Discussion() {
     );
   }
 
-  return <PostSkeleton uniqueKey="post-discussion-skeleton" />;
+  return <Spinner />;
 }
 
 export default Discussion;

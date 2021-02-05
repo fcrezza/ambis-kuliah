@@ -6,7 +6,7 @@ import Post from 'components/Post';
 import {Button} from 'components/Button';
 import axios from 'utils/axios';
 import {upvotePost, downvotePost, deletePost} from 'utils/common/post';
-import {useUser} from 'utils/user';
+import {useAuth} from 'utils/auth';
 
 function fetcher(url) {
   const fetchOptions = {
@@ -32,7 +32,7 @@ function getKey(pageIndex, previousPageData, username) {
 }
 
 function ProfileReplies({username}) {
-  const {userData} = useUser();
+  const {userData} = useAuth();
   let hasMore = true;
   const key = (pageIndex, previousPageData) =>
     getKey(pageIndex, previousPageData, username);

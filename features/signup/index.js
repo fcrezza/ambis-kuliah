@@ -11,7 +11,7 @@ import ErrorMessage from 'components/ErrorMessage';
 import {Input, InputGroup, PasswordInput} from 'components/Input';
 import {Button} from 'components/Button';
 import {useAuth} from 'utils/auth';
-import useRoute from 'utils/route';
+import {UnauthenticatedRoute} from 'components/Route';
 
 const SignupContainer = styled.div`
   margin-bottom: 100px;
@@ -75,8 +75,7 @@ function Signup() {
   });
   const {signup} = useAuth();
   const router = useRouter();
-  // eslint-disable-next-line
-  const route = useRoute(requestStatus === 'iddle' && '/home', null);
+
   const onSubmit = async data => {
     try {
       clearErrors('server');
@@ -113,69 +112,71 @@ function Signup() {
   };
 
   return (
-    <SignupContainer>
-      <SignupFormWrapper>
-        <SignupTitle>Daftar</SignupTitle>
-        <SignupForm onSubmit={handleSubmit(onSubmit)}>
-          <InputGroup>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              type="email"
-              placeholder="Email"
-              id="email"
-              name="email"
-              ref={register}
-              standalone
-            />
-          </InputGroup>
-          <ErrorMessage errors={errors} name="email" />
-          <InputGroup>
-            <Label htmlFor="fullname">Nama Lengkap</Label>
-            <Input
-              type="text"
-              placeholder="Nama Lengkap"
-              id="fullname"
-              name="fullname"
-              ref={register}
-              standalone
-            />
-          </InputGroup>
-          <ErrorMessage errors={errors} name="fullname" />
-          <InputGroup>
-            <Label htmlFor="username">Nama Pengguna</Label>
-            <Input
-              type="text"
-              placeholder="Nama Pengguna"
-              id="username"
-              name="username"
-              ref={register}
-              standalone
-            />
-          </InputGroup>
-          <ErrorMessage errors={errors} name="username" />
-          <InputGroup>
-            <Label htmlFor="password">Password</Label>
-            <PasswordInput
-              placeholder="Password"
-              id="password"
-              name="password"
-              ref={register}
-            />
-          </InputGroup>
-          <ErrorMessage errors={errors} name="password" />
-          <ErrorMessage errors={errors} name="server" />
-          <Button disabled={requestStatus === 'loading'}>Daftar</Button>
-        </SignupForm>
-        <LoginOptionContainer>
-          <LoginOptionText>
-            Sudah punya akun?{' '}
-            <NextLink href="/login" passHref>
-              <LoginOptionLink>Masuk</LoginOptionLink>
-            </NextLink>
-          </LoginOptionText>
-        </LoginOptionContainer>
-      </SignupFormWrapper>
-    </SignupContainer>
+    <UnauthenticatedRoute>
+      <SignupContainer>
+        <SignupFormWrapper>
+          <SignupTitle>Daftar</SignupTitle>
+          <SignupForm onSubmit={handleSubmit(onSubmit)}>
+            <InputGroup>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                type="email"
+                placeholder="Email"
+                id="email"
+                name="email"
+                ref={register}
+                standalone
+              />
+            </InputGroup>
+            <ErrorMessage errors={errors} name="email" />
+            <InputGroup>
+              <Label htmlFor="fullname">Nama Lengkap</Label>
+              <Input
+                type="text"
+                placeholder="Nama Lengkap"
+                id="fullname"
+                name="fullname"
+                ref={register}
+                standalone
+              />
+            </InputGroup>
+            <ErrorMessage errors={errors} name="fullname" />
+            <InputGroup>
+              <Label htmlFor="username">Nama Pengguna</Label>
+              <Input
+                type="text"
+                placeholder="Nama Pengguna"
+                id="username"
+                name="username"
+                ref={register}
+                standalone
+              />
+            </InputGroup>
+            <ErrorMessage errors={errors} name="username" />
+            <InputGroup>
+              <Label htmlFor="password">Password</Label>
+              <PasswordInput
+                placeholder="Password"
+                id="password"
+                name="password"
+                ref={register}
+              />
+            </InputGroup>
+            <ErrorMessage errors={errors} name="password" />
+            <ErrorMessage errors={errors} name="server" />
+            <Button disabled={requestStatus === 'loading'}>Daftar</Button>
+          </SignupForm>
+          <LoginOptionContainer>
+            <LoginOptionText>
+              Sudah punya akun?{' '}
+              <NextLink href="/login" passHref>
+                <LoginOptionLink>Masuk</LoginOptionLink>
+              </NextLink>
+            </LoginOptionText>
+          </LoginOptionContainer>
+        </SignupFormWrapper>
+      </SignupContainer>
+    </UnauthenticatedRoute>
   );
 }
 

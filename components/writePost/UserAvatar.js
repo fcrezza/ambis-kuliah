@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import styled from 'styled-components';
 
-import {useUser} from 'utils/user';
+import {useAuth} from 'utils/auth';
 
 const ProfileLink = styled.a`
   display: inline-block;
@@ -23,7 +23,7 @@ const Avatar = styled.div`
 `;
 
 function UserAvatar() {
-  const {userData} = useUser();
+  const {userData} = useAuth();
 
   return (
     <Link href={`/profile/${userData?.username}`} passHref>
