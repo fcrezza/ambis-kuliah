@@ -27,6 +27,8 @@ const PostContainer = styled.div`
 `;
 
 const PostContentContainer = styled.div`
+  width: 100%;
+
   & > *:not(:last-child) {
     margin-bottom: 1.3rem;
   }
@@ -45,9 +47,8 @@ const TimeStamp = styled.p`
 `;
 
 const Divider = styled.div`
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
+  width: 3px;
+  height: 3px;
   background: ${({theme}) => theme.colors['black.50']};
 `;
 
@@ -56,7 +57,7 @@ const PostFooter = styled.div`
   align-items: center;
 
   & > *:not(:last-child) {
-    margin-right: 0.5rem;
+    margin-right: 0.7rem;
   }
 `;
 
@@ -120,7 +121,7 @@ function Post(props) {
           <Divider />
           <AnswerStats>{replyStats} Jawaban</AnswerStats>
           <Divider />
-          <TimeStamp>{readableTimestamp} yang lalu</TimeStamp>
+          <TimeStamp>{readableTimestamp}</TimeStamp>
         </PostFooter>
       </PostContentContainer>
     </PostContainer>

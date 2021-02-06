@@ -1,4 +1,7 @@
-import styled from 'styled-components';
+import styled, {useTheme} from 'styled-components';
+import {Toaster} from 'react-hot-toast';
+
+import HotTopics from 'features/hotTopics';
 
 const LayoutContainer = styled.div`
   max-width: 1144px;
@@ -17,8 +20,28 @@ const LayoutContainer = styled.div`
   }
 `;
 
+const MainContainer = styled.div`
+  flex: 1;
+`;
+
 function Layout({children}) {
-  return <LayoutContainer>{children}</LayoutContainer>;
+  const {colors} = useTheme();
+
+  return (
+    <LayoutContainer>
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            background: colors['black.100'],
+            color: colors['white.50']
+          }
+        }}
+      />
+      <MainContainer>{children}</MainContainer>
+      <HotTopics />
+    </LayoutContainer>
+  );
 }
 
 export default Layout;

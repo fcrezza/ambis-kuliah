@@ -5,11 +5,12 @@ const ReplyContainer = styled.p`
   font-size: 0.9rem;
   color: ${({theme}) => theme.colors['black.50']};
   margin: 0;
+  font-weight: 500;
 `;
 
 const ProfileLink = styled.a`
   text-decoration: none;
-  color: ${({theme}) => theme.colors['orange.50']};
+  color: ${({theme}) => theme.colors['black.50']};
 
   &:focus,
   &:hover {

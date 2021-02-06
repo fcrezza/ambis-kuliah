@@ -1,3 +1,4 @@
+import React from 'react';
 import styled, {css} from 'styled-components';
 import {
   TiArrowDownThick,
@@ -6,6 +7,8 @@ import {
   TiArrowUpOutline
 } from 'react-icons/ti';
 
+import AuthReminder from './AuthReminder';
+import Modal from 'components/Modal';
 import {IconButton} from 'components/Button';
 import {PreventBubblingComponent} from './utils';
 import {useAuth} from 'utils/auth';
@@ -20,7 +23,7 @@ const VoteContainer = styled.div`
 
 const buttonIcon = css`
   font-size: 2rem;
-  color: ${({theme}) => theme.colors['orange.50']};
+  color: ${({theme}) => theme.colors['black.100']};
   display: block;
 `;
 
@@ -50,11 +53,12 @@ const VoteStats = styled.span`
 
 function PostVote(props) {
   const {isUpvote, isDownvote, voteStats, handleUpvote, handleDownvote} = props;
+  const [isReminderOpen, setIsReminderOpen] = React.useState(false);
   const {userData} = useAuth();
 
   const onClickUpvote = () => {
     if (!Object.keys(userData).length) {
-      alert('Kamu harus login terlebih dahulu');
+      setIsReminderOpen(true);
       return;
     }
     handleUpvote();
@@ -62,14 +66,21 @@ function PostVote(props) {
 
   const onClickDownvote = () => {
     if (!Object.keys(userData).length) {
-      alert('Kamu harus login terlebih dahulu');
+      setIsReminderOpen(true);
       return;
     }
     handleDownvote();
   };
 
+  const onCloseModal = () => {
+    setIsReminderOpen(false);
+  };
+
   return (
     <PreventBubblingComponent>
+      <Modal isOpen={isReminderOpen} onClose={onCloseModal}>
+        <AuthReminder />
+      </Modal>
       <VoteContainer>
         <IconButton onClick={onClickUpvote}>
           {isUpvote ? <UpvoteIconFill /> : <UpvoteIconDefault />}

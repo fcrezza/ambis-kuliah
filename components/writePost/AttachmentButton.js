@@ -19,11 +19,11 @@ const ButtonGroup = styled.div`
 
 const buttonIcon = css`
   font-size: 1.8rem;
-  color: ${({theme}) => theme.colors['orange.50']};
+  color: ${({theme}) => theme.colors['black.100']};
 
   ${IconButton}:disabled
   & {
-    color: ${({theme}) => lighten(0.1, theme.colors['orange.50'])};
+    color: ${({theme}) => lighten(0.1, theme.colors['black.100'])};
   }
 `;
 

@@ -30,7 +30,7 @@ export const GlobalStyle = createGlobalStyle`
 	      inset: 10% 40px auto 50%;
 	      border: 1px solid rgb(204, 204, 204);
 	      background: rgb(255, 255, 255);
-	      overflow: unset;
+	      overflow: hidden;
 	      border-radius: 20px;
 	      outline: none;
 	      padding: 0px;

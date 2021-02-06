@@ -20,12 +20,12 @@ const AttachmentItem = styled.div`
 const AttachmentContent = styled.div`
   display: flex;
   align-items: center;
-  border: 1px solid ${({theme}) => theme.colors['orange.50']};
+  border: 1px solid ${({theme}) => theme.colors['black.100']};
   padding: 0.3rem;
   border-radius: 3px 0 0 3px;
 `;
 const icon = css`
-  color: ${({theme}) => theme.colors['orange.50']};
+  color: ${({theme}) => theme.colors['black.100']};
   font-size: 1.2rem;
   display: block;
 `;
@@ -40,7 +40,7 @@ const AttachmentLabelIcon = styled(MdLabelOutline)`
 
 const AttachmentText = styled.p`
   margin: 0 0 0 0.5rem;
-  color: ${({theme}) => theme.colors['orange.50']};
+  color: ${({theme}) => theme.colors['black.100']};
   font-size: 0.8rem;
 `;
 
@@ -49,12 +49,12 @@ const AttachmentCancelButton = styled.button`
   border-radius: 0 3px 3px 0;
   padding: 0.1rem 0.2rem 0 0.1rem;
   border: 0;
-  background-color: ${({theme}) => theme.colors['orange.50']};
+  background-color: ${({theme}) => theme.colors['black.100']};
   display: inline-block;
 
   &:hover,
   &:focus {
-    background-color: ${({theme}) => darken(0.03, theme.colors['orange.50'])};
+    background-color: ${({theme}) => darken(0.03, theme.colors['black.100'])};
   }
 
   svg {

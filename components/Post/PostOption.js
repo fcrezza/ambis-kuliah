@@ -16,14 +16,14 @@ const OptionButtonContainer = styled.div`
 `;
 
 const ButtonIcon = styled(GoKebabVertical)`
-  color: ${({theme}) => theme.colors['orange.50']};
+  color: ${({theme}) => theme.colors['black.100']};
   font-size: 1.3rem;
 `;
 
 const OptionItem = styled.button`
   padding: 12px;
   border: 0;
-  color: ${({theme}) => theme.colors['black.100']};
+  color: ${({theme}) => theme.colors['black.50']};
   text-align: center;
   background: ${({theme}) => theme.colors['white.50']};
   display: block;

@@ -7,7 +7,6 @@ import 'fontsource-inter/700-normal.css';
 import {enableES5} from 'immer';
 
 import Navigation from 'features/navigation';
-import HotTopics from 'features/hotTopics';
 import Init from 'features/Init';
 import Layout from 'components/Layout';
 import {GlobalStyle} from 'utils/styles/Global';
@@ -26,7 +25,6 @@ function MyApp({Component, pageProps}) {
           <Navigation />
           <Layout>
             <Component {...pageProps} />
-            <HotTopics />
           </Layout>
         </Init>
       </GlobalSWRConfig>

@@ -22,7 +22,7 @@ const TitleText = styled.h2`
 
 const CloseIcon = styled(MdClose)`
   font-size: 1.8rem;
-  color: ${({theme}) => theme.colors['orange.50']};
+  color: ${({theme}) => theme.colors['black.100']};
 `;
 
 function Modal({isOpen, onClose, contentLabel, title, children}) {

@@ -13,10 +13,6 @@ const Container = styled.div`
   border-radius: 10px;
   background: ${({theme}) => theme.colors['white.50']};
 
-  @media screen and (max-width: 1440px) {
-    max-width: 340px;
-  }
-
   @media screen and (max-width: 768px) {
     display: none;
   }
@@ -37,7 +33,9 @@ function HotPosts() {
   const router = useRouter();
   const isShowed =
     router.pathname !== '/' &&
-    !['/login', '/signup'].find(route => router.pathname.startsWith(route));
+    !['/login', '/signup', '/auth'].find(route =>
+      router.pathname.startsWith(route)
+    );
 
   if (isShowed) {
     return (

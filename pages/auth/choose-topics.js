@@ -8,6 +8,7 @@ import {AuthenticatedRoute} from 'components/Route';
 
 const TopicsContainer = styled.div`
   width: 500px;
+  margin: 0 auto 200px;
   padding: 2rem;
   background: ${({theme}) => theme.colors['white.50']};
   border-radius: 10px;
@@ -53,10 +54,6 @@ const TopicsDescription = styled.p`
   }
 `;
 
-const TopicsWrapper = styled.div`
-  margin: 0 auto 200px;
-`;
-
 function ChooseTopics() {
   return (
     <AuthenticatedRoute>
@@ -64,18 +61,16 @@ function ChooseTopics() {
         title="Ikuti Topik - Pilih topik yang ingin kamu ikuti"
         description="Ikuti topik, diskusi tentang topik terkait akan mancul dihalaman utama kamu."
       />
-      <TopicsWrapper>
-        <TopicsContainer>
-          <TopicsTitle>Ikuti Topik</TopicsTitle>
-          <TopicsDescription>
-            Pilih topik yang ingin kamu ikuti, diskusi tentang topik terkait
-            akan mancul dihalaman utama kamu.
-          </TopicsDescription>
-          <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <Topics />
-          </ErrorBoundary>
-        </TopicsContainer>
-      </TopicsWrapper>
+      <TopicsContainer>
+        <TopicsTitle>Ikuti Topik</TopicsTitle>
+        <TopicsDescription>
+          Pilih topik yang ingin kamu ikuti, diskusi tentang topik terkait akan
+          mancul dihalaman utama kamu.
+        </TopicsDescription>
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <Topics />
+        </ErrorBoundary>
+      </TopicsContainer>
     </AuthenticatedRoute>
   );
 }

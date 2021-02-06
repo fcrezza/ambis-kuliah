@@ -89,7 +89,7 @@ function Login() {
 
   return (
     <UnauthenticatedRoute>
-      <Head title="Masuk - Ambis Kuliah" description="Halaman masuk" />;
+      <Head title="Masuk - Ambis Kuliah" description="Halaman masuk" />
       <LoginFormWrapper>
         <LoginTitle>Masuk</LoginTitle>
         <LoginForm onSubmit={handleSubmit(onSubmit)}>

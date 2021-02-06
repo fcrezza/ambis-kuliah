@@ -2,15 +2,15 @@ import styled from 'styled-components';
 import {darken} from 'polished';
 
 const EditorContainer = styled.div`
-  border-radius: 5px;
   width: 100%;
-  border: 1px solid ${({theme}) => theme.colors['gray.150']};
+  border: 1px solid ${({theme}) => theme.colors['gray.100']};
+  border-radius: 5px;
 `;
 
 const Divider = styled.div`
   height: 1px;
   width: 100%;
-  background-color: ${({theme}) => theme.colors['gray.150']};
+  background-color: ${({theme}) => theme.colors['gray.100']};
 `;
 
 const TitleInput = styled.input`
@@ -19,6 +19,7 @@ const TitleInput = styled.input`
   background-color: ${({theme}) => theme.colors['gray.50']};
   border: none;
   font-size: 1rem;
+  border-radius: 5px 5px 0 0;
   color: ${({theme}) => theme.colors['black.100']};
 
   &:hover,
@@ -37,6 +38,7 @@ const DescriptionInput = styled.textarea`
   min-height: 100px;
   resize: vertical;
   display: block;
+  border-radius: 0 0 5px 5px;
 
   &:hover,
   &:focus {

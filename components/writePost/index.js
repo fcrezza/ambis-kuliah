@@ -1,29 +1,25 @@
 import React from 'react';
 import styled from 'styled-components';
+import {toast} from 'react-hot-toast';
 
 import UserAvatar from './UserAvatar';
 import Input from './Input';
 import AttachmentValue from './AttachmentValue';
 import AttachementButton from './AttachmentButton';
+import {ErrorMessage} from 'components/Input';
 import axios from 'utils/axios';
 import {useAuth} from 'utils/auth';
+import useRequest from 'utils/useRequest';
 
 export const WritePostContainer = styled.div`
-  padding: 2rem 1.5rem;
+  padding: 2rem;
   display: flex;
   align-items: flex-start;
-  border: 1px solid ${({theme}) => theme.colors['gray.150']};
 `;
 
 export const EditorContainer = styled.div`
   margin-left: 2rem;
   width: 100%;
-`;
-
-export const ErrorMessage = styled.p`
-  margin: 1rem 0;
-  font-size: 1rem;
-  color: ${({theme}) => theme.colors['red.50']};
 `;
 
 function WritePost({onSubmitPost = () => {}}) {
@@ -33,8 +29,7 @@ function WritePost({onSubmitPost = () => {}}) {
   const [topics, setTopics] = React.useState([]);
   const [image, setImage] = React.useState(null);
   const imageInputRef = React.useRef();
-  const [requestStatus, setRequestStatus] = React.useState('iddle');
-  const [error, setError] = React.useState('');
+  const {requestStatus, changeRequestStatus} = useRequest();
 
   const onChangeImage = e => {
     setImage(e.target.files[0]);
@@ -67,13 +62,15 @@ function WritePost({onSubmitPost = () => {}}) {
   };
 
   const onSubmit = async () => {
+    console.log(requestStatus);
     try {
       if (!topics.length) {
-        setError('Postingan harus memiliki minimal 1 topik');
+        changeRequestStatus('error', {
+          message: 'Postingan harus memiliki minimal 1 topik'
+        });
         return;
       }
-      setError('');
-      setRequestStatus('loading');
+      changeRequestStatus('loading', null);
       const fd = new FormData();
 
       if (image) {
@@ -87,20 +84,23 @@ function WritePost({onSubmitPost = () => {}}) {
         JSON.stringify(topics.map(topic => Number(topic.id)))
       );
       await axios.post(`/posts/${userData.username}`, fd);
-      setRequestStatus('success');
+      changeRequestStatus('success', null);
       setImage(null);
       setTopics([]);
       setTitle('');
       setDescription('');
-      alert('berhasil!');
+      toast('Berhasil mengirim postingan');
       onSubmitPost();
     } catch (error) {
       if (error.response) {
-        setError(error.response.data.data.message);
+        changeRequestStatus('error', {
+          message: error.response.data.data.message
+        });
       } else {
-        setError('Upss, ada yang salah');
+        changeRequestStatus('error', {
+          message: 'Upzzz, ada yang salah'
+        });
       }
-      setRequestStatus('failed');
     }
   };
 
@@ -114,7 +114,9 @@ function WritePost({onSubmitPost = () => {}}) {
           onChangeTitle={onChangeTitle}
           onChangeDescription={onChangeDescription}
         />
-        {error ? <ErrorMessage>{error}</ErrorMessage> : null}
+        {requestStatus.name === 'error' ? (
+          <ErrorMessage message={requestStatus.data.message} />
+        ) : null}
         <AttachmentValue
           imageName={image?.name && `${image.name.substring(0, 20)}...`}
           topics={topics}
@@ -124,7 +126,7 @@ function WritePost({onSubmitPost = () => {}}) {
         <AttachementButton
           isTitlePresent={Boolean(title)}
           isImagePresent={Boolean(image)}
-          isSubmitting={requestStatus === 'loading'}
+          isSubmitting={requestStatus.name === 'loading'}
           topics={topics}
           imageInputRef={imageInputRef}
           onSubmit={onSubmit}

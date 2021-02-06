@@ -7,10 +7,10 @@ const TopicLink = styled.a`
 	text-decoration: none;
 	padding: 0.3rem;
 	border-radius: 5px;
-	border: 1px solid ${({theme}) => theme.colors['orange.50']};
+	border: 1px solid ${({theme}) => theme.colors['black.100']};
 	font-size: 0.8rem;
 	font-weight: 500;
-	color: ${({theme}) => theme.colors['orange.50']};
+	color: ${({theme}) => theme.colors['black.100']};
 
 	&:focus, &:hover {
 		background: ${({theme}) => theme.colors['gray.50']}}

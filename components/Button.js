@@ -29,7 +29,7 @@ const $Button = styled.button`
   font-weight: 700;
   font-size: 1.2rem;
   cursor: ${({disabled}) => (disabled ? 'default' : 'pointer')};
-  display: inline-block;
+  display: ${({block}) => (block ? 'block' : 'inline-block')};
   opacity: ${({disabled}) => (disabled ? 0.7 : 1)};
 
   ${({variant}) => (variant === 'outline' ? outline : original)};
@@ -53,9 +53,14 @@ export const IconButton = styled.button`
   }
 `;
 
-export function Button({onClick, disabled, variant, children}) {
+export function Button({onClick, disabled, variant, block, children}) {
   return (
-    <$Button onClick={onClick} variant={variant} disabled={disabled}>
+    <$Button
+      onClick={onClick}
+      variant={variant}
+      block={block}
+      disabled={disabled}
+    >
       {children}
     </$Button>
   );

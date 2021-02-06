@@ -40,12 +40,12 @@ const TopicAddButton = styled.button`
   border: 0;
   border-radius: 3px;
   padding: 0.2rem;
-  background-color: ${({theme}) => theme.colors['orange.50']};
+  background-color: ${({theme}) => theme.colors['black.100']};
   cursor: pointer;
 
   &:hover,
   &:focus {
-    background-color: ${({theme}) => darken(0.03, theme.colors['orange.50'])};
+    background-color: ${({theme}) => darken(0.03, theme.colors['black.100'])};
   }
 `;
 
@@ -69,7 +69,6 @@ const NotFoundContainer = styled.div`
 
 const NotFoundText = styled.p`
   margin: 2rem 0 0;
-  font-weight: 500;
   color: ${({theme}) => theme.colors['black.50']};
   text-align: center;
   font-size: 1rem;

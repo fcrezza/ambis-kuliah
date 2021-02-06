@@ -16,9 +16,6 @@ import useRequest from 'utils/useRequest';
 
 const SignupContainer = styled.div`
   margin: 0 auto 100px;
-`;
-
-const SignupFormWrapper = styled.div`
   background-color: ${({theme}) => theme.colors['white.50']};
   border-radius: 20px;
   width: 450px;
@@ -105,74 +102,72 @@ function Signup() {
     <UnauthenticatedRoute>
       <Head title="Daftar - Ambis Kuliah" description="Halaman daftar" />
       <SignupContainer>
-        <SignupFormWrapper>
-          <SignupTitle>Daftar</SignupTitle>
-          <SignupForm onSubmit={handleSubmit(onSubmit)}>
-            <InputGroup>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                type="email"
-                placeholder="Email"
-                id="email"
-                name="email"
-                ref={register}
-              />
-            </InputGroup>
-            {errors.email ? (
-              <ErrorMessage message={errors.email.message} />
-            ) : null}
-            <InputGroup>
-              <Label htmlFor="fullname">Nama Lengkap</Label>
-              <Input
-                type="text"
-                placeholder="Nama Lengkap"
-                id="fullname"
-                name="fullname"
-                ref={register}
-              />
-            </InputGroup>
-            {errors.fullname ? (
-              <ErrorMessage message={errors.fullname.message} />
-            ) : null}
-            <InputGroup>
-              <Label htmlFor="username">Nama Pengguna</Label>
-              <Input
-                type="text"
-                placeholder="Nama Pengguna"
-                id="username"
-                name="username"
-                ref={register}
-              />
-            </InputGroup>
-            {errors.username ? (
-              <ErrorMessage message={errors.username.message} />
-            ) : null}
-            <InputGroup>
-              <Label htmlFor="password">Password</Label>
-              <PasswordInput
-                placeholder="Password"
-                id="password"
-                name="password"
-                ref={register}
-              />
-            </InputGroup>
-            {errors.password ? (
-              <ErrorMessage message={errors.password.message} />
-            ) : null}
-            {requestStatus.name === 'error' ? (
-              <ErrorMessage message={requestStatus.data.message} />
-            ) : null}
-            <Button disabled={requestStatus === 'loading'}>Daftar</Button>
-          </SignupForm>
-          <LoginOptionContainer>
-            <LoginOptionText>
-              Sudah punya akun?{' '}
-              <NextLink href="/login" passHref>
-                <LoginOptionLink>Masuk</LoginOptionLink>
-              </NextLink>
-            </LoginOptionText>
-          </LoginOptionContainer>
-        </SignupFormWrapper>
+        <SignupTitle>Daftar</SignupTitle>
+        <SignupForm onSubmit={handleSubmit(onSubmit)}>
+          <InputGroup>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              type="email"
+              placeholder="Email"
+              id="email"
+              name="email"
+              ref={register}
+            />
+          </InputGroup>
+          {errors.email ? (
+            <ErrorMessage message={errors.email.message} />
+          ) : null}
+          <InputGroup>
+            <Label htmlFor="fullname">Nama Lengkap</Label>
+            <Input
+              type="text"
+              placeholder="Nama Lengkap"
+              id="fullname"
+              name="fullname"
+              ref={register}
+            />
+          </InputGroup>
+          {errors.fullname ? (
+            <ErrorMessage message={errors.fullname.message} />
+          ) : null}
+          <InputGroup>
+            <Label htmlFor="username">Nama Pengguna</Label>
+            <Input
+              type="text"
+              placeholder="Nama Pengguna"
+              id="username"
+              name="username"
+              ref={register}
+            />
+          </InputGroup>
+          {errors.username ? (
+            <ErrorMessage message={errors.username.message} />
+          ) : null}
+          <InputGroup>
+            <Label htmlFor="password">Password</Label>
+            <PasswordInput
+              placeholder="Password"
+              id="password"
+              name="password"
+              ref={register}
+            />
+          </InputGroup>
+          {errors.password ? (
+            <ErrorMessage message={errors.password.message} />
+          ) : null}
+          {requestStatus.name === 'error' ? (
+            <ErrorMessage message={requestStatus.data.message} />
+          ) : null}
+          <Button disabled={requestStatus === 'loading'}>Daftar</Button>
+        </SignupForm>
+        <LoginOptionContainer>
+          <LoginOptionText>
+            Sudah punya akun?{' '}
+            <NextLink href="/login" passHref>
+              <LoginOptionLink>Masuk</LoginOptionLink>
+            </NextLink>
+          </LoginOptionText>
+        </LoginOptionContainer>
       </SignupContainer>
     </UnauthenticatedRoute>
   );
