@@ -15,9 +15,9 @@ import Spinner from 'components/Spinner';
 
 const Container = styled.main`
   flex: 1;
-  border-radius: 5px;
-  border: 1px solid #d9d9d9;
-  min-height: calc(100vh - 150px);
+  border-radius: 10px 10px 0 0;
+  border: 1px solid ${({theme}) => theme.colors['gray.100']};
+  min-height: calc(100vh - 140px);
   padding-bottom: 5rem;
   position: relative;
   background: ${({theme}) => theme.colors['white.50']};
