@@ -2,6 +2,19 @@ import {mutate} from 'swr';
 
 import {Button} from 'components/Button';
 
+import styled from 'styled-components';
+
+const Container = styled.div`
+  padding: 2rem;
+  text-align: center;
+`;
+
+const Message = styled.p`
+  color: ${({theme}) => theme.colors['black.50']};
+  font-size: 1rem;
+  margin: 0 0 2rem;
+`;
+
 function ErrorFallback({resetErrorBoundary, error}) {
   const reset = async () => {
     if (error.response) {
@@ -21,10 +34,10 @@ function ErrorFallback({resetErrorBoundary, error}) {
   };
 
   return (
-    <div style={{textAlign: 'center'}}>
-      <p>Upzzz, ada yang tidak beres</p>
+    <Container>
+      <Message>Upzzz, ada yang tidak beres</Message>
       <Button onClick={reset}>Coba lagi</Button>
-    </div>
+    </Container>
   );
 }
 

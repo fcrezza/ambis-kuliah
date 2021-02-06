@@ -124,7 +124,7 @@ const EmptyContainer = styled.div`
 `;
 
 const EmptyText = styled.p`
-  color: ${({theme}) => theme.colors['black.100']};
+  color: ${({theme}) => theme.colors['black.50']};
   margin: 0;
   font-size: 1rem;
   text-align: center;

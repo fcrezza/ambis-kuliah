@@ -59,7 +59,7 @@ function PostContent({title, description, image}) {
   const closeImageModal = () => {
     setIsImageOpen(false);
   };
-
+  console.log(image);
   return (
     <ContentContainer>
       {title ? <ContentTitle>{title}</ContentTitle> : null}

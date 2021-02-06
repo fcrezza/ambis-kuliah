@@ -21,10 +21,36 @@ const PostsContainer = styled.div`
   padding-bottom: 5rem;
 `;
 
+const ErrorContainer = styled.div`
+  padding: 2rem;
+  text-align: center;
+`;
+
+const ErrorMessage = styled.p`
+  color: ${({theme}) => theme.colors['black.50']};
+  font-size: 1rem;
+  margin: 0 0 2rem;
+`;
+
 const SpinnerContainer = styled.div`
   padding-top: 2rem;
   display: flex;
   justify-content: center;
+`;
+
+const EmptyContainer = styled.div`
+  padding: 2rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const EmptyText = styled.p`
+  color: ${({theme}) => theme.colors['black.50']};
+  margin: 0;
+  font-size: 1rem;
+  text-align: center;
+  line-height: 30px;
 `;
 
 function fetcher(url) {
@@ -40,8 +66,8 @@ function getKey(pageIndex, previousPageData, topics) {
   }
 
   // change this offset
-  const startOffset = 1 * pageIndex + 1;
-  const endOffset = 1;
+  const startOffset = 20 * pageIndex + 1;
+  const endOffset = 20;
 
   if (previousPageData && !previousPageData.length) {
     return null;
@@ -100,37 +126,44 @@ function Posts() {
         }
         scrollThreshold="0px"
       >
-        {postData.map(post => (
-          <Post
-            key={post.id}
-            id={post.id}
-            title={post.title}
-            description={
-              post.contents && post.contents.length > 200
-                ? `${post.contents.substring(0, 200)}...`
-                : post.contents
-            }
-            topics={post.topics}
-            image={post.images[0]?.url}
-            voteStats={post.stats.upvotes - post.stats.downvotes}
-            replyStats={post.stats.replies}
-            timestamp={post.timestamp}
-            authorFullname={post.author.fullname}
-            authorUsername={post.author.username}
-            authorAvatar={post.author.avatar.url}
-            isUpvote={post?.feedback?.upvotes}
-            isDownvote={post?.feedback?.downvotes}
-            handleUpvote={() => handleUpvote(post.id)}
-            handleDownvote={() => handleDownvote(post.id)}
-            handleDelete={() => handleDelete(post.id)}
-            hasAuth={post.author.username === userData?.username}
-          />
-        ))}
+        {Array.isArray(postData) && postData.length
+          ? postData.map(post => (
+              <Post
+                key={post.id}
+                id={post.id}
+                title={post.title}
+                description={
+                  post.contents && post.contents.length > 200
+                    ? `${post.contents.substring(0, 200)}...`
+                    : post.contents
+                }
+                topics={post.topics}
+                image={post.images[0]?.url}
+                voteStats={post.stats.upvotes - post.stats.downvotes}
+                replyStats={post.stats.replies}
+                timestamp={post.timestamp}
+                authorFullname={post.author.fullname}
+                authorUsername={post.author.username}
+                authorAvatar={post.author.avatar.url}
+                isUpvote={post?.feedback?.upvotes}
+                isDownvote={post?.feedback?.downvotes}
+                handleUpvote={() => handleUpvote(post.id)}
+                handleDownvote={() => handleDownvote(post.id)}
+                handleDelete={() => handleDelete(post.id)}
+                hasAuth={post.author.username === userData?.username}
+              />
+            ))
+          : null}
+        {Array.isArray(postData) && !postData.length ? (
+          <EmptyContainer>
+            <EmptyText>Tidak ada apa-apa disini</EmptyText>
+          </EmptyContainer>
+        ) : null}
         {error && !isValidating && (
-          <div style={{textAlign: 'center'}}>
-            <h2 style={{padding: '2rem'}}>Tidak dapat memuat data</h2>
+          <ErrorContainer>
+            <ErrorMessage>Tidak dapat memuat data</ErrorMessage>
             <Button onClick={() => mutate()}>Coba lagi</Button>
-          </div>
+          </ErrorContainer>
         )}
       </InfiniteScroll>
     </PostsContainer>
