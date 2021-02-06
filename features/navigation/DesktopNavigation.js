@@ -135,13 +135,18 @@ function DesktopNavigation({onClickWrite, onClickLogin}) {
 
 function NavigationSearch() {
   const {push, pathname, query} = useRouter();
-  const [searchValue, setSearchValue] = React.useState(() => {
-    if (pathname === '/search') {
-      return query.keywords;
+  const [searchValue, setSearchValue] = React.useState('');
+
+  React.useEffect(() => {
+    if (query.keywords && pathname.startsWith('/search')) {
+      setSearchValue(query.keywords);
+      return;
     }
 
-    return '';
-  });
+    if (searchValue && !pathname.startsWith('/search')) {
+      setSearchValue('');
+    }
+  }, [pathname, query]);
 
   const onChangeSearch = e => setSearchValue(e.target.value);
 

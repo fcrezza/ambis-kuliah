@@ -2,7 +2,10 @@ import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {useSWRInfinite} from 'swr';
 import {useRouter} from 'next/router';
+import styled from 'styled-components';
+import {toast} from 'react-hot-toast';
 
+import Spinner from 'components/Spinner';
 import Head from 'components/Head';
 import Post from 'components/Post';
 import {Button} from 'components/Button';
@@ -10,19 +13,52 @@ import axios from 'utils/axios';
 import {useAuth} from 'utils/auth';
 import {upvotePost, downvotePost, deletePost} from 'utils/common/post';
 
-import styled from 'styled-components';
-
 const Container = styled.main`
+  border: 1px solid ${({theme}) => theme.colors['gray.100']};
   flex: 1;
-  border-radius: 5px;
-  border: 1px solid #d9d9d9;
+  border-radius: 10px 10px 0 0;
   min-height: calc(100vh - 150px);
   padding-bottom: 20px;
   position: relative;
+  background: ${({theme}) => theme.colors['white.50']};
 
   @media screen and (max-width: 768px) {
     border: 0;
   }
+`;
+
+const ErrorContainer = styled.div`
+  padding: 2rem;
+  text-align: center;
+`;
+
+const ErrorMessage = styled.p`
+  color: ${({theme}) => theme.colors['black.50']};
+  font-size: 1rem;
+  margin: 0 0 2rem;
+`;
+
+const SpinnerContainer = styled.div`
+  padding-top: 2rem;
+  display: flex;
+  justify-content: center;
+`;
+
+const EmptyContainer = styled.div`
+  padding: 2rem 1.5rem;
+  text-lign: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
+const EmptyText = styled.p`
+  color: ${({theme}) => theme.colors['black.50']};
+  margin: 0;
+  font-size: 1rem;
+  text-align: center;
+  line-height: 30px;
 `;
 
 function fetcher(url) {
@@ -71,33 +107,27 @@ function Search() {
   }
 
   const handleUpvote = postId => {
-    if (!Object.keys(userData).length) {
-      console.log('youre not login');
-      return;
-    }
     mutate(prevData => upvotePost(postId, userData.id, prevData.flat()), false);
   };
 
   const handleDownvote = postId => {
-    if (!Object.keys(userData).length) {
-      console.log('youre not login');
-      return;
-    }
-
     mutate(
       prevData => downvotePost(postId, userData.id, prevData.flat()),
       false
     );
   };
 
-  const handleDelete = postId => {
+  const handleDelete = async postId => {
     try {
-      mutate(
+      await mutate(
         prevData => deletePost(postId, userData.username, prevData.flat()),
         false
       );
+      toast.success('Berhasil menghapus postingan');
     } catch (e) {
-      alert('upzzz ada yang tidak beres, coba lagi');
+      toast.error('Gagal menghapus postingan', {
+        className: 'success'
+      });
     }
   };
 
@@ -111,10 +141,14 @@ function Search() {
         dataLength={postData.length}
         next={() => setSize(size => size + 1)}
         hasMore={isValidating || hasMore}
-        loader={<p style={{textAlign: 'center'}}>Memuat lebih banyak...</p>}
+        loader={
+          <SpinnerContainer>
+            <Spinner />
+          </SpinnerContainer>
+        }
         scrollThreshold="0px"
       >
-        {postData.length
+        {Array.isArray(postData) && postData.length
           ? postData.map(post => (
               <Post
                 key={post.id}
@@ -137,24 +171,16 @@ function Search() {
               />
             ))
           : null}
-        {Array.isArray(postData) && !postData.length && !error ? (
-          <div
-            style={{
-              textAlign: 'center',
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)'
-            }}
-          >
-            Tidak ada apa-apa disini
-          </div>
+        {Array.isArray(postData) && !postData.length ? (
+          <EmptyContainer>
+            <EmptyText>Tidak ada apa-apa disini</EmptyText>
+          </EmptyContainer>
         ) : null}
         {error && !isValidating && (
-          <div style={{textAlign: 'center'}}>
-            <h2 style={{padding: '2rem'}}>Tidak dapat memuat data</h2>
-            <Button onClick={() => mutate()}>Coba lagi</Button>
-          </div>
+          <ErrorContainer>
+            <ErrorMessage>Tidak dapat memuat data</ErrorMessage>
+            <Button onClick={() => mutate()}>Coba Lagi</Button>
+          </ErrorContainer>
         )}
       </InfiniteScroll>
     </Container>

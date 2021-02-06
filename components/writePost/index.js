@@ -89,7 +89,7 @@ function WritePost({onSubmitPost = () => {}}) {
       setTopics([]);
       setTitle('');
       setDescription('');
-      toast('Berhasil mengirim postingan');
+      toast.success('Berhasil mengirim postingan');
       onSubmitPost();
     } catch (error) {
       if (error.response) {

@@ -19,6 +19,7 @@ const PostsContainer = styled.div`
   overflow: hidden;
   min-height: calc(100vh - 460px);
   padding-bottom: 5rem;
+  position: relative;
 `;
 
 const ErrorContainer = styled.div`
@@ -40,9 +41,11 @@ const SpinnerContainer = styled.div`
 
 const EmptyContainer = styled.div`
   padding: 2rem 1.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  text-lign: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const EmptyText = styled.p`
@@ -160,7 +163,9 @@ function Posts() {
           : null}
         {Array.isArray(postData) && !postData.length ? (
           <EmptyContainer>
-            <EmptyText>Tidak ada apa-apa disini</EmptyText>
+            <EmptyText>
+              Postingan dari topik yang anda ikuti akan muncul disini
+            </EmptyText>
           </EmptyContainer>
         ) : null}
         {error && !isValidating && (
