@@ -1,52 +1,49 @@
 import React from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import {useSWRInfinite} from 'swr';
-import {useRouter} from 'next/router';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import styled from 'styled-components';
-import {toast} from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
-import Head from 'components/Head';
 import Post from 'components/Post';
 import {Button} from 'components/Button';
 import axios from 'utils/axios';
-import {useAuth} from 'utils/auth';
 import {upvotePost, downvotePost, deletePost} from 'utils/common/post';
+import {useAuth} from 'utils/auth';
 import Spinner from 'components/Spinner';
 
-const Container = styled.main`
-  flex: 1;
+const Container = styled.div`
   border-radius: 10px 10px 0 0;
-  border: 1px solid ${({theme}) => theme.colors['gray.100']};
+  border: 1px solid #d9d9d9;
   min-height: calc(100vh - 140px);
-  padding-bottom: 5rem;
+  overflow: hidden;
+  padding-bottom: 100px;
   position: relative;
   background: ${({theme}) => theme.colors['white.50']};
 
   @media screen and (max-width: 768px) {
-    border: 0;
+    border-radius: 0;
   }
 `;
 
-const ErrorContainer = styled.div`
-  padding: 2rem;
-  text-align: center;
+const TitleContainer = styled.div`
+  padding: 1.5rem;
+  border-bottom: ${({theme}) => `1px solid ${theme.colors['gray.100']}`};
 `;
 
-const ErrorMessage = styled.p`
-  color: ${({theme}) => theme.colors['black.50']};
-  font-size: 1rem;
-  margin: 0 0 2rem;
+const Title = styled.h1`
+  color: ${({theme}) => theme.colors['black.100']};
+  font-size: 1.5rem;
+  margin: 0;
 `;
 
 const SpinnerContainer = styled.div`
-  padding-top: 2rem;
   display: flex;
   justify-content: center;
+  padding: 2rem;
 `;
 
 const EmptyContainer = styled.div`
-  padding: 2rem 1.5rem;
-  text-lign: center;
+  padding: 2rem;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -61,23 +58,26 @@ const EmptyText = styled.p`
   line-height: 30px;
 `;
 
-const TitleContainer = styled.div`
-  padding: 1.5rem;
-  border-bottom: ${({theme}) => `1px solid ${theme.colors['gray.100']}`};
+const ErrorContainer = styled.div`
+  padding: 2rem;
+  text-align: center;
 `;
 
-const Title = styled.h1`
-  color: ${({theme}) => theme.colors['black.100']};
-  font-size: 1.5rem;
-  margin: 0;
+const ErrorMessage = styled.p`
+  color: ${({theme}) => theme.colors['black.50']};
+  font-size: 1rem;
+  margin: 0 0 2rem;
 `;
 
 function fetcher(url) {
-  return axios.get(url).then(({data}) => data.data);
+  const fetchOptions = {
+    withCredentials: true
+  };
+  return axios.get(url, fetchOptions).then(({data}) => data.data);
 }
 
-function getKey(pageIndex, previousPageData, topic) {
-  if (!topic) {
+function getKey(pageIndex, previousPageData, username) {
+  if (!username) {
     return null;
   }
 
@@ -89,22 +89,19 @@ function getKey(pageIndex, previousPageData, topic) {
     return null;
   }
 
-  return `/posts?topics=${topic}&limit=${startOffset},${endOffset}`;
+  return `/posts/${username}?limit=${startOffset},${endOffset}`;
 }
 
-function Topic() {
-  const {query} = useRouter();
-  const topic = query.topic;
+function ProfilePosts({username}) {
   const {userData} = useAuth();
   const key = (pageIndex, previousPageData) =>
-    getKey(pageIndex, previousPageData, topic);
+    getKey(pageIndex, previousPageData, username);
   const {data, error, mutate, isValidating, setSize} = useSWRInfinite(
     key,
     fetcher
   );
   let hasMore = true;
   const postData = Array.isArray(data) ? data.flat() : [];
-
   if (
     (Array.isArray(data) && data.length && !data[data.length - 1].length) ||
     error
@@ -133,20 +130,13 @@ function Topic() {
       );
       toast.success('Berhasil menghapus postingan');
     } catch (e) {
-      toast.error('Gagal menghapus postingan', {
-        className: 'success'
-      });
+      toast.error('Tidak bisa menghapus postingan');
     }
   };
-
   return (
     <Container>
-      <Head
-        title={`${topic} - Ambis Kuliah`}
-        description={`Jelajahi diskusi yang menggunakan topik ${topic}`}
-      />
       <TitleContainer>
-        <Title>{topic}</Title>
+        <Title>Diskusi</Title>
       </TitleContainer>
       <InfiniteScroll
         dataLength={postData.length}
@@ -178,7 +168,7 @@ function Topic() {
                 handleUpvote={() => handleUpvote(post.id)}
                 handleDownvote={() => handleDownvote(post.id)}
                 handleDelete={() => handleDelete(post.id)}
-                hasAuth={userData?.username === post.author.username}
+                hasAuth={userData?.id === post.author.id}
               />
             ))
           : null}
@@ -190,7 +180,7 @@ function Topic() {
         {error && !isValidating && (
           <ErrorContainer>
             <ErrorMessage>Tidak dapat memuat data</ErrorMessage>
-            <Button onClick={() => mutate(null)}>Coba Lagi</Button>
+            <Button onClick={() => mutate()}>Coba Lagi</Button>
           </ErrorContainer>
         )}
       </InfiniteScroll>
@@ -198,4 +188,4 @@ function Topic() {
   );
 }
 
-export default Topic;
+export default ProfilePosts;

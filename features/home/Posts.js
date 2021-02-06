@@ -171,7 +171,7 @@ function Posts() {
         {error && !isValidating && (
           <ErrorContainer>
             <ErrorMessage>Tidak dapat memuat data</ErrorMessage>
-            <Button onClick={() => mutate()}>Coba lagi</Button>
+            <Button onClick={() => mutate(null)}>Coba lagi</Button>
           </ErrorContainer>
         )}
       </InfiniteScroll>

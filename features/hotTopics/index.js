@@ -33,7 +33,7 @@ function HotPosts() {
   const router = useRouter();
   const isShowed =
     router.pathname !== '/' &&
-    !['/login', '/signup', '/auth'].find(route =>
+    !['/login', '/signup', '/auth', '/profile'].find(route =>
       router.pathname.startsWith(route)
     );
 

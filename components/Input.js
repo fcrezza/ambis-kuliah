@@ -50,8 +50,9 @@ const PasswordVisibilityToggler = styled.button`
 `;
 
 const $TextArea = styled.textarea`
+  border-radius: 5px;
+  border: ${({theme}) => `1px solid ${theme.colors['gray.100']}`};
   background-color: ${({theme}) => theme.colors['gray.50']};
-  border: 0;
   padding: 0.8rem;
   font-size: 1rem;
   width: 100%;
@@ -77,11 +78,17 @@ const PasswordHiddenIcon = styled(AiOutlineEyeInvisible)`
 `;
 
 export const Input = React.forwardRef((props, ref) => {
-  const {id, name, placeholder} = props;
+  const {id, name, placeholder, type = 'text'} = props;
 
   return (
     <InputWrapper>
-      <$Input id={id} name={name} placeholder={placeholder} ref={ref} />
+      <$Input
+        id={id}
+        type={type}
+        name={name}
+        placeholder={placeholder}
+        ref={ref}
+      />
     </InputWrapper>
   );
 });
@@ -114,9 +121,11 @@ export const PasswordInput = React.forwardRef((props, ref) => {
   );
 });
 
-export function Textarea({onChange, value, placeholder, name, styles}) {
+export const Textarea = React.forwardRef((props, ref) => {
+  const {onChange, value, placeholder, name, styles} = props;
   return (
     <$TextArea
+      ref={ref}
       name={name}
       placeholder={placeholder}
       value={value}
@@ -124,7 +133,7 @@ export function Textarea({onChange, value, placeholder, name, styles}) {
       styles={styles}
     />
   );
-}
+});
 
 export function ErrorMessage({message}) {
   return <$ErrorMessage>{message}</$ErrorMessage>;

@@ -1,5 +1,4 @@
-import ProfileDescription from './Description';
-import ProfileEditModal from './EditModal.js';
-import ProfileMenu from './Menu';
+import ProfileContent from './Content';
+import ErrorFallback from './ErrorFallback';
 
-export {ProfileDescription, ProfileEditModal, ProfileMenu};
+export {ProfileContent, ErrorFallback};

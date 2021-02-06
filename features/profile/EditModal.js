@@ -9,69 +9,29 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import {mutate, cache} from 'swr';
 
 import Modal from 'components/Modal';
-import ErrorMessage from 'components/ErrorMessage';
+import {ErrorMessage, Input, InputGroup, Textarea} from 'components/Input';
+import Label from 'components/Label';
 import {Button, IconButton} from 'components/Button';
 import axios from 'utils/axios';
 import {useAuth} from 'utils/auth';
 
 const ProfileEditContainer = styled.div`
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
+  max-height: 500px;
+  overflow-y: auto;
 `;
 
 const AvatarWrapper = styled.div`
-  padding: 1.5rem 0 3rem;
+  margin-bottom: 3rem;
 `;
 
 const ButtonWrapper = styled.div`
   text-align: right;
 `;
 
-const Form = styled.form``;
-
-const InputGroup = styled.div`
-  margin-bottom: 2rem;
-`;
-
-const InputLabel = styled.label`
-  color: ${({theme}) => theme.colors['black.150']};
-  font-size: 1rem;
-  font-weight: 500;
-  margin-bottom: 1rem;
-  display: inline-block;
-`;
-
-const Input = styled.input`
-  padding: 0.8rem;
-  width: 100%;
-  background-color: ${({theme, disabled}) =>
-    disabled ? darken(0.05, theme.colors['gray.50']) : theme.colors['gray.50']};
-  border: 1px solid ${({theme}) => theme.colors['gray.150']};
-  font-size: 1rem;
-  color: ${({theme, disabled}) =>
-    disabled ? theme.colors['black.50'] : theme.colors['black.100']};
-  border-radius: 5px;
-
-  &:hover,
-  &:focus {
-    background-color: ${({theme}) => darken(0.02, theme.colors['gray.50'])};
-  }
-`;
-
-const Textarea = styled.textarea`
-  background-color: ${({theme}) => theme.colors['gray.50']};
-  border: 1px solid ${({theme}) => theme.colors['gray.150']};
-  padding: 0.8rem;
-  font-size: 1rem;
-  width: 100%;
-  color: ${({theme}) => theme.colors['black.100']};
-  min-height: 100px;
-  resize: vertical;
-  display: block;
-  border-radius: 5px;
-
-  &:hover,
-  &:focus {
-    background-color: ${({theme}) => darken(0.02, theme.colors['gray.50'])};
+const Form = styled.form`
+  & > *:not(:last-child) {
+    margin-bottom: 1.5rem;
   }
 `;
 
@@ -80,9 +40,10 @@ const ProfileAvatarPreview = styled.div`
   height: 100px;
   border-radius: 50%;
   display: block;
-  background: ${({theme}) => theme.colors['gray.100']};
+  background: ${({theme}) => theme.colors['gray.150']};
   background-image: url(${({imageUrl}) => imageUrl});
   background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
 `;
 
@@ -94,14 +55,14 @@ const ButtonContainer = styled.div`
   width: 100%;
   border-radius: 50%;
   background: ${({theme}) =>
-    `rgba(${Object.values(parseToRgb(theme.colors['black.150'])).join(
+    `rgba(${Object.values(parseToRgb(theme.colors['black.100'])).join(
       ','
     )}, 0.4)`};
 `;
 
 const ChangeAvatarIcon = styled(MdAddAPhoto)`
   font-size: 1.8rem;
-  color: ${({theme}) => theme.colors['orange.50']};
+  color: ${({theme}) => theme.colors['white.50']};
 `;
 
 const ImageInput = styled.input`
@@ -274,22 +235,22 @@ function ProfileEdit(props) {
         </AvatarWrapper>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <InputGroup>
-            <InputLabel htmlFor="fullname">Nama Lengkap</InputLabel>
+            <Label htmlFor="fullname">Nama Lengkap</Label>
             <Input type="text" id="fullname" name="fullname" ref={register} />
           </InputGroup>
           <ErrorMessage name="fullname" errors={errors} />
           <InputGroup>
-            <InputLabel htmlFor="username">Username</InputLabel>
+            <Label htmlFor="username">Username</Label>
             <Input type="text" id="username" name="username" ref={register} />
           </InputGroup>
           <ErrorMessage name="username" errors={errors} />
           <InputGroup>
-            <InputLabel htmlFor="email">Email</InputLabel>
+            <Label htmlFor="email">Email</Label>
             <Input type="email" id="email" name="email" ref={register} />
           </InputGroup>
           <ErrorMessage name="email" errors={errors} />
           <InputGroup>
-            <InputLabel htmlFor="bio">Bio</InputLabel>
+            <Label htmlFor="bio">Bio</Label>
             <Textarea id="bio" name="bio" ref={register} />
           </InputGroup>
           <ErrorMessage name="bio" errors={errors} />
