@@ -5,16 +5,17 @@ import useSWR from 'swr';
 import {useErrorHandler} from 'react-error-boundary';
 import {formatDistanceToNow} from 'date-fns';
 import {id as localeId} from 'date-fns/locale';
+import {useRouter} from 'next/router';
+import {lighten} from 'polished';
 
 import Spinner from 'components/Spinner';
 import axios from 'utils/axios';
-import {useRouter} from 'next/router';
 
 const PostItem = styled.div`
   padding: 1.2rem;
 `;
 
-const PostsContainer = styled.div`
+const PostContainer = styled.div`
   cursor: pointer;
 
   & > ${PostItem}:not(:last-child) {
@@ -23,18 +24,18 @@ const PostsContainer = styled.div`
 
   &:hover,
   &:focus {
-    background-color: ${({theme}) => theme.colors['gray.50']};
+    background-color: ${({theme}) => lighten(0.01, theme.colors['gray.50'])};
   }
 `;
 
 const PostTimestamp = styled.p`
-  color: ${({theme}) => theme.colors['black.100']};
+  color: ${({theme}) => theme.colors['black.50']};
   margin: 0;
   font-size: 0.9rem;
 `;
 
 const PostTitle = styled.h3`
-  color: ${({theme}) => theme.colors['black.150']};
+  color: ${({theme}) => theme.colors['black.100']};
   margin: 0 0 1.5rem;
   font-size: 1.4rem;
   line-height: 35px;
@@ -47,13 +48,13 @@ const AuthorNameContainer = styled.div`
 const AuthorFullname = styled.p`
   margin: 0 0 8px;
   font-size: 0.9rem;
-  color: ${({theme}) => theme.colors['black.100']};
+  color: ${({theme}) => theme.colors['black.50']};
   font-weight: 700;
 `;
 
 const Divider = styled.div`
   margin: 0 8px;
-  background: ${({theme}) => theme.colors['black.100']};
+  background: ${({theme}) => theme.colors['black.50']};
   width: 3px;
   height: 3px;
 `;
@@ -61,7 +62,7 @@ const Divider = styled.div`
 const AuthorUsername = styled.p`
   margin: 0;
   font-size: 0.85rem;
-  color: ${({theme}) => theme.colors['black.100']};
+  color: ${({theme}) => theme.colors['black.50']};
 `;
 
 const AuthorAvatar = styled.div`
@@ -99,7 +100,7 @@ const PostTopContainer = styled.div`
 `;
 
 const PostTopicLink = styled.a`
-  color: ${({theme}) => theme.colors['black.100']};
+  color: ${({theme}) => theme.colors['black.50']};
   text-decoration: none;
   font-size: 0.85rem;
 
@@ -207,7 +208,7 @@ function Post(props) {
   };
 
   return (
-    <PostsContainer
+    <PostContainer
       tabIndex="0"
       role="button"
       ref={e => (postContainerRef.current = e)}
@@ -239,7 +240,7 @@ function Post(props) {
           </AuthorLink>
         </Link>
       </PostItem>
-    </PostsContainer>
+    </PostContainer>
   );
 }
 

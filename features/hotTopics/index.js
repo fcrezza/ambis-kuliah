@@ -11,6 +11,7 @@ const Container = styled.div`
   margin-left: 3rem;
   border: 1px solid #d9d9d9;
   border-radius: 10px;
+  overflow: hidden;
   background: ${({theme}) => theme.colors['white.50']};
 
   @media screen and (max-width: 768px) {
