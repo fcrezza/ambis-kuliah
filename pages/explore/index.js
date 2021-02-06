@@ -1,14 +1,11 @@
 import React from 'react';
-import useSWR from 'swr';
 import styled from 'styled-components';
-import Link from 'next/link';
-import {lighten} from 'polished';
+import {ErrorBoundary} from 'react-error-boundary';
 
 import Head from 'components/Head';
-// import ExploreModal from 'features/explore/Modal';
 import Search from 'components/Search';
-import axios from 'utils/axios';
-import {Button} from 'components/Button';
+import Topics from 'features/explore/Topics';
+import ErrorFallback from 'features/explore/ErrorFallback';
 
 const Container = styled.main`
   border-radius: 10px 10px 0 0;
@@ -18,6 +15,7 @@ const Container = styled.main`
   flex: 1;
   padding-bottom: 100px;
   position: relative;
+  background: ${({theme}) => theme.colors['white.50']};
 
   @media screen and (max-width: 768px) {
     border-radius: 0;
@@ -33,62 +31,33 @@ const SearchContainer = styled.div`
   }
 `;
 
-const TopicItemContainer = styled.a`
-  display: block;
-  text-decoration: none;
+const TitleContainer = styled.div`
   padding: 1.5rem;
   border-bottom: ${({theme}) => `1px solid ${theme.colors['gray.100']}`};
-  color: ${({theme}) => theme.colors['black.100']};
-  font-weight: 500;
-  font-size: 1.1rem;
+`;
 
-  &:hover,
-  &:focus {
-    background-color: ${({theme}) => lighten(0.01, theme.colors['gray.50'])};
-  }
+const Title = styled.h1`
+  color: ${({theme}) => theme.colors['black.100']};
+  font-size: 1.5rem;
+  margin: 0;
 `;
 
 function Explore() {
-  const {data: topics, error, mutate} = useSWR(
-    '/topics',
-    url => axios.get(url).then(({data}) => data.data),
-    {revalidateOnFocus: false}
-  );
-
   return (
     <Container>
       <Head
-        title="Eksplor topik - Ambis Kuliah"
-        description="Eksplor berbagai macam topik diskusi"
+        title="Jelajahi topik - Ambis Kuliah"
+        description="Jelajahi berbagai macam topik diskusi"
       />
-      {/* <ExploreModal
-        topics={topics}
-        isOpen={isModalOpen}
-        onClose={onModalClose}
-      /> */}
+      <TitleContainer>
+        <Title>Jelajahi</Title>
+      </TitleContainer>
       <SearchContainer>
         <Search placeholder="Cari Diskusi" />
       </SearchContainer>
-      {error && !topics ? (
-        <div style={{textAlign: 'center'}}>
-          <h2>Uppzz, ada yang salah</h2>
-          <Button onClick={mutate}>Coba lagi</Button>
-        </div>
-      ) : !error && !topics ? (
-        <div
-          style={{
-            textAlign: 'center'
-          }}
-        >
-          Memuat data...
-        </div>
-      ) : (
-        topics.map(topic => (
-          <Link key={topic.id} href={`/explore/${topic.name}`} passHref>
-            <TopicItemContainer>{topic.name}</TopicItemContainer>
-          </Link>
-        ))
-      )}
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <Topics />
+      </ErrorBoundary>
     </Container>
   );
 }

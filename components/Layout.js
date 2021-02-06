@@ -32,9 +32,19 @@ function Layout({children}) {
       <Toaster
         position="bottom-center"
         toastOptions={{
-          style: {
-            background: colors['black.100'],
-            color: colors['white.50']
+          success: {
+            icon: null,
+            style: {
+              background: colors['black.100'],
+              color: colors['white.50']
+            }
+          },
+          error: {
+            icon: null,
+            style: {
+              background: colors['red.50'],
+              color: colors['white.50']
+            }
           }
         }}
       />

@@ -105,12 +105,16 @@ function Posts() {
     );
   };
 
-  const handleDelete = postId => {
-    mutate(
-      prevData => deletePost(postId, userData.username, prevData.flat()),
-      false
-    );
-    toast('Berhasil menghapus postingan');
+  const handleDelete = async postId => {
+    try {
+      await mutate(
+        prevData => deletePost(postId, userData.username, prevData.flat()),
+        false
+      );
+      toast.success('Berhasil menghapus postingan');
+    } catch (error) {
+      toast.error('Gagal menghapus postingan');
+    }
   };
 
   return (

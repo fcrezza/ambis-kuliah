@@ -24,7 +24,7 @@ const TitleContainer = styled.div`
 `;
 
 const Title = styled.h2`
-  color: ${({theme}) => theme.colors['black.150']};
+  color: ${({theme}) => theme.colors['black.100']};
   font-size: 1.5rem;
   margin: 0;
 `;
