@@ -1,4 +1,4 @@
-import ReplyDiscussion from './Replies';
-import WriteReply from './WriteReply';
+import DiscussionContent from './Content';
+import ErrorFallback from './ErrorFallback';
 
-export {ReplyDiscussion, WriteReply};
+export {DiscussionContent, ErrorFallback};
