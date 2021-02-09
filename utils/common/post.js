@@ -5,35 +5,35 @@ export function upvotePost(postId, userId, prevData) {
   let hasUpvote = false;
   let hasDownvote = false;
   const newData = IProduce(prevData, draft => {
-    const post = Array.isArray(draft)
-      ? draft.find(p => p.id === postId)
-      : draft;
-    if (post.feedback.upvotes) {
-      hasUpvote = true;
-      post.feedback.upvotes = false;
-      post.stats.upvotes--;
-    } else if (post.feedback.downvotes) {
-      hasDownvote = true;
-      post.feedback.downvotes = false;
-      post.feedback.upvotes = true;
-      post.stats.downvotes--;
-      post.stats.upvotes++;
-    } else {
-      post.feedback.upvotes = true;
-      post.stats.upvotes++;
+    for (const {posts} of draft) {
+      const post = posts.find(post => post.id === postId);
+      if (post) {
+        if (post.interactions.upvote) {
+          hasUpvote = true;
+          post.interactions.upvote = false;
+          post.stats.upvotes--;
+        } else if (post.interactions.downvote) {
+          hasDownvote = true;
+          post.interactions.downvote = false;
+          post.interactions.upvote = true;
+          post.stats.downvotes--;
+          post.stats.upvotes++;
+        } else {
+          post.interactions.upvote = true;
+          post.stats.upvotes++;
+        }
+        break;
+      }
     }
   });
 
   if (hasUpvote) {
-    unUpvote(Number(postId), Number(userId));
+    unUpvote(postId, userId);
   } else if (hasDownvote) {
-    unDownvote(Number(postId), Number(userId)).then(() =>
-      upvote(Number(postId), Number(userId))
-    );
+    unDownvote(postId, userId).then(() => upvote(postId, userId));
   } else {
-    upvote(Number(postId), Number(userId));
+    upvote(postId, userId);
   }
-
   return newData;
 }
 
@@ -41,42 +41,47 @@ export function downvotePost(postId, userId, prevData) {
   let hasUpvote = false;
   let hasDownvote = false;
   const newData = IProduce(prevData, draft => {
-    const post = Array.isArray(draft)
-      ? draft.find(p => p.id === postId)
-      : draft;
-    if (post.feedback.downvotes) {
-      hasDownvote = true;
-      post.feedback.downvotes = false;
-      post.stats.downvotes--;
-    } else if (post.feedback.upvotes) {
-      hasUpvote = true;
-      post.feedback.upvotes = false;
-      post.feedback.downvotes = true;
-      post.stats.upvotes--;
-      post.stats.downvotes++;
-    } else {
-      post.feedback.downvotes = true;
-      post.stats.downvotes++;
+    for (const {posts} of draft) {
+      const post = posts.find(post => post.id === postId);
+      if (post) {
+        if (post.interactions.downvote) {
+          hasDownvote = true;
+          post.interactions.downvote = false;
+          post.stats.downvotes--;
+        } else if (post.interactions.upvote) {
+          hasUpvote = true;
+          post.interactions.upvote = false;
+          post.interactions.downvote = true;
+          post.stats.upvotes--;
+          post.stats.downvotes++;
+        } else {
+          post.interactions.downvote = true;
+          post.stats.downvotes++;
+        }
+        break;
+      }
     }
   });
 
   if (hasDownvote) {
-    unDownvote(Number(postId), Number(userId));
+    unDownvote(postId, userId);
   } else if (hasUpvote) {
-    unUpvote(Number(postId), Number(userId)).then(() =>
-      downvote(Number(postId), Number(userId))
-    );
+    unUpvote(postId, userId).then(() => downvote(postId, userId));
   } else {
-    downvote(Number(postId), Number(userId));
+    downvote(postId, userId);
   }
 
   return newData;
 }
 
 export async function deletePost(postId, username, prevData) {
-  const newData = prevData
-    ? prevData.filter(p => Number(p.id) !== Number(postId))
-    : null;
+  // const newData = prevData
+  //   ? prevData.filter(p => Number(p.id) !== postId)
+  //   : null;
+  const newData = prevData.map(item => ({
+    ...item,
+    posts: item.posts.filter(post => post.id !== postId)
+  }));
   await axios.delete(`/posts/${username}/${postId}`);
   return newData;
 }

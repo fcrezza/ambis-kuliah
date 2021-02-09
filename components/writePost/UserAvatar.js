@@ -28,7 +28,7 @@ function UserAvatar() {
   return (
     <Link href={`/profile/${userData?.username}`} passHref>
       <ProfileLink>
-        <Avatar imageUrl={userData?.avatar.url} />
+        <Avatar imageUrl={userData?.avatar} />
       </ProfileLink>
     </Link>
   );

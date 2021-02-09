@@ -56,62 +56,50 @@ const EmptyText = styled.p`
   line-height: 30px;
 `;
 
-function fetcher(url) {
-  const fetchOptions = {
-    withCredentials: true
-  };
-  return axios.get(url, fetchOptions).then(({data}) => data.data);
-}
+function getKey(pageIndex, previousPageData) {
+  const limit = 3;
 
-function getKey(pageIndex, previousPageData, topics) {
-  if (!topics) {
-    return null;
-  }
-
-  // change this offset
-  const startOffset = 20 * pageIndex + 1;
-  const endOffset = 20;
-
-  if (previousPageData && !previousPageData.length) {
-    return null;
-  }
-
-  return `/posts?topics=${topics}&limit=${startOffset},${endOffset}`;
+  // reached the end
+  if (previousPageData && !previousPageData.next) return null;
+  // first page, we don't have `previousPageData`
+  if (pageIndex === 0) return `/posts/feeds?limit=${limit}`;
+  // add the cursor to the API endpoint
+  const {searchParams} = new URL(previousPageData.next);
+  return `posts/feeds?${searchParams}`;
 }
 
 function Posts() {
   const {userData} = useAuth();
-  const topics = userData.topics.map(topic => topic.name).join(',');
-  const key = (pageIndex, previousPageData) =>
-    getKey(pageIndex, previousPageData, topics);
   const {data, error, mutate, isValidating, setSize} = useSWRInfinite(
-    key,
-    fetcher
+    getKey,
+    url => axios.get(url).then(({data}) => data.data)
   );
-  let hasMore = true;
-  const postData = Array.isArray(data) ? data.flat() : [];
 
-  if ((Array.isArray(data) && !data[data.length - 1].length) || error) {
+  let hasMore = false;
+
+  if (Array.isArray(data) && !data[data.length - 1].next) {
     hasMore = false;
-  } else {
+  } else if (data && data[data.length - 1].next) {
     hasMore = true;
   }
 
+  let posts = [];
+
+  if (Array.isArray(data)) {
+    posts = data.map(({posts}) => posts).flat();
+  }
   const handleUpvote = postId => {
-    mutate(prevData => upvotePost(postId, userData.id, prevData.flat()), false);
+    mutate(prevState => upvotePost(postId, userData.id, prevState), false);
   };
 
   const handleDownvote = postId => {
-    mutate(
-      prevData => downvotePost(postId, userData.id, prevData.flat()),
-      false
-    );
+    mutate(prevState => downvotePost(postId, userData.id, prevState), false);
   };
 
   const handleDelete = async postId => {
     try {
       await mutate(
-        prevData => deletePost(postId, userData.username, prevData.flat()),
+        prevState => deletePost(postId, userData.username, prevState),
         false
       );
       toast.success('Berhasil menghapus postingan');
@@ -123,18 +111,18 @@ function Posts() {
   return (
     <PostsContainer>
       <InfiniteScroll
-        dataLength={postData.length}
+        dataLength={posts.length}
         next={() => setSize(size => size + 1)}
-        hasMore={isValidating || hasMore}
+        hasMore={hasMore && !error}
         loader={
           <SpinnerContainer>
             <Spinner />
           </SpinnerContainer>
         }
-        scrollThreshold="0px"
+        scrollThreshold="10px"
       >
-        {Array.isArray(postData) && postData.length
-          ? postData.map(post => (
+        {posts.length
+          ? posts.map(post => (
               <Post
                 key={post.id}
                 id={post.id}
@@ -145,15 +133,15 @@ function Posts() {
                     : post.contents
                 }
                 topics={post.topics}
-                image={post.images[0]?.url}
+                image={post.image}
                 voteStats={post.stats.upvotes - post.stats.downvotes}
                 replyStats={post.stats.replies}
                 timestamp={post.timestamp}
                 authorFullname={post.author.fullname}
                 authorUsername={post.author.username}
-                authorAvatar={post.author.avatar.url}
-                isUpvote={post?.feedback?.upvotes}
-                isDownvote={post?.feedback?.downvotes}
+                authorAvatar={post.author.avatar}
+                isUpvote={post?.interactions?.upvote}
+                isDownvote={post?.interactions?.downvote}
                 handleUpvote={() => handleUpvote(post.id)}
                 handleDownvote={() => handleDownvote(post.id)}
                 handleDelete={() => handleDelete(post.id)}
@@ -161,19 +149,21 @@ function Posts() {
               />
             ))
           : null}
-        {Array.isArray(postData) && !postData.length ? (
+        {!posts.length ? (
           <EmptyContainer>
             <EmptyText>
               Postingan dari topik yang anda ikuti akan muncul disini
             </EmptyText>
           </EmptyContainer>
         ) : null}
-        {error && !isValidating && (
+        {error && !isValidating ? (
           <ErrorContainer>
             <ErrorMessage>Tidak dapat memuat data</ErrorMessage>
-            <Button onClick={() => mutate(null)}>Coba lagi</Button>
+            <Button onClick={() => mutate(prevData => prevData, true)}>
+              Coba lagi
+            </Button>
           </ErrorContainer>
-        )}
+        ) : null}
       </InfiniteScroll>
     </PostsContainer>
   );

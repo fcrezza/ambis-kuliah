@@ -121,7 +121,7 @@ function DesktopNavigation({onClickWrite, onClickLogin}) {
           <>
             <Link href={`/profile/${userData?.username}`} passHref>
               <AvatarContainer>
-                <Avatar imageUrl={userData?.avatar.url} />
+                <Avatar imageUrl={userData?.avatar} />
               </AvatarContainer>
             </Link>
             <Button onClick={onClickWrite}>Tulis</Button>

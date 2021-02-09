@@ -109,11 +109,9 @@ function Topics() {
   const onSubmit = async () => {
     try {
       changeRequestStatus('loading', null);
-      const data = {
-        name: 'topics',
-        data: selectedTopics
-      };
-      const response = await axios.put('/auth/user', data);
+      const response = await axios.post(`/users/${userData.username}/topics`, {
+        topicIds: selectedTopics
+      });
       updateProfile({
         topics: response.data.data
       });

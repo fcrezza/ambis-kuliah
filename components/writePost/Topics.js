@@ -76,8 +76,12 @@ const NotFoundText = styled.p`
 
 function Topics({topics, onClickTopic}) {
   const [searchValue, setSearchValue] = React.useState('');
-  const {data: topicsData} = useSWR('/topics', url =>
-    axios.get(url).then(({data}) => data.data)
+  const {data: topicsData} = useSWR(
+    '/topics',
+    url => axios.get(url).then(({data}) => data.data),
+    {
+      revalidateOnFocus: false
+    }
   );
 
   const topicList = topicsData?.filter(topic => {

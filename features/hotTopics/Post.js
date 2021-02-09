@@ -136,11 +136,9 @@ function fetcher(url) {
   return axios.get(url).then(({data}) => data.data);
 }
 
-const url = '/posts/trending';
-
 function Posts() {
   const {push} = useRouter();
-  const {data: posts, error} = useSWR(url, fetcher);
+  const {data: posts, error} = useSWR('/posts/trending', fetcher);
   const isError = error && !Array.isArray(posts);
   useErrorHandler(isError ? error : null);
 
@@ -171,7 +169,7 @@ function Posts() {
       topics={post.topics}
       authorUsername={post.author.username}
       authorFullname={post.author.fullname}
-      authorAvatar={post.author.avatar.url}
+      authorAvatar={post.author.avatar}
       timestamp={post.timestamp}
       handleClickPost={() => navigate(post.id, post.author.username)}
       handleKeyDownPost={() => navigate(post.id, post.author.username)}

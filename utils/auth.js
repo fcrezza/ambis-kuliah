@@ -9,7 +9,7 @@ const AuthContext = React.createContext();
 export function AuthProvider({children}) {
   const {data: userData, mutate, error} = useSWR(
     '/auth/user',
-    url => axios.get(url, {withCredentials: true}).then(res => res.data.data),
+    url => axios.get(url).then(res => res.data.data),
     {revalidateOnFocus: false}
   );
   useErrorHandler(error);

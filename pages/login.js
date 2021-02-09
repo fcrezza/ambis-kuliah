@@ -77,7 +77,7 @@ function Login() {
     } catch (error) {
       if (error.response) {
         changeRequestStatus('error', {
-          message: error.response.data.data.message
+          message: error.response.data.error.message
         });
       } else {
         changeRequestStatus('error', {
