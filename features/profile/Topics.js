@@ -65,9 +65,7 @@ const TopicsContainer = styled.div`
 
 const EmptyContainer = styled.div`
   padding: 2rem 1.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin: 0 auto;
 `;
 
 const EmptyText = styled.p`
@@ -160,7 +158,6 @@ function Topics({topics}) {
         isOpen={isModalOpen}
         onClose={onCloseModal}
       />
-      ;
     </>
   );
 }

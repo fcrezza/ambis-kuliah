@@ -137,7 +137,6 @@ function WriteReply({postId, authorUsername}) {
       }
 
       fd.append('replyContent', replyContent);
-      fd.append('userId', Number(userData.id));
 
       await axios.post(`/posts/${authorUsername}/${postId}/replies`, fd);
       changeRequestStatus('success', null);
@@ -155,7 +154,7 @@ function WriteReply({postId, authorUsername}) {
     } catch (error) {
       if (error.response) {
         changeRequestStatus('error', {
-          message: error.response.data.data.message
+          message: error.response.data.error.message
         });
       } else {
         changeRequestStatus('error', {message: 'Upss, ada yang salah'});
@@ -167,7 +166,7 @@ function WriteReply({postId, authorUsername}) {
     <WriteReplyContainer>
       <Link href={`/profile/${userData.username}`} passHref>
         <AuthorProfileLink>
-          <AuthorAvatar imageUrl={userData.avatar.url} />
+          <AuthorAvatar imageUrl={userData.avatar} />
         </AuthorProfileLink>
       </Link>
       <EditorContainer>
@@ -209,7 +208,7 @@ function WriteReply({postId, authorUsername}) {
           </AttachmentGroup>
           <Button
             onClick={onSumitReply}
-            disabled={!replyContent && requestStatus.name === 'loading'}
+            disabled={!replyContent || requestStatus.name === 'loading'}
           >
             Kirim
           </Button>

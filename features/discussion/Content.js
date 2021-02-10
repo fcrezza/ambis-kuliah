@@ -56,7 +56,7 @@ function DiscussionContent() {
     axios.get(url).then(({data}) => data.data)
   );
   useErrorHandler(!data && error);
-
+  console.log(data);
   const isAuth = Object.keys(userData).length;
 
   const handleUpvote = () => {
@@ -103,12 +103,13 @@ function DiscussionContent() {
               voteStats={data.stats.upvotes - data.stats.downvotes}
               replyStats={data.stats.replies}
               replyTo={data.replyTo}
+              image={data.image}
               timestamp={data.timestamp}
               authorFullname={data.author.fullname}
               authorUsername={data.author.username}
-              authorAvatar={data.author.avatar.url}
-              isUpvote={data?.feedback?.upvotes}
-              isDownvote={data?.feedback?.downvotes}
+              authorAvatar={data.author.avatar}
+              isUpvote={data?.interactions?.upvote}
+              isDownvote={data?.interactions?.downvote}
               handleUpvote={handleUpvote}
               handleDownvote={handleDownvote}
               handleDelete={handleDelete}
@@ -126,6 +127,7 @@ function DiscussionContent() {
       <DiscussionRepliesContainer>
         <ErrorBoundary FallbackComponent={ErrorFallback}>
           <DiscussionReplies
+            totalReplies={data?.stats?.replies}
             postId={Number(query.postId)}
             authorUsername={query.authorUsername}
           />

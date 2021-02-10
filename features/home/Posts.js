@@ -57,7 +57,7 @@ const EmptyText = styled.p`
 `;
 
 function getKey(pageIndex, previousPageData) {
-  const limit = 3;
+  const limit = 20;
 
   // reached the end
   if (previousPageData && !previousPageData.next) return null;
@@ -88,6 +88,7 @@ function Posts() {
   if (Array.isArray(data)) {
     posts = data.map(({posts}) => posts).flat();
   }
+
   const handleUpvote = postId => {
     mutate(prevState => upvotePost(postId, userData.id, prevState), false);
   };

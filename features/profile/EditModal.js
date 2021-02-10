@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, {useTheme} from 'styled-components';
 import {useRouter} from 'next/router';
-import {darken, lighten, parseToRgb} from 'polished';
+import {lighten, parseToRgb} from 'polished';
 import {MdAddAPhoto} from 'react-icons/md';
 import * as yup from 'yup';
 import {useForm} from 'react-hook-form';
@@ -14,6 +14,7 @@ import Label from 'components/Label';
 import {Button, IconButton} from 'components/Button';
 import axios from 'utils/axios';
 import {useAuth} from 'utils/auth';
+import useRequest from 'utils/useRequest';
 
 const ProfileEditContainer = styled.div`
   padding: 2rem 1.5rem;
@@ -82,19 +83,12 @@ function ProfileEdit(props) {
   const {isOpen, onClose, username, fullname, email, bio, avatar} = props;
   const [avatarFile, setAvatarFile] = React.useState(null);
   const [avatarPreview, setAvatarPreview] = React.useState(() => avatar);
-  const [requestStatus, setRequestStatus] = React.useState('iddle');
+  const {requestStatus, changeRequestStatus} = useRequest();
   const imgRef = React.useRef();
   const {colors} = useTheme();
   const router = useRouter();
   const {userData} = useAuth();
-  const {
-    register,
-    handleSubmit,
-    errors,
-    setError,
-    clearErrors,
-    reset
-  } = useForm({
+  const {register, handleSubmit, errors, reset} = useForm({
     defaultValues: {
       username,
       fullname,
@@ -120,8 +114,7 @@ function ProfileEdit(props) {
 
   const onSubmit = async data => {
     try {
-      clearErrors('server');
-      setRequestStatus('loading');
+      changeRequestStatus('loading', null);
       let newAvatar;
 
       if (avatarPreview !== avatar) {
@@ -129,20 +122,14 @@ function ProfileEdit(props) {
         fd.append('avatar', avatarFile);
         const {data: avatarData} = await axios.post(
           `/users/${userData.username}/avatar`,
-          fd,
-          {
-            withCredentials: true
-          }
+          fd
         );
         newAvatar = avatarData.data;
       }
 
       const {data: newData} = await axios.put(
         `/users/${userData.username}/profile`,
-        data,
-        {
-          withCredentials: true
-        }
+        data
       );
       await mutate('/auth/user', prevData => ({
         ...prevData,
@@ -172,27 +159,26 @@ function ProfileEdit(props) {
           mutate(key, undefined, true);
         }
       }
-      setRequestStatus('success');
+      changeRequestStatus('success');
       setAvatarFile(null);
       setAvatarPreview(avatar);
       reset({
-        username: username,
-        fullname: fullname,
-        email: email,
-        bio: bio
+        username: newData.data.username,
+        fullname: newData.data.fullname,
+        email: newData.data.email,
+        bio: newData.data.bio
       });
       onClose();
     } catch (error) {
       if (error.response) {
-        setError('server', {
-          message: error.response.data.data.message
+        changeRequestStatus('error', {
+          message: error.response.data.error.message
         });
       } else {
-        setError('server', {
+        changeRequestStatus('error', {
           message: 'Upss, ada yang salah'
         });
       }
-      setRequestStatus('failed');
     }
   };
 
@@ -238,25 +224,32 @@ function ProfileEdit(props) {
             <Label htmlFor="fullname">Nama Lengkap</Label>
             <Input type="text" id="fullname" name="fullname" ref={register} />
           </InputGroup>
-          <ErrorMessage name="fullname" errors={errors} />
+          {errors.fullname ? (
+            <ErrorMessage message={errors.fullname.message} />
+          ) : null}
           <InputGroup>
             <Label htmlFor="username">Username</Label>
             <Input type="text" id="username" name="username" ref={register} />
           </InputGroup>
-          <ErrorMessage name="username" errors={errors} />
+          {errors.username ? (
+            <ErrorMessage message={errors.username.message} />
+          ) : null}
           <InputGroup>
             <Label htmlFor="email">Email</Label>
             <Input type="email" id="email" name="email" ref={register} />
           </InputGroup>
-          <ErrorMessage name="email" errors={errors} />
+          {errors.email ? (
+            <ErrorMessage message={errors.email.message} />
+          ) : null}
           <InputGroup>
             <Label htmlFor="bio">Bio</Label>
             <Textarea id="bio" name="bio" ref={register} />
           </InputGroup>
-          <ErrorMessage name="bio" errors={errors} />
-          <ErrorMessage errors={errors} name="server" />
+          {requestStatus.name === 'error' ? (
+            <ErrorMessage message={requestStatus.data.message} />
+          ) : null}
           <ButtonWrapper>
-            <Button disabled={requestStatus === 'loading'}>Simpan</Button>
+            <Button disabled={requestStatus.name === 'loading'}>Simpan</Button>
           </ButtonWrapper>
         </Form>
       </ProfileEditContainer>

@@ -5,24 +5,41 @@ export function upvotePost(postId, userId, prevData) {
   let hasUpvote = false;
   let hasDownvote = false;
   const newData = IProduce(prevData, draft => {
-    for (const {posts} of draft) {
-      const post = posts.find(post => post.id === postId);
-      if (post) {
-        if (post.interactions.upvote) {
-          hasUpvote = true;
-          post.interactions.upvote = false;
-          post.stats.upvotes--;
-        } else if (post.interactions.downvote) {
-          hasDownvote = true;
-          post.interactions.downvote = false;
-          post.interactions.upvote = true;
-          post.stats.downvotes--;
-          post.stats.upvotes++;
-        } else {
-          post.interactions.upvote = true;
-          post.stats.upvotes++;
+    if (Array.isArray(prevData)) {
+      for (const {posts} of draft) {
+        const post = posts.find(post => post.id === postId);
+        if (post) {
+          if (post.interactions.upvote) {
+            hasUpvote = true;
+            post.interactions.upvote = false;
+            post.stats.upvotes--;
+          } else if (post.interactions.downvote) {
+            hasDownvote = true;
+            post.interactions.downvote = false;
+            post.interactions.upvote = true;
+            post.stats.downvotes--;
+            post.stats.upvotes++;
+          } else {
+            post.interactions.upvote = true;
+            post.stats.upvotes++;
+          }
+          break;
         }
-        break;
+      }
+    } else {
+      if (draft.interactions.upvote) {
+        hasUpvote = true;
+        draft.interactions.upvote = false;
+        draft.stats.upvotes--;
+      } else if (draft.interactions.downvote) {
+        hasDownvote = true;
+        draft.interactions.downvote = false;
+        draft.interactions.upvote = true;
+        draft.stats.downvotes--;
+        draft.stats.upvotes++;
+      } else {
+        draft.interactions.upvote = true;
+        draft.stats.upvotes++;
       }
     }
   });
@@ -41,24 +58,41 @@ export function downvotePost(postId, userId, prevData) {
   let hasUpvote = false;
   let hasDownvote = false;
   const newData = IProduce(prevData, draft => {
-    for (const {posts} of draft) {
-      const post = posts.find(post => post.id === postId);
-      if (post) {
-        if (post.interactions.downvote) {
-          hasDownvote = true;
-          post.interactions.downvote = false;
-          post.stats.downvotes--;
-        } else if (post.interactions.upvote) {
-          hasUpvote = true;
-          post.interactions.upvote = false;
-          post.interactions.downvote = true;
-          post.stats.upvotes--;
-          post.stats.downvotes++;
-        } else {
-          post.interactions.downvote = true;
-          post.stats.downvotes++;
+    if (Array.isArray(prevData)) {
+      for (const {posts} of draft) {
+        const post = posts.find(post => post.id === postId);
+        if (post) {
+          if (post.interactions.downvote) {
+            hasDownvote = true;
+            post.interactions.downvote = false;
+            post.stats.downvotes--;
+          } else if (post.interactions.upvote) {
+            hasUpvote = true;
+            post.interactions.upvote = false;
+            post.interactions.downvote = true;
+            post.stats.upvotes--;
+            post.stats.downvotes++;
+          } else {
+            post.interactions.downvote = true;
+            post.stats.downvotes++;
+          }
+          break;
         }
-        break;
+      }
+    } else {
+      if (draft.interactions.downvote) {
+        hasDownvote = true;
+        draft.interactions.downvote = false;
+        draft.stats.downvotes--;
+      } else if (draft.interactions.upvote) {
+        hasUpvote = true;
+        draft.interactions.upvote = false;
+        draft.interactions.downvote = true;
+        draft.stats.upvotes--;
+        draft.stats.downvotes++;
+      } else {
+        draft.interactions.downvote = true;
+        draft.stats.downvotes++;
       }
     }
   });
@@ -75,13 +109,12 @@ export function downvotePost(postId, userId, prevData) {
 }
 
 export async function deletePost(postId, username, prevData) {
-  // const newData = prevData
-  //   ? prevData.filter(p => Number(p.id) !== postId)
-  //   : null;
-  const newData = prevData.map(item => ({
-    ...item,
-    posts: item.posts.filter(post => post.id !== postId)
-  }));
+  const newData = Array.isArray(prevData)
+    ? prevData.map(item => ({
+        ...item,
+        posts: item.posts.filter(post => post.id !== postId)
+      }))
+    : null;
   await axios.delete(`/posts/${username}/${postId}`);
   return newData;
 }

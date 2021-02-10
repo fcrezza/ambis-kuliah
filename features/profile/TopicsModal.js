@@ -4,6 +4,10 @@ import {MdCheck} from 'react-icons/md';
 
 import Modal from 'components/Modal';
 import {Button} from 'components/Button';
+import useRequest from 'utils/useRequest';
+import {ErrorMessage} from 'components/Input';
+import axios from 'utils/axios';
+import {useAuth} from 'utils/auth';
 
 const TopicsContainer = styled.div`
   padding: 1.5rem;
@@ -66,6 +70,8 @@ const ButtonContainer = styled.div`
 
 function TopicsModal({topics, topicsData, isOpen, onClose}) {
   const [selectedTopics, setTopics] = React.useState(() => topics);
+  const {requestStatus, changeRequestStatus} = useRequest();
+  const {userData, updateProfile} = useAuth();
 
   const onSelectTopic = newTopic => {
     const isFound = selectedTopics.find(topic => topic.id === newTopic.id);
@@ -78,8 +84,32 @@ function TopicsModal({topics, topicsData, isOpen, onClose}) {
     setTopics(prevState => [...prevState, newTopic]);
   };
 
-  const onClickSubmit = () => {
-    console.log(selectedTopics);
+  const onClickSubmit = async () => {
+    try {
+      changeRequestStatus('loading', null);
+      const topicIds = selectedTopics.map(topic => topic.id);
+      const {data: newTopics} = await axios.put(
+        `/users/${userData.username}/topics`,
+        {
+          topicIds
+        }
+      );
+      updateProfile({
+        topics: newTopics.data
+      });
+      changeRequestStatus('success');
+      onClose();
+    } catch (error) {
+      if (error.response) {
+        changeRequestStatus('error', {
+          message: error.response.data.error.message
+        });
+      } else {
+        changeRequestStatus('error', {
+          message: 'Upss, ada yang salah'
+        });
+      }
+    }
   };
 
   return (
@@ -100,8 +130,16 @@ function TopicsModal({topics, topicsData, isOpen, onClose}) {
             );
           })}
         </TopicsItemContainer>
+        {requestStatus.name === 'error' ? (
+          <ErrorMessage message={requestStatus.data.message} />
+        ) : null}
         <ButtonContainer>
-          <Button onClick={onClickSubmit}>Simpan</Button>
+          <Button
+            onClick={onClickSubmit}
+            disabled={requestStatus.name === 'loading'}
+          >
+            Simpan
+          </Button>
         </ButtonContainer>
       </TopicsContainer>
     </Modal>

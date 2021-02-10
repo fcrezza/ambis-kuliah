@@ -118,7 +118,7 @@ function ProfileContent() {
           ) : (
             <>
               <ProfileIdentityHeader>
-                <ProfileAvatar imageUrl={user?.avatar.url} />
+                <ProfileAvatar imageUrl={user?.avatar} />
                 {isAdmin ? (
                   <Button variant="outline" onClick={onClickEdit}>
                     Edit Profil
@@ -129,11 +129,11 @@ function ProfileContent() {
               <ProfileUsername>@{user?.username}</ProfileUsername>
               <ProfileBio>{user?.bio}</ProfileBio>
               <ProfileEditModal
-                avatar={user?.avatar.url}
-                fullname={user?.fullname}
-                username={user?.username}
-                bio={user?.bio}
-                email={user?.email}
+                avatar={user?.avatar}
+                fullname={userData?.fullname}
+                username={userData?.username}
+                bio={userData?.bio}
+                email={userData?.email}
                 isOpen={isModalOpen}
                 onClose={onCloseModal}
               />

@@ -61,27 +61,17 @@ const EmptyText = styled.p`
   line-height: 30px;
 `;
 
-function fetcher(url) {
-  const fetchOptions = {
-    withCredentials: true
-  };
-  return axios.get(url, fetchOptions).then(({data}) => data.data);
-}
-
 function getKey(pageIndex, previousPageData, keywords) {
-  if (!keywords) {
-    return null;
-  }
+  const limit = 20;
 
-  // change this offset
-  const startOffset = 20 * pageIndex || 1;
-  const endOffset = 20;
-
-  if (previousPageData && !previousPageData.length) {
-    return null;
-  }
-
-  return `/posts?keywords=${keywords}&limit=${startOffset},${endOffset}`;
+  if (!keywords) return null;
+  // reached the end
+  if (previousPageData && !previousPageData.next) return null;
+  // first page, we don't have `previousPageData`
+  if (pageIndex === 0) return `/posts?keywords=${keywords}&limit=${limit}`;
+  // add the cursor to the API endpoint
+  const {searchParams} = new URL(previousPageData.next);
+  return `/posts?${searchParams}`;
 }
 
 function Search() {
@@ -92,45 +82,42 @@ function Search() {
     getKey(pageIndex, previousPageData, keywords);
   const {data, error, mutate, isValidating, setSize} = useSWRInfinite(
     key,
-    fetcher
+    url => axios.get(url).then(({data}) => data.data)
   );
-  let hasMore = true;
-  const postData = Array.isArray(data) ? data.flat() : [];
+  let hasMore = false;
 
-  if (
-    (Array.isArray(data) && data.length && !data[data.length - 1].length) ||
-    error
-  ) {
+  if (Array.isArray(data) && !data[data.length - 1].next) {
     hasMore = false;
-  } else {
+  } else if (data && data[data.length - 1].next) {
     hasMore = true;
   }
 
+  let posts = [];
+
+  if (Array.isArray(data)) {
+    posts = data.map(({posts}) => posts).flat();
+  }
+
   const handleUpvote = postId => {
-    mutate(prevData => upvotePost(postId, userData.id, prevData.flat()), false);
+    mutate(prevState => upvotePost(postId, userData.id, prevState), false);
   };
 
   const handleDownvote = postId => {
-    mutate(
-      prevData => downvotePost(postId, userData.id, prevData.flat()),
-      false
-    );
+    mutate(prevState => downvotePost(postId, userData.id, prevState), false);
   };
 
   const handleDelete = async postId => {
     try {
       await mutate(
-        prevData => deletePost(postId, userData.username, prevData.flat()),
+        prevState => deletePost(postId, userData.username, prevState),
         false
       );
       toast.success('Berhasil menghapus postingan');
-    } catch (e) {
-      toast.error('Gagal menghapus postingan', {
-        className: 'success'
-      });
+    } catch (error) {
+      toast.error('Gagal menghapus postingan');
     }
   };
-
+  console.log(posts);
   return (
     <Container>
       <Head
@@ -138,32 +125,34 @@ function Search() {
         description={`Cari diskusi yang mengandung kata kunci ${keywords}`}
       />
       <InfiniteScroll
-        dataLength={postData.length}
+        dataLength={posts.length}
         next={() => setSize(size => size + 1)}
-        hasMore={isValidating || hasMore}
+        hasMore={(hasMore && !error) || isValidating}
         loader={
           <SpinnerContainer>
             <Spinner />
           </SpinnerContainer>
         }
-        scrollThreshold="0px"
+        scrollThreshold="10px"
       >
-        {Array.isArray(postData) && postData.length
-          ? postData.map(post => (
+        {posts.length
+          ? posts.map(post => (
               <Post
                 key={post.id}
                 id={post.id}
                 title={post.title}
                 description={post.contents}
+                image={post.image}
                 topics={post.topics}
                 voteStats={post.stats.upvotes - post.stats.downvotes}
                 replyStats={post.stats.replies}
                 timestamp={post.timestamp}
+                replyTo={post.replyTo}
                 authorFullname={post.author.fullname}
                 authorUsername={post.author.username}
-                authorAvatar={post.author.avatar.url}
-                isUpvote={post?.feedback?.upvotes}
-                isDownvote={post?.feedback?.downvotes}
+                authorAvatar={post.author.avatar}
+                isUpvote={post?.interactions?.upvote}
+                isDownvote={post?.interactions?.downvote}
                 handleUpvote={() => handleUpvote(post.id)}
                 handleDownvote={() => handleDownvote(post.id)}
                 handleDelete={() => handleDelete(post.id)}
@@ -171,7 +160,7 @@ function Search() {
               />
             ))
           : null}
-        {Array.isArray(postData) && !postData.length ? (
+        {!posts.length ? (
           <EmptyContainer>
             <EmptyText>Tidak ada apa-apa disini</EmptyText>
           </EmptyContainer>

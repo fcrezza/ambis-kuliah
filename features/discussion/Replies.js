@@ -51,110 +51,106 @@ const ErrorMessage = styled.p`
   margin: 0 0 2rem;
 `;
 
-function getKey(pageIndex, previousPageData, postContext) {
-  if (!Object.keys(postContext).length) {
-    return null;
-  }
+function getKey(pageIndex, previousPageData, data) {
+  const limit = 20;
 
-  // change this offset
-  const startOffset = 20 * pageIndex + 1;
-  const endOffset = 20;
-
-  if (previousPageData && !previousPageData.length) {
-    return null;
-  }
-
-  return `/posts/${postContext.authorUsername}/${postContext.postId}/replies?limit=${startOffset},${endOffset}`;
+  if (!Object.keys(data).length) return null;
+  // reached the end
+  if (previousPageData && !previousPageData.next) return null;
+  // first page, we don't have `previousPageData`
+  if (pageIndex === 0)
+    return `/posts/${data.authorUsername}/${data.postId}/replies?limit=${limit}`;
+  // add the cursor to the API endpoint
+  const {searchParams} = new URL(previousPageData.next);
+  return `posts/${data.authorUsername}/${data.postId}/replies?${searchParams}`;
 }
 
-function DiscussionReplies({postId, authorUsername}) {
+function DiscussionReplies({totalReplies, postId, authorUsername}) {
   const {userData} = useAuth();
-  let hasMore = true;
   const key = (pageIndex, previousPageData) =>
     getKey(pageIndex, previousPageData, {postId, authorUsername});
   const {data, error, mutate, isValidating, setSize} = useSWRInfinite(
     key,
     url => axios.get(url).then(({data}) => data.data)
   );
-  const replies = Array.isArray(data) ? [].concat(...data) : [];
+  let hasMore = false;
 
-  if (
-    (Array.isArray(data) && data.length && !data[data.length - 1].length) ||
-    error
-  ) {
+  if (Array.isArray(data) && !data[data.length - 1].next) {
     hasMore = false;
-  } else {
+  } else if (data && data[data.length - 1].next) {
     hasMore = true;
   }
 
+  let replies = [];
+
+  if (Array.isArray(data)) {
+    replies = data.map(({posts}) => posts).flat();
+  }
+
   const handleUpvote = postId => {
-    mutate(prevData => upvotePost(postId, userData.id, prevData.flat()), false);
+    mutate(prevState => upvotePost(postId, userData.id, prevState), false);
   };
 
   const handleDownvote = postId => {
-    mutate(
-      prevData => downvotePost(postId, userData.id, prevData.flat()),
-      false
-    );
+    mutate(prevState => downvotePost(postId, userData.id, prevState), false);
   };
 
   const handleDelete = async postId => {
     try {
       await mutate(
-        prevData => deletePost(postId, userData.username, prevData.flat()),
+        prevState => deletePost(postId, userData.username, prevState),
         false
       );
-      console.log(data);
-      toast.success('Berhasil menghapus komentar');
-    } catch (e) {
-      toast.error('Gagal menghapus komentar');
+      toast.success('Berhasil menghapus postingan');
+    } catch (error) {
+      toast.error('Gagal menghapus postingan');
     }
   };
 
   return (
     <>
       <TitleContainer>
-        <Title>Komentar ({replies.length})</Title>
+        <Title>Komentar ({totalReplies})</Title>
       </TitleContainer>
       <InfiniteScroll
         dataLength={replies.length}
         next={() => setSize(size => size + 1)}
-        hasMore={isValidating || hasMore}
+        hasMore={(hasMore && !error) || isValidating}
         loader={
           <SpinnerContainer>
             <Spinner />
           </SpinnerContainer>
         }
-        scrollThreshold="0px"
+        scrollThreshold="10px"
       >
-        {Array.isArray(replies) && replies.length
-          ? replies.map(post => (
+        {replies.length
+          ? replies.map(reply => (
               <Post
-                key={post.id}
-                id={post.id}
-                title={post.title}
+                key={reply.id}
+                id={reply.id}
                 description={
-                  post.contents && post.contents.length > 200
-                    ? `${post.contents.substring(0, 200)}...`
-                    : post.contents
+                  reply.contents && reply.contents.length > 200
+                    ? `${reply.contents.substring(0, 200)}...`
+                    : reply.contents
                 }
-                replyTo={post.replyTo}
-                voteStats={post.stats.upvotes - post.stats.downvotes}
-                replyStats={post.stats.replies}
-                timestamp={post.timestamp}
-                authorFullname={post.author.fullname}
-                authorUsername={post.author.username}
-                authorAvatar={post.author.avatar.url}
-                isUpvote={post?.feedback?.upvotes}
-                isDownvote={post?.feedback?.downvotes}
-                handleUpvote={() => handleUpvote(post.id)}
-                handleDownvote={() => handleDownvote(post.id)}
-                handleDelete={() => handleDelete(post.id)}
-                hasAuth={post.author.username === userData?.username}
+                replyTo={reply.replyTo}
+                voteStats={reply.stats.upvotes - reply.stats.downvotes}
+                replyStats={reply.stats.replies}
+                timestamp={reply.timestamp}
+                authorFullname={reply.author.fullname}
+                authorUsername={reply.author.username}
+                authorAvatar={reply.author.avatar}
+                image={reply.image}
+                isUpvote={reply?.interactions?.upvote}
+                isDownvote={reply?.interactions?.downvote}
+                handleUpvote={() => handleUpvote(reply.id)}
+                handleDownvote={() => handleDownvote(reply.id)}
+                handleDelete={() => handleDelete(reply.id)}
+                hasAuth={reply.author.username === userData?.username}
               />
             ))
           : null}
-        {Array.isArray(replies) && !replies.length ? (
+        {!replies.length ? (
           <EmptyContainer>
             <EmptyText>Tidak ada komentar</EmptyText>
           </EmptyContainer>
@@ -162,7 +158,9 @@ function DiscussionReplies({postId, authorUsername}) {
         {error && !isValidating && (
           <ErrorContainer>
             <ErrorMessage>Tidak dapat memuat data</ErrorMessage>
-            <Button onClick={() => mutate()}>Coba Lagi</Button>
+            <Button onClick={() => mutate(prevState => prevState, true)}>
+              Coba Lagi
+            </Button>
           </ErrorContainer>
         )}
       </InfiniteScroll>

@@ -26,6 +26,7 @@ const ContentDescription = styled.p`
 const ContentImage = styled.div`
   width: 100%;
   height: 200px;
+  cursor: pointer;
   border-radius: 10px;
   background-color: ${({theme}) => theme.colors['gray.150']};
   background-image: url(${({imageUrl}) => imageUrl});

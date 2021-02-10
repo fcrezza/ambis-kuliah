@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import {useRouter} from 'next/router';
 import {FaRegCompass} from 'react-icons/fa';
 import {HiOutlineHome} from 'react-icons/hi';
+import {FiLogOut} from 'react-icons/fi';
 
 import Search from 'components/Search';
 import {Button, IconButton} from 'components/Button';
@@ -44,7 +45,7 @@ const LogoImage = styled.img`
 
 const SearchContainer = styled.div`
   margin: 0 2rem;
-  width: 500px;
+  width: 450px;
 `;
 
 const NavigationLinkContainer = styled.nav`
@@ -52,7 +53,7 @@ const NavigationLinkContainer = styled.nav`
   align-items: center;
 
   & > *:not(:last-child) {
-    margin-right: 1.7rem;
+    margin-right: 1.5rem;
   }
 `;
 
@@ -85,14 +86,25 @@ const ExploreIcon = styled(FaRegCompass)`
   font-size: 1.8rem;
 `;
 
+const LogoutIcon = styled(FiLogOut)`
+  color: ${({theme}) => theme.colors['black.100']};
+  font-size: 1.8rem;
+`;
+
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
 `;
 
 function DesktopNavigation({onClickWrite, onClickLogin}) {
-  const {userData} = useAuth();
+  const {userData, logout} = useAuth();
+  const {push} = useRouter();
   const isAuth = Object.keys(userData).length;
+
+  const onClickLogout = async () => {
+    await logout();
+    push('/login');
+  };
 
   return (
     <DesktopContainer>
@@ -119,6 +131,9 @@ function DesktopNavigation({onClickWrite, onClickLogin}) {
         </Link>
         {isAuth ? (
           <>
+            <IconButton onClick={onClickLogout}>
+              <LogoutIcon />
+            </IconButton>
             <Link href={`/profile/${userData?.username}`} passHref>
               <AvatarContainer>
                 <Avatar imageUrl={userData?.avatar} />

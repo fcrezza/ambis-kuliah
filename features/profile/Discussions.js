@@ -69,27 +69,17 @@ const ErrorMessage = styled.p`
   margin: 0 0 2rem;
 `;
 
-function fetcher(url) {
-  const fetchOptions = {
-    withCredentials: true
-  };
-  return axios.get(url, fetchOptions).then(({data}) => data.data);
-}
-
 function getKey(pageIndex, previousPageData, username) {
-  if (!username) {
-    return null;
-  }
+  const limit = 20;
 
-  // change this offset
-  const startOffset = 20 * pageIndex || 1;
-  const endOffset = 20;
-
-  if (previousPageData && !previousPageData.length) {
-    return null;
-  }
-
-  return `/posts/${username}?limit=${startOffset},${endOffset}`;
+  if (!username) return null;
+  // reached the end
+  if (previousPageData && !previousPageData.next) return null;
+  // first page, we don't have `previousPageData`
+  if (pageIndex === 0) return `/posts/${username}?limit=${limit}`;
+  // add the cursor to the API endpoint
+  const {searchParams} = new URL(previousPageData.next);
+  return `/posts/${username}?${searchParams}`;
 }
 
 function ProfilePosts({username}) {
@@ -98,91 +88,100 @@ function ProfilePosts({username}) {
     getKey(pageIndex, previousPageData, username);
   const {data, error, mutate, isValidating, setSize} = useSWRInfinite(
     key,
-    fetcher
+    url => axios.get(url).then(({data}) => data.data)
   );
-  let hasMore = true;
-  const postData = Array.isArray(data) ? data.flat() : [];
-  if (
-    (Array.isArray(data) && data.length && !data[data.length - 1].length) ||
-    error
-  ) {
+
+  let hasMore = false;
+
+  if (Array.isArray(data) && !data[data.length - 1].next) {
     hasMore = false;
-  } else {
+  } else if (data && data[data.length - 1].next) {
     hasMore = true;
   }
 
+  let posts = [];
+
+  if (Array.isArray(data)) {
+    posts = data.map(({posts}) => posts).flat();
+  }
+
   const handleUpvote = postId => {
-    mutate(prevData => upvotePost(postId, userData.id, prevData.flat()), false);
+    mutate(prevState => upvotePost(postId, userData.id, prevState), false);
   };
 
   const handleDownvote = postId => {
-    mutate(
-      prevData => downvotePost(postId, userData.id, prevData.flat()),
-      false
-    );
+    mutate(prevState => downvotePost(postId, userData.id, prevState), false);
   };
 
   const handleDelete = async postId => {
     try {
       await mutate(
-        prevData => deletePost(postId, userData.username, prevData.flat()),
+        prevState => deletePost(postId, userData.username, prevState),
         false
       );
       toast.success('Berhasil menghapus postingan');
-    } catch (e) {
-      toast.error('Tidak bisa menghapus postingan');
+    } catch (error) {
+      toast.error('Gagal menghapus postingan');
     }
   };
+
   return (
     <Container>
       <TitleContainer>
-        <Title>Diskusi</Title>
+        <Title>Postingan</Title>
       </TitleContainer>
       <InfiniteScroll
-        dataLength={postData.length}
+        dataLength={posts.length}
         next={() => setSize(size => size + 1)}
-        hasMore={isValidating || hasMore}
+        hasMore={(hasMore && !error) || isValidating}
         loader={
           <SpinnerContainer>
             <Spinner />
           </SpinnerContainer>
         }
-        scrollThreshold="0px"
+        scrollThreshold="10px"
       >
-        {Array.isArray(postData) && postData.length
-          ? postData.map(post => (
+        {posts.length
+          ? posts.map(post => (
               <Post
                 key={post.id}
                 id={post.id}
                 title={post.title}
-                description={post.contents}
+                description={
+                  post.contents && post.contents.length > 200
+                    ? `${post.contents.substring(0, 200)}...`
+                    : post.contents
+                }
                 topics={post.topics}
+                image={post.image}
                 voteStats={post.stats.upvotes - post.stats.downvotes}
                 replyStats={post.stats.replies}
                 timestamp={post.timestamp}
                 authorFullname={post.author.fullname}
                 authorUsername={post.author.username}
-                authorAvatar={post.author.avatar.url}
-                isUpvote={post?.feedback?.upvotes}
-                isDownvote={post?.feedback?.downvotes}
+                authorAvatar={post.author.avatar}
+                isUpvote={post?.interactions?.upvote}
+                isDownvote={post?.interactions?.downvote}
                 handleUpvote={() => handleUpvote(post.id)}
                 handleDownvote={() => handleDownvote(post.id)}
                 handleDelete={() => handleDelete(post.id)}
-                hasAuth={userData?.id === post.author.id}
+                hasAuth={post.author.username === userData?.username}
               />
             ))
           : null}
-        {Array.isArray(postData) && !postData.length ? (
+        {!posts.length ? (
           <EmptyContainer>
             <EmptyText>Tidak ada apa-apa disini</EmptyText>
           </EmptyContainer>
         ) : null}
-        {error && !isValidating && (
+        {error && !isValidating ? (
           <ErrorContainer>
             <ErrorMessage>Tidak dapat memuat data</ErrorMessage>
-            <Button onClick={() => mutate()}>Coba Lagi</Button>
+            <Button onClick={() => mutate(prevData => prevData, true)}>
+              Coba Lagi
+            </Button>
           </ErrorContainer>
-        )}
+        ) : null}
       </InfiniteScroll>
     </Container>
   );
